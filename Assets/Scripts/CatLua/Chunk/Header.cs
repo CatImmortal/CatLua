@@ -10,7 +10,7 @@ namespace CatLua
     public struct Header
     {
         /// <summary>
-        /// 签名 4byte 魔数0x1B 4C 75 61
+        /// 签名 4byte 0x1B 4C 75 61
         /// </summary>
         public byte[] Signature;
 
