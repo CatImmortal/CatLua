@@ -4,9 +4,12 @@ using System;
 using System.Text;
 namespace CatLua
 {
-    public struct Reader
+    /// <summary>
+    /// Chunk数据读取器
+    /// </summary>
+    public struct ChunkReader
     {
-        public Reader(byte[] data)
+        public ChunkReader(byte[] data)
         {
             this.data = data;
             curIndex = 0;

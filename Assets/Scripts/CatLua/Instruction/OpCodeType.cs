@@ -7,17 +7,75 @@ namespace CatLua
     /// <summary>
     /// 操作码类型
     /// </summary>
-    public enum OpCodeType
+    public enum OpCodeType : byte
     {
-        /// <summary>
-        /// 移动寄存器值
-        /// </summary>
+
         Move,
 
-        /// <summary>
-        /// 加载常量到寄存器值
-        /// </summary>
         LoadK,
+        LoadKX,
+        LoadBool,
+        LoadNil,
+
+        GetUpValue,
+        GetTabup,
+        GetTable,
+
+        SetTabup,
+        SetUpvalue,
+        SetTable,
+
+        NewTable,
+
+        Self,
+        Add,
+        Sub,
+        Mul,
+        Mod,
+        Pow,
+        Div,
+        Idiv,
+
+        Band,
+        Bor,
+        Bxor,
+
+        Shl,
+        Shr,
+
+        Unm,
+
+        Bnot,
+        Not,
+
+        Len,
+        Concat,
+        Jmp,
+        Eq,
+
+        Lt,
+        Le,
+
+        Test,
+        TestSet,
+
+        Call,
+        TailCall,
+        Return,
+
+        ForLoop,
+        ForPrep,
+        TForCall,
+        TForloop,
+
+        Setlist,
+
+        Closure,
+
+        Vararg,
+
+        ExtraArg,
+
     }
 
 }

@@ -7,7 +7,7 @@ namespace CatLua
     /// <summary>
     /// 操作数类型
     /// </summary>
-    public enum OpArgType
+    public enum OpArgType : byte
     {
         /// <summary>
         /// 不表示任何信息
@@ -25,7 +25,7 @@ namespace CatLua
         R,
 
         /// <summary>
-        /// 表示常量表索引或寄存器索引
+        /// iABC模式下，最高位为1时，低8位表示常量表索引，否则低8位表示寄存器索引
         /// </summary>
         K
     }

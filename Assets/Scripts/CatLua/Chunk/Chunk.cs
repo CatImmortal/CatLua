@@ -7,33 +7,34 @@ namespace CatLua
     /// <summary>
     /// lua的二进制chunk
     /// </summary>
-    public struct BinaryChunk
+    public struct Chunk
     {
         /// <summary>
         /// 头信息
         /// </summary>
-        private Header header;
+        public Header Header;
 
         /// <summary>
         /// 主函数的upvalue数量
         /// </summary>
-        private byte sizeUpvalues;
+        public byte UpvaluesSize;
 
         /// <summary>
         /// 主函数的函数原型
         /// </summary>
-        private Prototype mainFunc;
+        public Prototype MainFunc;
 
         /// <summary>
-        /// 解码trunk
+        /// 从字节流解码trunk
         /// </summary>
-        public Prototype Undump(byte[] data)
+        public static Chunk Undump(byte[] data)
         {
-            Reader reader = new Reader(data);
-            header = reader.CheckHeader();
-            sizeUpvalues = reader.ReadByte(); 
-            mainFunc = reader.ReadProto(string.Empty);
-            return mainFunc;
+            Chunk chunk;
+            ChunkReader reader = new ChunkReader(data);
+            chunk.Header = reader.CheckHeader();
+            chunk.UpvaluesSize = reader.ReadByte();
+            chunk.MainFunc = reader.ReadProto(string.Empty);
+            return chunk;
         }
     }
 

@@ -5,9 +5,9 @@ using UnityEngine;
 namespace CatLua
 {
     /// <summary>
-    /// 编码模式
+    /// 指令编码模式
     /// </summary>
-    public enum EncodeMode
+    public enum OpMode : byte
     {
         IABC,
         IABx,

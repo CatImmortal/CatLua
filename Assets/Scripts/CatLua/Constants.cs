@@ -29,6 +29,9 @@ namespace CatLua
         public const byte tagInteger = 0x13;
         public const byte tagShortStr = 0x04;
         public const byte tagLongStr = 0x14;
+
+        public const uint maxArgBx = (1 << 18) - 1;
+        public const int maxArgSbx = (int)(maxArgBx >> 1);
     }
 }
 
