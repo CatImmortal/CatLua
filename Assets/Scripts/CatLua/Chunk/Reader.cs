@@ -223,67 +223,79 @@ namespace CatLua
         /// <summary>
         /// 检查头信息
         /// </summary>
-        public void CheckHeader()
+        public Header CheckHeader()
         {
-            byte[] bytes = ReadBytes(4);
-            string sign = Encoding.UTF8.GetString(bytes);
+            Header header = new Header();
+
+            header.Signature = ReadBytes(4);
+            string sign = Encoding.UTF8.GetString(header.Signature);
             if (sign != Constants.LuaSignature)
             {
                 throw new Exception("签名不对");
             }
 
-            if (ReadByte() != Constants.LuacVersion)
+            header.Version = ReadByte();
+            if (header.Version != Constants.LuacVersion)
             {
                 throw new Exception("版本不对");
             }
 
-            if (ReadByte() != Constants.LuacFormat)
+            header.Format = ReadByte();
+            if (header.Format != Constants.LuacFormat)
             {
                 throw new Exception("格式不对");
             }
 
-            bytes = ReadBytes(6);
-            string data = Encoding.UTF8.GetString(bytes);
+            header.LuacData = ReadBytes(6);
+            string data = Encoding.UTF8.GetString(header.LuacData);
             if (data != Constants.LuacData)
             {
                 throw new Exception("luacData不对");
             }
 
-            if (ReadByte() != Constants.CintSize)
+            header.CintSize = ReadByte();
+            if (header.CintSize != Constants.CintSize)
             {
                 throw new Exception("cint size不对");
             }
 
-            if (ReadByte() != Constants.CsizetSize)
+            header.SizetSize = ReadByte();
+            if (header.SizetSize != Constants.CsizetSize)
             {
                 throw new Exception("csizet size不对");
             }
 
-            if (ReadByte() != Constants.InstructionSize)
+            header.InstructionSize = ReadByte();
+            if (header.InstructionSize != Constants.InstructionSize)
             {
                 throw new Exception("指令size不对");
             }
 
-            if (ReadByte() != Constants.LuaIntergerSize)
+            header.LuaIntergerSize = ReadByte();
+            if (header.LuaIntergerSize != Constants.LuaIntergerSize)
             {
                 throw new Exception("lua整数size不对");
             }
 
-            if (ReadByte() != Constants.LuaNumberSize)
+            header.LuaNumberSize = ReadByte();
+            if (header.LuaNumberSize != Constants.LuaNumberSize)
             {
                 throw new Exception("lua浮点数size不对");
             }
 
-            if (ReadLuaInteger() != Constants.LuacInt)
+            header.LuacInt = ReadLuaInteger();
+            if (header.LuacInt != Constants.LuacInt)
             {
                 throw new Exception("luac int不对");
             }
 
-            if (ReadLuaNumber() != Constants.LuacNum)
+            header.LuacNum = ReadLuaNumber();
+            if (header.LuacNum != Constants.LuacNum)
             {
                 throw new Exception("luac num不对");
             }
 
+            return header;
         }
 
         /// <summary>

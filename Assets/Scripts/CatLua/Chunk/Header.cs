@@ -12,57 +12,57 @@ namespace CatLua
         /// <summary>
         /// 签名 4byte 魔数0x1B 4C 75 61
         /// </summary>
-        private byte[] signature;
+        public byte[] Signature;
 
         /// <summary>
         /// 版本号
         /// </summary>
-        private byte version;
+        public byte Version;
 
         /// <summary>
         /// 格式号
         /// </summary>
-        private byte format;
+        public byte Format;
 
         /// <summary>
         /// 校验数据 6byte 0x19 93 0D 0A 1A 0A
         /// </summary>
-        private byte[] luacData;
+        public byte[] LuacData;
 
         /// <summary>
         /// cint大小
         /// </summary>
-        private byte cintSize;
+        public byte CintSize;
 
         /// <summary>
         /// sizet大小
         /// </summary>
-        private byte sizetSize;
+        public byte SizetSize;
 
         /// <summary>
         /// Lua虚拟机指令大小
         /// </summary>
-        private byte instructionSize;
+        public byte InstructionSize;
 
         /// <summary>
         /// Lua整数大小
         /// </summary>
-        private byte luaIntergerSize;
+        public byte LuaIntergerSize;
 
         /// <summary>
         /// Lua浮点数大小
         /// </summary>
-        private byte luaNumberSize;
+        public byte LuaNumberSize;
 
         /// <summary>
         /// Lua整数值 0x56 78
         /// </summary>
-        private long luacInt;
+        public long LuacInt;
 
         /// <summary>
         /// Lua浮点数 370.5
         /// </summary>
-        private double luacNum;
+        public double LuacNum;
     }
 
 }

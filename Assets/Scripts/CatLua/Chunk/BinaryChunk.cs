@@ -30,10 +30,10 @@ namespace CatLua
         public Prototype Undump(byte[] data)
         {
             Reader reader = new Reader(data);
-            reader.CheckHeader();
-            reader.ReadByte();  //跳过upvalue数量
-            Prototype proto = reader.ReadProto(string.Empty);
-            return proto;
+            header = reader.CheckHeader();
+            sizeUpvalues = reader.ReadByte(); 
+            mainFunc = reader.ReadProto(string.Empty);
+            return mainFunc;
         }
     }
 

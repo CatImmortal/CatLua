@@ -9,6 +9,7 @@ namespace CatLua
     /// </summary>
     public static class Constants
     {
+        //header校验常量
         public const string LuaSignature = "Lua";
         public const byte LuacVersion = 0x53;
         public const byte LuacFormat = 0;
@@ -21,6 +22,7 @@ namespace CatLua
         public const short LuacInt = 0x5678;
         public const double LuacNum = 370.5;
 
+        //类型tag
         public const byte tagNil = 0x00;
         public const byte tagBoolean = 0x01;
         public const byte tagNumber = 0x03;
