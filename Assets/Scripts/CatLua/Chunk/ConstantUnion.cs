@@ -6,10 +6,10 @@ using UnityEngine;
 namespace CatLua
 {
     /// <summary>
-    /// 表示lua中各个数据类型的模拟union
+    /// lua常量的模拟union
     /// </summary>
     [StructLayout(LayoutKind.Explicit)]
-    public struct LuaUnion
+    public struct ConstantUnion
     {
         [FieldOffset(0)]
         public byte nil;
@@ -18,10 +18,10 @@ namespace CatLua
         public bool boolean;
 
         [FieldOffset(0)]
-        public double number;
+        public long integer;
 
         [FieldOffset(0)]
-        public long integer;
+        public double number;
 
         [FieldOffset(0)]
         public string shortStr;

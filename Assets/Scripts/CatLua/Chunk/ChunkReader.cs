@@ -104,9 +104,9 @@ namespace CatLua
         /// <summary>
         /// 读取常量
         /// </summary>
-        public LuaUnion ReadConstant()
+        public ConstantUnion ReadConstant()
         {
-            LuaUnion union = new LuaUnion();
+            ConstantUnion union = new ConstantUnion();
 
             byte tag = ReadByte();
             switch (tag)
@@ -139,9 +139,9 @@ namespace CatLua
         /// <summary>
         /// 读取常量表
         /// </summary>
-        public LuaUnion[] ReadConstants()
+        public ConstantUnion[] ReadConstants()
         {
-            LuaUnion[] constants = new LuaUnion[ReadUint()];
+            ConstantUnion[] constants = new ConstantUnion[ReadUint()];
             for (int i = 0; i < constants.Length; i++)
             {
                 constants[i] = ReadConstant();
