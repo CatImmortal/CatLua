@@ -9,16 +9,18 @@ namespace CatLua
     /// </summary>
     public enum LuaDataType : byte
     {
-        None,
         Nil,
         Boolean,
         LightUserdata,
+        Integer,
         Number,
         String,
         Table,
         Function,
         Userdata,
         Thread,
+
+        None = byte.MaxValue,
     }
 }
 

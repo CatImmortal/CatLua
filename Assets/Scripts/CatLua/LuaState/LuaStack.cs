@@ -111,6 +111,21 @@ namespace CatLua
             }
         }
 
+        /// <summary>
+        /// 将栈中from到to部分的值翻转
+        /// </summary>
+        public void Reverse(int from,int to)
+        {
+            while (from < to)
+            {
+                LuaValueUnion temp = stack[from];
+                stack[from] = stack[to];
+                stack[to] = temp;
+
+                from++;
+                to--;
+            }
+        }
     }
 
 }
