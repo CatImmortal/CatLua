@@ -18,7 +18,7 @@ namespace CatLua
 
         private static bool EqMethod(LuaDataUnion a, LuaDataUnion b)
         {
-            return a == b;
+            return a.Equals(b);
             
         }
 

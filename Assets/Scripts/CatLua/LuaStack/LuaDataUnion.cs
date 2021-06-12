@@ -143,30 +143,7 @@ namespace CatLua
                     return false;
             }
         }
-        public override int GetHashCode()
-        {
-            switch (Type)
-            {
-                case LuaDataType.None:
-                case LuaDataType.Nil:
-                    return 0;
 
-                case LuaDataType.Boolean:
-                    return Boolean.GetHashCode();
-
-                case LuaDataType.Integer:
-                    return Integer.GetHashCode();
-
-                case LuaDataType.Number:
-                    return Number.GetHashCode();
-
-                case LuaDataType.String:
-                    return Str.GetHashCode();
-
-                default:
-                    return base.GetHashCode();
-            }
-        }
 
         public bool Equals(LuaDataUnion other)
         {
@@ -211,20 +188,7 @@ namespace CatLua
             }
         }
 
-        public override bool Equals(object obj)
-        {
-            return base.Equals(obj);
-        }
 
-        public static bool operator == (LuaDataUnion a,LuaDataUnion b)
-        {
-            return a.Equals(b);
-        }
-
-        public static bool operator !=(LuaDataUnion a, LuaDataUnion b)
-        {
-            return !(a == b);
-        }
 
         public override string ToString()
         {

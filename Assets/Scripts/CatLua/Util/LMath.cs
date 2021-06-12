@@ -55,7 +55,7 @@ namespace CatLua
         }
 
         /// <summary>
-        /// 尝试将Lu numbner转换为lua integer（比如3.0转换为3），
+        /// 尝试将Lua numbner转换为lua integer（比如3.0转换为3），
         /// 如果小数部分不为0或者范围超出了会返回flase
         /// </summary>
         public static bool TryNumberToInteger(double d, out long l)
