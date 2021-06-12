@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using CatLua;
+using System;
+
 public class Entry : MonoBehaviour
 {
     // Start is called before the first frame update
@@ -65,10 +67,13 @@ public class Entry : MonoBehaviour
         //    Debug.Log("--------------------------------");
         //}
 
-        TestLuaState();
+        //TestLuaState();
+
+        TestLuaStateOperator();
+
     }
 
-    private void TestLuaState()
+    private void TestLuaStateStack()
     {
         LuaState ls = new LuaState();
 
@@ -88,7 +93,7 @@ public class Entry : MonoBehaviour
         Debug.Log(ls.ToString());
 
 
-        ls.CopyToTop(-4);
+        ls.CopyAndPush(-4);
         Debug.Log(ls.ToString());
 
 
@@ -105,5 +110,30 @@ public class Entry : MonoBehaviour
         Debug.Log(ls.ToString());
     }
 
+    private void TestLuaStateOperator()
+    {
+        LuaState ls = new LuaState();
 
+        ls.Push(1);
+        ls.Push("2.0");
+        ls.Push("3.0");
+        ls.Push(4.0);
+        Debug.Log(ls.ToString());
+
+        ls.Arith(ArithOpType.Add);
+        Debug.Log(ls.ToString());
+
+        ls.Arith(ArithOpType.BNot);
+        Debug.Log(ls.ToString());
+
+        ls.Len(2);
+        Debug.Log(ls.ToString());
+
+        ls.Concat(3);
+        Debug.Log(ls.ToString());
+
+        bool result = ls.Compare(1, 2, CompareOpType.Eq);
+        ls.Push(result);
+        Debug.Log(ls.ToString());
+    }
 }

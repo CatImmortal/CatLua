@@ -30,6 +30,7 @@ namespace CatLua
         public const byte tagShortStr = 0x04;
         public const byte tagLongStr = 0x14;
 
+        //操作数的最大值
         public const uint maxArgBx = (1 << 18) - 1;
         public const int maxArgSbx = (int)(maxArgBx >> 1);
     }

@@ -34,14 +34,14 @@ namespace CatLua
         Mod,
         Pow,
         Div,
-        Idiv,
+        IDiv,
 
-        Band,
-        Bor,
-        Bxor,
+        BAnd,
+        BOr,
+        BXor,
 
-        Shl,
-        Shr,
+        ShL,
+        ShR,
 
         Unm,
 

@@ -12,22 +12,22 @@ namespace CatLua
     public struct ConstantUnion
     {
         [FieldOffset(0)]
-        public byte nil;
+        public byte Nil;
 
         [FieldOffset(0)]
-        public bool boolean;
+        public bool Boolean;
 
         [FieldOffset(0)]
-        public long integer;
+        public long Integer;
 
         [FieldOffset(0)]
-        public double number;
+        public double Number;
 
         [FieldOffset(0)]
-        public string shortStr;
+        public string ShortStr;
 
         [FieldOffset(0)]
-        public string longStr;
+        public string LongStr;
     }
 
 }

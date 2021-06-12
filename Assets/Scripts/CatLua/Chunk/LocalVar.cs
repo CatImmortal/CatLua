@@ -7,7 +7,7 @@ namespace CatLua
     /// <summary>
     /// 局部变量
     /// </summary>
-    public struct LocVar
+    public struct LocalVar
     {
         /// <summary>
         /// 变量名

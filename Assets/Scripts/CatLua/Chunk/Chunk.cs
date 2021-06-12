@@ -12,7 +12,7 @@ namespace CatLua
         /// <summary>
         /// 头信息
         /// </summary>
-        public Header Header;
+        public ChunkHeader Header;
 
         /// <summary>
         /// 主函数的upvalue数量
@@ -22,7 +22,7 @@ namespace CatLua
         /// <summary>
         /// 主函数的函数原型
         /// </summary>
-        public Prototype MainFunc;
+        public FuncPrototype MainFunc;
 
         /// <summary>
         /// 从字节流解码trunk

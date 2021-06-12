@@ -112,22 +112,22 @@ namespace CatLua
             switch (tag)
             {
                 case Constants.tagNil:
-                    union.nil = 1;
+                    union.Nil = 1;
                     break;
                 case Constants.tagBoolean:
-                    union.boolean = ReadByte() != 0;
+                    union.Boolean = ReadByte() != 0;
                     break;
                 case Constants.tagInteger:
-                    union.integer = ReadLuaInteger();
+                    union.Integer = ReadLuaInteger();
                     break;
                 case Constants.tagNumber:
-                    union.number = ReadLuaNumber();
+                    union.Number = ReadLuaNumber();
                     break;
                 case Constants.tagShortStr:
-                    union.shortStr = ReadString();
+                    union.ShortStr = ReadString();
                     break;
                 case Constants.tagLongStr:
-                    union.longStr = ReadString();
+                    union.LongStr = ReadString();
                     break;
                 default:
                     throw new Exception("常量tag不对");
@@ -170,9 +170,9 @@ namespace CatLua
         /// <summary>
         /// 读取子函数原型表
         /// </summary>
-        public Prototype[] ReadProtos(string parentSource)
+        public FuncPrototype[] ReadProtos(string parentSource)
         {
-            Prototype[] protos = new Prototype[ReadUint()];
+            FuncPrototype[] protos = new FuncPrototype[ReadUint()];
             for (int i = 0; i < protos.Length; i++)
             {
                 protos[i] = ReadProto(parentSource);
@@ -196,12 +196,12 @@ namespace CatLua
         /// <summary>
         /// 读取局部变量表
         /// </summary>
-        public LocVar[] ReadLocVars()
+        public LocalVar[] ReadLocVars()
         {
-            LocVar[] locvars = new LocVar[ReadUint()];
+            LocalVar[] locvars = new LocalVar[ReadUint()];
             for (int i = 0; i < locvars.Length; i++)
             {
-                LocVar locVar = new LocVar();
+                LocalVar locVar = new LocalVar();
                 locVar.VarName = ReadString();
                 locVar.StartPC = ReadUint();
                 locVar.EndPC = ReadUint();
@@ -226,9 +226,9 @@ namespace CatLua
         /// <summary>
         /// 检查头信息
         /// </summary>
-        public Header CheckHeader()
+        public ChunkHeader CheckHeader()
         {
-            Header header = new Header();
+            ChunkHeader header = new ChunkHeader();
 
             header.Signature = ReadBytes(4);
             string sign = Encoding.UTF8.GetString(header.Signature);
@@ -304,7 +304,7 @@ namespace CatLua
         /// <summary>
         /// 读取函数原型
         /// </summary>
-        public Prototype ReadProto(string parentSource)
+        public FuncPrototype ReadProto(string parentSource)
         {
             string source = ReadString();
             if (string.IsNullOrEmpty(source))
@@ -313,7 +313,7 @@ namespace CatLua
                 source = parentSource;
             }
 
-            Prototype proto = new Prototype
+            FuncPrototype proto = new FuncPrototype
             {
                 Source = source,
                 LineDefined = ReadUint(),

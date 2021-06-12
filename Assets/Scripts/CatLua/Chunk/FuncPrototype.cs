@@ -7,7 +7,7 @@ namespace CatLua
     /// <summary>
     /// 函数原型
     /// </summary>
-    public struct Prototype
+    public struct FuncPrototype
     {
         /// <summary>
         /// 源文件名
@@ -57,7 +57,7 @@ namespace CatLua
         /// <summary>
         /// 子函数原型表
         /// </summary>
-        public Prototype[] Protos;
+        public FuncPrototype[] Protos;
 
         /// <summary>
         /// 行号表（每条指令对应的行号）
@@ -67,7 +67,7 @@ namespace CatLua
         /// <summary>
         /// 局部变量表
         /// </summary>
-        public LocVar[] Locvars;
+        public LocalVar[] Locvars;
 
         /// <summary>
         /// upvalue名列表

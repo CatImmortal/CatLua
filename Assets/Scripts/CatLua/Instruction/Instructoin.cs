@@ -14,7 +14,7 @@ namespace CatLua
         }
 
         /// <summary>
-        /// chunk里的指令
+        /// chunk里的指令数据
         /// </summary>
         private uint code;
 
