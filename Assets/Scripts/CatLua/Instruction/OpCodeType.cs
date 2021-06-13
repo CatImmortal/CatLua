@@ -38,7 +38,7 @@ namespace CatLua
 
         BAnd,
         BOr,
-        BXor,
+        BXOr,
 
         ShL,
         ShR,

@@ -7,22 +7,22 @@ namespace CatLua
     /// <summary>
     ///比较运算符对应的函数实现
     /// </summary>
-    public static class CompareOpFunc
+    public static class CompareOpFuncs
     {
 
-        public static Func<LuaDataUnion, LuaDataUnion, bool> Eq = EqMethod;
+        public static Func<LuaDataUnion, LuaDataUnion, bool> Eq = EqFunc;
 
-        public static Func<LuaDataUnion, LuaDataUnion, bool> Lt = LtMethod;
+        public static Func<LuaDataUnion, LuaDataUnion, bool> Lt = LtFunc;
 
-        public static Func<LuaDataUnion, LuaDataUnion, bool> Le = LeMethod;
+        public static Func<LuaDataUnion, LuaDataUnion, bool> Le = LeFunc;
 
-        private static bool EqMethod(LuaDataUnion a, LuaDataUnion b)
+        private static bool EqFunc(LuaDataUnion a, LuaDataUnion b)
         {
             return a.Equals(b);
             
         }
 
-        private static bool LtMethod(LuaDataUnion a, LuaDataUnion b)
+        private static bool LtFunc(LuaDataUnion a, LuaDataUnion b)
         {
             switch (a.Type)
             {
@@ -56,7 +56,7 @@ namespace CatLua
             throw new Exception(string.Format("{0}不能与{1}进行比较",a.Type,b.Type));
         }
 
-        private static bool LeMethod(LuaDataUnion a, LuaDataUnion b)
+        private static bool LeFunc(LuaDataUnion a, LuaDataUnion b)
         {
             switch (a.Type)
             {

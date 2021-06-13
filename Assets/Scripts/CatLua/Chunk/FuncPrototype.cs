@@ -47,7 +47,7 @@ namespace CatLua
         /// <summary>
         /// 常量表
         /// </summary>
-        public ConstantUnion[] Constants;
+        public LuaConstantUnion[] Constants;
 
         /// <summary>
         /// upvalue表

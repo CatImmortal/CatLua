@@ -19,7 +19,7 @@ namespace CatLua
                 a = stack.Pop();
             }
 
-            ArithOpConfig operatorConfig = ArithOpConfig.ArithOpConfigs[(int)type];
+            ArithOpConfig operatorConfig = ArithOpConfig.Configs[(int)type];
 
             LuaDataUnion result = Arith(a, b, operatorConfig);
 
@@ -149,7 +149,7 @@ namespace CatLua
         {
             LuaDataUnion a = stack.Get(index1);
             LuaDataUnion b = stack.Get(index2);
-            CompareOpConfig compareOpConfig = CompareOpConfig.CompareOpConfigs[(int)type];
+            CompareOpConfig compareOpConfig = CompareOpConfig.Configs[(int)type];
             return compareOpConfig.CompareFunc(a, b);
         }
 

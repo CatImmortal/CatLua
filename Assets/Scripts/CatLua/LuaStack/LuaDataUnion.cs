@@ -12,11 +12,10 @@ namespace CatLua
     [StructLayout(LayoutKind.Explicit)]
     public struct LuaDataUnion
     {
-        public LuaDataUnion(LuaDataType type, byte nil = 0, bool boolean = false, long integer = 0, double number = 0, string str = null)
+        public LuaDataUnion(LuaDataType type, bool boolean = default, long integer = default, double number = default, string str = default)
         {
             Type = type;
 
-            Nil = default;
             Boolean = default;
             Integer = default;
             Number = default;
@@ -41,9 +40,6 @@ namespace CatLua
 
         [FieldOffset(0)]
         public LuaDataType Type;
-
-        [FieldOffset(8)]
-        public byte Nil;
 
         [FieldOffset(8)]
         public bool Boolean;

@@ -9,13 +9,22 @@ namespace CatLua
     /// </summary>
     public partial class LuaState
     {
-        public LuaState()
+        public LuaState(int size, FuncPrototype proto)
         {
-            stack = new LuaStack(20);
+            stack = new LuaStack(size);
+            this.proto = proto;
+            PC = 0;
         }
 
+        /// <summary>
+        /// Lua虚拟栈
+        /// </summary>
         private LuaStack stack;
 
+        /// <summary>
+        /// 函数原型
+        /// </summary>
+        private FuncPrototype proto;
 
         public override string ToString()
         {
@@ -47,6 +56,8 @@ namespace CatLua
             }
             return s;
         }
+
+
     }
 }
 

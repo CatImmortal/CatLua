@@ -3,19 +3,54 @@ using System.Collections.Generic;
 using UnityEngine;
 using CatLua;
 using System;
-
+using UnityEngine.Profiling;
 public class Entry : MonoBehaviour
 {
+    public TextAsset main;
+    private LuaState ls;
     // Start is called before the first frame update
     void Start()
     {
+        Application.targetFrameRate = 30;
+        Chunk chunk = TestUndump();
+        //TestLuaVM(chunk.MainFunc);
+        ls = new LuaState(chunk.MainFunc.MaxStackSize + 8, chunk.MainFunc);
+        ls.SetTop(chunk.MainFunc.MaxStackSize);
+        var c1 = InstructionConfig.Configs;
+        var c2 = ArithOpConfig.Configs;
+        var c3 = CompareOpConfig.Configs;
 
+        bool b = InstructionFuncs.Equals(1, 2);
+        b = ArithOpFuncs.Equals(1, 2);
+        b = CompareOpFuncs.Equals(1, 2);
 
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.A))
+        {
+            Profiler.BeginSample("LuaVM Test");
+            while (true)
+            {
+                //int pc = ls.PC;
+                Instructoin inst = new Instructoin(ls.Fetch());
+                if (inst.OpCode != (byte)OpCodeType.Return)
+                {
+                    inst.Execute(ls);
+                    // Debug.Log(string.Format("[{0}] {1} {2}", pc + 1, inst.OpType, ls));
+                }
+                else
+                {
+                    break;
+                }
+            }
+            Profiler.EndSample();
+        }
     }
 
     private Chunk TestUndump()
     {
-        TextAsset main = Resources.Load<TextAsset>("Main");
         Chunk chunk = Chunk.Undump(main.bytes);
         return chunk;
     }
@@ -76,9 +111,9 @@ public class Entry : MonoBehaviour
             Debug.Log("--------------------------------");
         }
     }
-    private void TestLuaStateStack()
+    private void TestLuaStateStack(FuncPrototype proto)
     {
-        LuaState ls = new LuaState();
+        LuaState ls = new LuaState(20,proto);
 
         ls.Push(true);
         Debug.Log(ls.ToString());
@@ -113,9 +148,9 @@ public class Entry : MonoBehaviour
         Debug.Log(ls.ToString());
     }
 
-    private void TestLuaStateOperator()
+    private void TestLuaStateOperator(FuncPrototype proto)
     {
-        LuaState ls = new LuaState();
+        LuaState ls = new LuaState(20,proto);
 
         ls.Push(1);
         ls.Push("2.0");
@@ -138,5 +173,26 @@ public class Entry : MonoBehaviour
         bool result = ls.Compare(1, 2, CompareOpType.Eq);
         ls.Push(result);
         Debug.Log(ls.ToString());
+    }
+
+    private void TestLuaVM(FuncPrototype proto)
+    {
+        LuaState ls = new LuaState(proto.MaxStackSize + 8, proto);
+        ls.SetTop(proto.MaxStackSize);
+
+        while (true)
+        {
+            //int pc = ls.PC;
+            Instructoin inst = new Instructoin(ls.Fetch());
+            if (inst.OpCode != (byte)OpCodeType.Return)
+            {
+                inst.Execute(ls);
+               // Debug.Log(string.Format("[{0}] {1} {2}", pc + 1, inst.OpType, ls));
+            }
+            else
+            {
+                break;
+            }
+        }
     }
 }

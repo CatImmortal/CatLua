@@ -7,7 +7,7 @@ namespace CatLua
     /// <summary>
     /// 数学与位运算符对应的函数实现
     /// </summary>
-    public static class ArithOpFunc
+    public static class ArithOpFuncs
     {
         public static Func<long, long, long> IAdd = (a, b) => { return a + b; };
         public static Func<double, double, double> NAdd = (a, b) => { return a + b; };

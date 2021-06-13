@@ -68,9 +68,14 @@ namespace CatLua
             return d;
         }
 
+        /// <summary>
+        /// 读取字符串
+        /// </summary>
         public string ReadString()
         {
+            //短字符串 长度<253 用1byte记录长度+1
             ulong size = ReadByte();
+
             if (size == 0)
             {
                 return string.Empty;
@@ -78,8 +83,8 @@ namespace CatLua
 
             if (size == 0xFF)
             {
-                //长字符串
-                size = ReadUlong();
+                //长字符串 长度>=253 用1个size_t记录长度+1
+                size = ReadUint();
             }
 
             byte[] bytes = ReadBytes((uint)size - 1);
@@ -96,6 +101,7 @@ namespace CatLua
             uint[] code = new uint[ReadUint()];
             for (int i = 0; i < code.Length; i++)
             {
+                //1条指令 4byte
                 code[i] = ReadUint();
             }
             return code;
@@ -104,44 +110,44 @@ namespace CatLua
         /// <summary>
         /// 读取常量
         /// </summary>
-        public ConstantUnion ReadConstant()
+        public LuaConstantUnion ReadConstant()
         {
-            ConstantUnion union = new ConstantUnion();
+            LuaConstantUnion constant;
 
             byte tag = ReadByte();
             switch (tag)
             {
                 case Constants.tagNil:
-                    union.Nil = 1;
+                    constant = new LuaConstantUnion(LuaConstantType.Nil);
                     break;
                 case Constants.tagBoolean:
-                    union.Boolean = ReadByte() != 0;
+                    constant = new LuaConstantUnion(LuaConstantType.Boolean, boolean: ReadByte() != 0);
                     break;
                 case Constants.tagInteger:
-                    union.Integer = ReadLuaInteger();
+                    constant = new LuaConstantUnion(LuaConstantType.Integer, integer: ReadLuaInteger());
                     break;
                 case Constants.tagNumber:
-                    union.Number = ReadLuaNumber();
+                    constant = new LuaConstantUnion(LuaConstantType.Number, number: ReadLuaNumber());
                     break;
                 case Constants.tagShortStr:
-                    union.ShortStr = ReadString();
+                    constant = new LuaConstantUnion(LuaConstantType.ShorStr, str: ReadString());
                     break;
                 case Constants.tagLongStr:
-                    union.LongStr = ReadString();
+                    constant = new LuaConstantUnion(LuaConstantType.LongStr, str: ReadString());
                     break;
                 default:
                     throw new Exception("常量tag不对");
             }
 
-            return union;
+            return constant;
         }
 
         /// <summary>
         /// 读取常量表
         /// </summary>
-        public ConstantUnion[] ReadConstants()
+        public LuaConstantUnion[] ReadConstants()
         {
-            ConstantUnion[] constants = new ConstantUnion[ReadUint()];
+            LuaConstantUnion[] constants = new LuaConstantUnion[ReadUint()];
             for (int i = 0; i < constants.Length; i++)
             {
                 constants[i] = ReadConstant();

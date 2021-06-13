@@ -14,16 +14,19 @@ namespace CatLua
             CompareFunc = compareFunc;
         }
 
+        /// <summary>
+        /// 比较运算的函数实现
+        /// </summary>
         public Func<LuaDataUnion, LuaDataUnion, bool> CompareFunc;
 
         /// <summary>
         /// 所有比较运算符的配置
         /// </summary>
-        public static CompareOpConfig[] CompareOpConfigs =
+        public static CompareOpConfig[] Configs =
         {
-           new CompareOpConfig(CompareOpFunc.Eq),
-           new CompareOpConfig(CompareOpFunc.Lt),
-           new CompareOpConfig(CompareOpFunc.Le),
+           new CompareOpConfig(CompareOpFuncs.Eq),
+           new CompareOpConfig(CompareOpFuncs.Lt),
+           new CompareOpConfig(CompareOpFuncs.Le),
         };
 
 

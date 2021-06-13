@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace CatLua
@@ -36,7 +37,7 @@ namespace CatLua
         {
             get
             {
-                return InstructionConfig.InstructionConfigs[OpCode].Type;
+                return InstructionConfig.Configs[OpCode].Type;
             }
         }
 
@@ -47,7 +48,7 @@ namespace CatLua
         {
             get
             {
-                return InstructionConfig.InstructionConfigs[OpCode].OpMode;
+                return InstructionConfig.Configs[OpCode].OpMode;
             }
         }
 
@@ -58,7 +59,7 @@ namespace CatLua
         {
             get
             {
-                return InstructionConfig.InstructionConfigs[OpCode].ArgBType;
+                return InstructionConfig.Configs[OpCode].ArgBType;
             }
         }
 
@@ -69,7 +70,7 @@ namespace CatLua
         {
             get
             {
-                return InstructionConfig.InstructionConfigs[OpCode].ArgCType;
+                return InstructionConfig.Configs[OpCode].ArgCType;
             }
         }
 
@@ -78,6 +79,8 @@ namespace CatLua
         /// </summary>
         public void GetABC(out int a,out int b ,out int c)
         {
+            //iABC编码的指令，操作数在内存上是按ACB来排列的
+
             a = (int)((code >> 6) & 0xff);
             c = (int)((code >> 14) & 0x1ff);
             b = (int)((code >> 23) & 0x1ff);
@@ -99,6 +102,8 @@ namespace CatLua
         {
             int bx;
             GetABx(out a,out bx);
+
+            //sbx表示有符号整数
             sbx = bx - Constants.maxArgSbx;
         }
 
@@ -110,7 +115,21 @@ namespace CatLua
             ax = (int)(code >> 6);
         }
 
-
+        /// <summary>
+        /// 执行指令
+        /// </summary>
+        public void Execute(LuaState vm)
+        {
+            Action<Instructoin, LuaState> function = InstructionConfig.Configs[OpCode].Func;
+            if (function != null)
+            {
+                function(this, vm);
+            }
+            else
+            {
+                throw new Exception("指令没有对应的函数实现：" + OpType.ToString());
+            }
+        }
     }
 }
 

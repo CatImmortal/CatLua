@@ -15,28 +15,35 @@ namespace CatLua
             NumberFunc = numberFunc;
         }
 
+        /// <summary>
+        /// 数学与位运算整数版本的函数实现
+        /// </summary>
         public Func<long, long, long> IntegerFunc;
+
+        /// <summary>
+        /// 数学与位运算浮点数版本的函数实现
+        /// </summary>
         public Func<double, double, double> NumberFunc;
 
         /// <summary>
         /// 所有数学与位运算符的配置
         /// </summary>
-        public static ArithOpConfig[] ArithOpConfigs =
+        public static ArithOpConfig[] Configs =
         {
-            new ArithOpConfig(ArithOpFunc.IAdd,ArithOpFunc.NAdd),
-            new ArithOpConfig(ArithOpFunc.ISub,ArithOpFunc.NSub),
-            new ArithOpConfig(ArithOpFunc.IMul,ArithOpFunc.NMul),
-            new ArithOpConfig(ArithOpFunc.IMod,ArithOpFunc.NMod),
-            new ArithOpConfig(null,ArithOpFunc.Pow),
-            new ArithOpConfig(null,ArithOpFunc.Div),
-            new ArithOpConfig(ArithOpFunc.IIdiv,ArithOpFunc.NIdiv),
-            new ArithOpConfig(ArithOpFunc.BAnd,null),
-            new ArithOpConfig(ArithOpFunc.BOr,null),
-            new ArithOpConfig(ArithOpFunc.BXor,null),
-            new ArithOpConfig(ArithOpFunc.ShL,null),
-            new ArithOpConfig(ArithOpFunc.ShR,null),
-            new ArithOpConfig(ArithOpFunc.IUnm,ArithOpFunc.NUnm),
-            new ArithOpConfig(ArithOpFunc.BNot,null),
+            new ArithOpConfig(ArithOpFuncs.IAdd,ArithOpFuncs.NAdd),
+            new ArithOpConfig(ArithOpFuncs.ISub,ArithOpFuncs.NSub),
+            new ArithOpConfig(ArithOpFuncs.IMul,ArithOpFuncs.NMul),
+            new ArithOpConfig(ArithOpFuncs.IMod,ArithOpFuncs.NMod),
+            new ArithOpConfig(null,ArithOpFuncs.Pow),
+            new ArithOpConfig(null,ArithOpFuncs.Div),
+            new ArithOpConfig(ArithOpFuncs.IIdiv,ArithOpFuncs.NIdiv),
+            new ArithOpConfig(ArithOpFuncs.BAnd,null),
+            new ArithOpConfig(ArithOpFuncs.BOr,null),
+            new ArithOpConfig(ArithOpFuncs.BXor,null),
+            new ArithOpConfig(ArithOpFuncs.ShL,null),
+            new ArithOpConfig(ArithOpFuncs.ShR,null),
+            new ArithOpConfig(ArithOpFuncs.IUnm,ArithOpFuncs.NUnm),
+            new ArithOpConfig(ArithOpFuncs.BNot,null),
         };
     }
 }

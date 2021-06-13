@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using System;
 
 namespace CatLua
 {
@@ -9,7 +9,7 @@ namespace CatLua
     /// </summary>
     public struct InstructionConfig
     {
-        public InstructionConfig(byte testFlag, byte setAFlag, OpArgType argBType, OpArgType argCType, OpMode opMode, OpCodeType type)
+        public InstructionConfig(byte testFlag, byte setAFlag, OpArgType argBType, OpArgType argCType, OpMode opMode, OpCodeType type, Action<Instructoin, LuaState> func = null)
         {
             TestFlag = testFlag;
             SetAFlag = setAFlag;
@@ -17,6 +17,7 @@ namespace CatLua
             ArgCType = argCType;
             OpMode = opMode;
             Type = type;
+            Func = func;
         }
 
         /// <summary>
@@ -50,16 +51,21 @@ namespace CatLua
         public OpCodeType Type;
 
         /// <summary>
+        /// 指令的函数实现
+        /// </summary>
+        public Action<Instructoin, LuaState> Func;
+
+        /// <summary>
         /// 所有指令的指令配置
         /// </summary>
-        public static InstructionConfig[] InstructionConfigs =
+        public static InstructionConfig[] Configs =
         {
             //                    T A      B           C           mode          type
-            new InstructionConfig(0,1,OpArgType.R,OpArgType.N,OpMode.IABC,OpCodeType.Move),
-            new InstructionConfig(0,1,OpArgType.K,OpArgType.N,OpMode.IABx,OpCodeType.LoadK),
-            new InstructionConfig(0,1,OpArgType.N,OpArgType.N,OpMode.IABx,OpCodeType.LoadKX),
-            new InstructionConfig(0,1,OpArgType.U,OpArgType.U,OpMode.IABC,OpCodeType.LoadBool),
-            new InstructionConfig(0,1,OpArgType.U,OpArgType.N,OpMode.IABC,OpCodeType.LoadNil),
+            new InstructionConfig(0,1,OpArgType.R,OpArgType.N,OpMode.IABC,OpCodeType.Move,InstructionFuncs.Move),
+            new InstructionConfig(0,1,OpArgType.K,OpArgType.N,OpMode.IABx,OpCodeType.LoadK,InstructionFuncs.LoadK),
+            new InstructionConfig(0,1,OpArgType.N,OpArgType.N,OpMode.IABx,OpCodeType.LoadKX,InstructionFuncs.LoadKX),
+            new InstructionConfig(0,1,OpArgType.U,OpArgType.U,OpMode.IABC,OpCodeType.LoadBool,InstructionFuncs.LoadBool),
+            new InstructionConfig(0,1,OpArgType.U,OpArgType.N,OpMode.IABC,OpCodeType.LoadNil,InstructionFuncs.LoadNil),
             new InstructionConfig(0,1,OpArgType.U,OpArgType.N,OpMode.IABC,OpCodeType.GetUpValue),
             new InstructionConfig(0,1,OpArgType.U,OpArgType.K,OpMode.IABC,OpCodeType.GetTabup),
             new InstructionConfig(0,1,OpArgType.R,OpArgType.K,OpMode.IABC,OpCodeType.GetTable),
@@ -68,34 +74,34 @@ namespace CatLua
             new InstructionConfig(0,0,OpArgType.K,OpArgType.K,OpMode.IABC,OpCodeType.SetTable),
             new InstructionConfig(0,1,OpArgType.U,OpArgType.U,OpMode.IABC,OpCodeType.NewTable),
             new InstructionConfig(0,1,OpArgType.R,OpArgType.K,OpMode.IABC,OpCodeType.Self),
-            new InstructionConfig(0,1,OpArgType.K,OpArgType.K,OpMode.IABC,OpCodeType.Add),
-            new InstructionConfig(0,1,OpArgType.K,OpArgType.K,OpMode.IABC,OpCodeType.Sub),
-            new InstructionConfig(0,1,OpArgType.K,OpArgType.K,OpMode.IABC,OpCodeType.Mul),
-            new InstructionConfig(0,1,OpArgType.K,OpArgType.K,OpMode.IABC,OpCodeType.Mod),
-            new InstructionConfig(0,1,OpArgType.K,OpArgType.K,OpMode.IABC,OpCodeType.Pow),
-            new InstructionConfig(0,1,OpArgType.K,OpArgType.K,OpMode.IABC,OpCodeType.Div),
-            new InstructionConfig(0,1,OpArgType.K,OpArgType.K,OpMode.IABC,OpCodeType.IDiv),
-            new InstructionConfig(0,1,OpArgType.K,OpArgType.K,OpMode.IABC,OpCodeType.BAnd),
-            new InstructionConfig(0,1,OpArgType.K,OpArgType.K,OpMode.IABC,OpCodeType.BOr),
-            new InstructionConfig(0,0,OpArgType.K,OpArgType.K,OpMode.IABC,OpCodeType.BXor),
-            new InstructionConfig(0,0,OpArgType.K,OpArgType.K,OpMode.IABC,OpCodeType.ShL),
-            new InstructionConfig(0,1,OpArgType.K,OpArgType.K,OpMode.IABC,OpCodeType.ShR),
-            new InstructionConfig(0,1,OpArgType.R,OpArgType.N,OpMode.IABC,OpCodeType.Unm),
-            new InstructionConfig(0,1,OpArgType.R,OpArgType.N,OpMode.IABC,OpCodeType.Bnot),
-            new InstructionConfig(0,1,OpArgType.R,OpArgType.N,OpMode.IABC,OpCodeType.Not),
-            new InstructionConfig(0,1,OpArgType.R,OpArgType.N,OpMode.IABC,OpCodeType.Len),
-            new InstructionConfig(0,1,OpArgType.R,OpArgType.R,OpMode.IABC,OpCodeType.Concat),
-            new InstructionConfig(0,1,OpArgType.R,OpArgType.N,OpMode.IAsBx,OpCodeType.Jmp),
-            new InstructionConfig(1,0,OpArgType.K,OpArgType.K,OpMode.IABC,OpCodeType.Eq),
-            new InstructionConfig(1,0,OpArgType.K,OpArgType.K,OpMode.IABC,OpCodeType.Lt),
-            new InstructionConfig(1,0,OpArgType.K,OpArgType.K,OpMode.IABC,OpCodeType.Le),
-            new InstructionConfig(1,0,OpArgType.N,OpArgType.U,OpMode.IABC,OpCodeType.Test),
-            new InstructionConfig(1,1,OpArgType.R,OpArgType.U,OpMode.IABC,OpCodeType.TestSet),
+            new InstructionConfig(0,1,OpArgType.K,OpArgType.K,OpMode.IABC,OpCodeType.Add,InstructionFuncs.Add),
+            new InstructionConfig(0,1,OpArgType.K,OpArgType.K,OpMode.IABC,OpCodeType.Sub,InstructionFuncs.Sub),
+            new InstructionConfig(0,1,OpArgType.K,OpArgType.K,OpMode.IABC,OpCodeType.Mul,InstructionFuncs.Mul),
+            new InstructionConfig(0,1,OpArgType.K,OpArgType.K,OpMode.IABC,OpCodeType.Mod,InstructionFuncs.Mod),
+            new InstructionConfig(0,1,OpArgType.K,OpArgType.K,OpMode.IABC,OpCodeType.Pow,InstructionFuncs.Pow),
+            new InstructionConfig(0,1,OpArgType.K,OpArgType.K,OpMode.IABC,OpCodeType.Div,InstructionFuncs.Div),
+            new InstructionConfig(0,1,OpArgType.K,OpArgType.K,OpMode.IABC,OpCodeType.IDiv,InstructionFuncs.IDiv),
+            new InstructionConfig(0,1,OpArgType.K,OpArgType.K,OpMode.IABC,OpCodeType.BAnd,InstructionFuncs.BAnd),
+            new InstructionConfig(0,1,OpArgType.K,OpArgType.K,OpMode.IABC,OpCodeType.BOr,InstructionFuncs.BOr),
+            new InstructionConfig(0,0,OpArgType.K,OpArgType.K,OpMode.IABC,OpCodeType.BXOr,InstructionFuncs.BXOr),
+            new InstructionConfig(0,0,OpArgType.K,OpArgType.K,OpMode.IABC,OpCodeType.ShL,InstructionFuncs.ShL),
+            new InstructionConfig(0,1,OpArgType.K,OpArgType.K,OpMode.IABC,OpCodeType.ShR,InstructionFuncs.ShR),
+            new InstructionConfig(0,1,OpArgType.R,OpArgType.N,OpMode.IABC,OpCodeType.Unm,InstructionFuncs.Unm),
+            new InstructionConfig(0,1,OpArgType.R,OpArgType.N,OpMode.IABC,OpCodeType.Bnot,InstructionFuncs.BNot),
+            new InstructionConfig(0,1,OpArgType.R,OpArgType.N,OpMode.IABC,OpCodeType.Not,InstructionFuncs.Not),
+            new InstructionConfig(0,1,OpArgType.R,OpArgType.N,OpMode.IABC,OpCodeType.Len,InstructionFuncs.Len),
+            new InstructionConfig(0,1,OpArgType.R,OpArgType.R,OpMode.IABC,OpCodeType.Concat,InstructionFuncs.Concat),
+            new InstructionConfig(0,1,OpArgType.R,OpArgType.N,OpMode.IAsBx,OpCodeType.Jmp,InstructionFuncs.Jmp),
+            new InstructionConfig(1,0,OpArgType.K,OpArgType.K,OpMode.IABC,OpCodeType.Eq,InstructionFuncs.Eq),
+            new InstructionConfig(1,0,OpArgType.K,OpArgType.K,OpMode.IABC,OpCodeType.Lt,InstructionFuncs.Lt),
+            new InstructionConfig(1,0,OpArgType.K,OpArgType.K,OpMode.IABC,OpCodeType.Le,InstructionFuncs.Le),
+            new InstructionConfig(1,0,OpArgType.N,OpArgType.U,OpMode.IABC,OpCodeType.Test,InstructionFuncs.Test),
+            new InstructionConfig(1,1,OpArgType.R,OpArgType.U,OpMode.IABC,OpCodeType.TestSet,InstructionFuncs.TestSet),
             new InstructionConfig(0,1,OpArgType.U,OpArgType.U,OpMode.IABC,OpCodeType.Call),
             new InstructionConfig(0,1,OpArgType.U,OpArgType.U,OpMode.IABC,OpCodeType.TailCall),
             new InstructionConfig(0,0,OpArgType.U,OpArgType.N,OpMode.IABC,OpCodeType.Return),
-            new InstructionConfig(0,1,OpArgType.R,OpArgType.N,OpMode.IAsBx,OpCodeType.ForLoop),
-            new InstructionConfig(0,1,OpArgType.R,OpArgType.N,OpMode.IAsBx,OpCodeType.ForPrep),
+            new InstructionConfig(0,1,OpArgType.R,OpArgType.N,OpMode.IAsBx,OpCodeType.ForLoop,InstructionFuncs.ForLoop),
+            new InstructionConfig(0,1,OpArgType.R,OpArgType.N,OpMode.IAsBx,OpCodeType.ForPrep,InstructionFuncs.ForPrep),
             new InstructionConfig(0,0,OpArgType.N,OpArgType.U,OpMode.IABC,OpCodeType.TForCall),
             new InstructionConfig(0,1,OpArgType.R,OpArgType.N,OpMode.IAsBx,OpCodeType.TForloop),
             new InstructionConfig(0,0,OpArgType.U,OpArgType.U,OpMode.IABC,OpCodeType.Setlist),
