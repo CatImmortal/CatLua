@@ -159,15 +159,22 @@ namespace CatLua
         public void Len(int index)
         {
             LuaDataUnion value = stack.Get(index);
+            long len;
             if (value.Type == LuaDataType.String)
             {
-                long len = value.Str.Length;
-                stack.Push(new LuaDataUnion(LuaDataType.Integer, integer: len));
+                len = value.Str.Length;
+               
+            }
+            else if (value.Type == LuaDataType.Table)
+            {
+                len = value.Table.Length;
             }
             else
             {
                 throw new Exception("Len方法不能对字符串以外的值使用");
             }
+
+            stack.Push(new LuaDataUnion(LuaDataType.Integer, integer: len));
         }
 
         /// <summary>

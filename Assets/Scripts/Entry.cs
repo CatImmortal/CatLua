@@ -4,6 +4,8 @@ using UnityEngine;
 using CatLua;
 using System;
 using UnityEngine.Profiling;
+using System.Threading.Tasks;
+
 public class Entry : MonoBehaviour
 {
     public TextAsset main;
@@ -13,41 +15,43 @@ public class Entry : MonoBehaviour
     {
         Application.targetFrameRate = 30;
         Chunk chunk = TestUndump();
-        //TestLuaVM(chunk.MainFunc);
-        ls = new LuaState(chunk.MainFunc.MaxStackSize + 8, chunk.MainFunc);
-        ls.SetTop(chunk.MainFunc.MaxStackSize);
-        var c1 = InstructionConfig.Configs;
-        var c2 = ArithOpConfig.Configs;
-        var c3 = CompareOpConfig.Configs;
+        TestLuaVM(chunk.MainFunc);
 
-        bool b = InstructionFuncs.Equals(1, 2);
-        b = ArithOpFuncs.Equals(1, 2);
-        b = CompareOpFuncs.Equals(1, 2);
+
+        //ls = new LuaState(chunk.MainFunc.MaxStackSize + 8, chunk.MainFunc);
+        //ls.SetTop(chunk.MainFunc.MaxStackSize);
+        //var c1 = InstructionConfig.Configs;
+        //var c2 = ArithOpConfig.Configs;
+        //var c3 = CompareOpConfig.Configs;
+
+        //bool b = InstructionFuncs.Equals(1, 2);
+        //b = ArithOpFuncs.Equals(1, 2);
+        //b = CompareOpFuncs.Equals(1, 2);
 
     }
 
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.A))
-        {
-            Profiler.BeginSample("LuaVM Test");
-            while (true)
-            {
-                //int pc = ls.PC;
-                Instructoin inst = new Instructoin(ls.Fetch());
-                if (inst.OpCode != (byte)OpCodeType.Return)
-                {
-                    inst.Execute(ls);
-                    // Debug.Log(string.Format("[{0}] {1} {2}", pc + 1, inst.OpType, ls));
-                }
-                else
-                {
-                    break;
-                }
-            }
-            Profiler.EndSample();
-        }
-    }
+    //private void Update()
+    //{
+    //    if (Input.GetKeyDown(KeyCode.A))
+    //    {
+    //        Profiler.BeginSample("LuaVM Test");
+    //        while (true)
+    //        {
+    //            //int pc = ls.PC;
+    //            Instructoin inst = new Instructoin(ls.Fetch());
+    //            if (inst.OpCode != (byte)OpCodeType.Return)
+    //            {
+    //                inst.Execute(ls);
+    //                // Debug.Log(string.Format("[{0}] {1} {2}", pc + 1, inst.OpType, ls));
+    //            }
+    //            else
+    //            {
+    //                break;
+    //            }
+    //        }
+    //        Profiler.EndSample();
+    //    }
+    //}
 
     private Chunk TestUndump()
     {
@@ -182,12 +186,17 @@ public class Entry : MonoBehaviour
 
         while (true)
         {
-            //int pc = ls.PC;
+
+            int pc = ls.PC;
+            if (pc + 1 == 8)
+            {
+                int i = 1;
+            }
             Instructoin inst = new Instructoin(ls.Fetch());
             if (inst.OpCode != (byte)OpCodeType.Return)
             {
                 inst.Execute(ls);
-               // Debug.Log(string.Format("[{0}] {1} {2}", pc + 1, inst.OpType, ls));
+               Debug.Log(string.Format("[{0}] {1} {2}", pc + 1, inst.OpType, ls));
             }
             else
             {

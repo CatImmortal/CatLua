@@ -172,5 +172,13 @@ namespace CatLua
         {
             stack.Push(new LuaDataUnion(LuaDataType.String, str: str));
         }
+
+        /// <summary>
+        /// 压入table值
+        /// </summary>
+        public void Push(LuaTable table)
+        {
+            stack.Push(new LuaDataUnion(LuaDataType.Table, table: table));
+        }
     }
 }

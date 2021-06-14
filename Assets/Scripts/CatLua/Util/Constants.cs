@@ -33,6 +33,9 @@ namespace CatLua
         //操作数的最大值
         public const uint maxArgBx = (1 << 18) - 1;
         public const int maxArgSbx = (int)(maxArgBx >> 1);
+
+        //SetList指令的默认批次
+        public const int SetListDefaultBatch = 50;
     }
 }
 

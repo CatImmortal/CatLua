@@ -47,7 +47,10 @@ namespace CatLua
         public static Action<Instructoin, LuaState> ForPrep = ForPrepFunc;
         public static Action<Instructoin, LuaState> ForLoop = ForLoopFunc;
 
-
+        public static Action<Instructoin, LuaState> NewTable = NewTableFunc;
+        public static Action<Instructoin, LuaState> GetTable = GetTableFunc;
+        public static Action<Instructoin, LuaState> SetTable = SetTableFunc;
+        public static Action<Instructoin, LuaState> SetList = SetListFunc;
 
         /// <summary>
         /// 将b位置的栈值复制到a位置
@@ -201,7 +204,7 @@ namespace CatLua
                 vm.CopyAndPush(index);
             }
 
-            vm.Concat(b - c + 1);
+            vm.Concat((c - b)+ 1);
             vm.PopAndCopy(a);
         }
 
@@ -337,6 +340,74 @@ namespace CatLua
 
         }
 
+        /// <summary>
+        /// 创建空表，放入a位置，空表的数组大小=b，字典大小=c
+        /// </summary>
+        private static void NewTableFunc(Instructoin i, LuaState vm)
+        {
+            i.GetABC(out int a, out int b, out int c);
+            a++;
+
+            //为了用9bit表示大于521的数
+            //NewTable指令使用了浮点字节编码B和C 需要进行转换
+            vm.CreateTable(LMath.Fb2Int(b), LMath.Fb2Int(c));
+            vm.PopAndCopy(a);
+        }
+
+        /// <summary>
+        /// 从b位置获取table,从c位置获取key，将table[key]放入a位置
+        /// </summary>
+        private static void GetTableFunc(Instructoin i, LuaState vm)
+        {
+            i.GetABC(out int a, out int b, out int c);
+            a++;
+            b++;
+
+            vm.PushRK(c); 
+            vm.PushTableValue(b);
+            vm.PopAndCopy(a);
+        }
+
+        /// <summary>
+        /// 从a位置获取table,从b位置获取key，从c位置获取value,table[key] = value
+        /// </summary>
+        private static void SetTableFunc(Instructoin i, LuaState vm)
+        {
+            i.GetABC(out int a, out int b, out int c);
+            a++;
+
+            vm.PushRK(b);
+            vm.PushRK(c);
+            vm.SetTableValue(a);
+        }
+
+        /// <summary>
+        /// 将从a+1位置开始的b个值放入a位置table的数组部分，c表示批次数，起始索引=批次数*批大小
+        /// 如果c>0，那么c表示批次数+1，否则批次数放在了下一条指令的ax里
+        /// </summary>
+        private static void SetListFunc(Instructoin i, LuaState vm)
+        {
+            i.GetABC(out int a, out int b, out int c);
+            a++;
+
+            if (c > 0)
+            {
+                c = c - 1;
+            }
+            else
+            {
+                new Instructoin(vm.Fetch()).GetAx(out int ax);
+                c = ax;
+            }
+
+            long key = c * Constants.SetListDefaultBatch;
+            for (int num  = 1; num <= b; num ++)
+            {
+                key++;
+                vm.CopyAndPush(a + num);
+                vm.SetTableValue(a, key);
+            }
+        }
     }
 
 }
