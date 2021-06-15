@@ -10,7 +10,7 @@ namespace CatLua
         /// </summary>
         public bool IsNoneOrNil(int index)
         {
-            LuaDataUnion value = stack.Get(index);
+            LuaDataUnion value = CurStack.Get(index);
             return value.Type == LuaDataType.None || value.Type == LuaDataType.Nil;
         }
 
@@ -20,7 +20,7 @@ namespace CatLua
 
         public bool IsString(int index)
         {
-            LuaDataUnion value = stack.Get(index);
+            LuaDataUnion value = CurStack.Get(index);
 
             return value.Type == LuaDataType.String
                 || value.Type == LuaDataType.Number

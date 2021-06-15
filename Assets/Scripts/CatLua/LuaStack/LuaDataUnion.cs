@@ -12,7 +12,7 @@ namespace CatLua
 
     public struct LuaDataUnion : IEqualityComparer<LuaDataUnion>
     {
-        public LuaDataUnion(LuaDataType type, bool boolean = default, long integer = default, double number = default, string str = default, LuaTable table = default)
+        public LuaDataUnion(LuaDataType type, bool boolean = default, long integer = default, double number = default, string str = default, LuaTable table = default, Closure closure = default)
         {
             Type = type;
 
@@ -21,6 +21,7 @@ namespace CatLua
             Number = default;
             Str = default;
             Table = default;
+            Closure = default;
 
             switch (type)
             {
@@ -38,6 +39,9 @@ namespace CatLua
                     break;
                 case LuaDataType.Table:
                     Table = table;
+                    break;
+                case LuaDataType.Function:
+                    Closure = closure;
                     break;
                     
             }
@@ -60,6 +64,9 @@ namespace CatLua
 
 
         public LuaTable Table;
+
+
+        public Closure Closure;
 
         /// <summary>
         /// 转换为bool值
@@ -227,7 +234,12 @@ namespace CatLua
                 case LuaDataType.Table:
                     result = Table.Equals(Table);
                     break;
-               
+
+                case LuaDataType.Function:
+                    result = Closure.Equals(Closure);
+                    break;
+
+
             }
 
             return result;
@@ -251,6 +263,12 @@ namespace CatLua
                     break;
                 case LuaDataType.String:
                     hashCode = Str.GetHashCode();
+                    break;
+                case LuaDataType.Table:
+                    hashCode = Table.GetHashCode();
+                    break;
+                case LuaDataType.Function:
+                    hashCode = Closure.GetHashCode();
                     break;
             }
 

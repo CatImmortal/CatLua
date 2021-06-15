@@ -7,21 +7,14 @@ namespace CatLua
     {
   
 
-        /// <summary>
-        /// 获取当前PC(指令索引)
-        /// </summary>
-        public int PC
-        {
-            get;
-            private set;    
-        }
+
 
         /// <summary>
         /// 修改PC
         /// </summary>
         public void AddPC(int n )
         {
-            PC += n;
+            CurStack.PC += n;
         }
 
         /// <summary>
@@ -29,8 +22,8 @@ namespace CatLua
         /// </summary>
         public uint Fetch()
         {
-            uint code = proto.Code[PC];
-            PC++;
+            uint code = CurStack.Closure.Proto.Code[CurStack.PC];
+            CurStack.PC++;
             return code;    
         }
 
@@ -39,7 +32,7 @@ namespace CatLua
         /// </summary>
         public void PushConst(int index)
         {
-           LuaConstantUnion constant =  proto.Constants[index];
+           LuaConstantUnion constant = CurStack.Closure.Proto.Constants[index];
             switch (constant.Type)
             {
                 case LuaConstantType.Nil:

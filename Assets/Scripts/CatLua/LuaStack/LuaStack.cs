@@ -16,23 +16,39 @@ namespace CatLua
         }
 
         /// <summary>
-        /// 存放Lua值的栈
+        /// 存放Lua数据的可索引的栈
         /// </summary>
         private LuaDataUnion[] stack;
 
         /// <summary>
+        /// 指向底下的栈帧
+        /// </summary>
+        public LuaStack Prev;
+
+        /// <summary>
+        /// 闭包
+        /// </summary>
+        public Closure Closure;
+
+        /// <summary>
+        /// 变长参数
+        /// </summary>
+        public LuaDataUnion[] VarArgs;
+
+        /// <summary>
+        /// 指令索引
+        /// </summary>
+        public int PC;
+
+        /// <summary>
         /// 栈顶索引
         /// </summary>
-        public int Top
-        {
-            get;
-            private set;
-        }
+        public int Top;
 
         /// <summary>
         /// 往栈顶压入值
         /// </summary>
-        public void Push(LuaDataUnion value)
+        public void Push(LuaDataUnion data)
         {
             if (Top == stack.Length)
             {
@@ -40,8 +56,32 @@ namespace CatLua
             }
 
             Top++;
-            stack[Top] = value;
+            stack[Top] = data;
             
+        }
+
+        /// <summary>
+        /// 往栈顶压入datas[startIndex]开始的n个值
+        /// 若n为-1则全部压入，若n>可压入的值的数量，则多余部分压入nil值
+        /// </summary>
+        public void PushN(LuaDataUnion[] datas,int startIndex = 0,int n = -1)
+        {
+            if (n == -1)
+            {
+                n = datas.Length - startIndex;
+            }
+
+            for (int i = startIndex; i < n; i++)
+            {
+                if (i < datas.Length - startIndex)
+                {
+                    Push(datas[i]);
+                }
+                else
+                {
+                    Push(new LuaDataUnion(LuaDataType.Nil));
+                }
+            }
         }
 
         /// <summary>
@@ -62,6 +102,22 @@ namespace CatLua
             return value;
         }
         
+        /// <summary>
+        /// 从栈顶弹出n个值
+        /// </summary>
+        public LuaDataUnion[] PopN(int n)
+        {
+            LuaDataUnion[] datas = new LuaDataUnion[n];
+
+            //栈顶的要放在数组末尾 所以要倒着来
+            for (int i = n - 1; i >= 0; i--)
+            {
+                datas[i] = Pop();
+            }
+
+            return datas;
+        }
+
         /// <summary>
         /// 获取绝对索引
         /// </summary>

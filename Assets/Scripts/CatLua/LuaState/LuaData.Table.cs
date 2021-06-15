@@ -22,7 +22,7 @@ namespace CatLua
         /// </summary>
         public LuaDataType PushTableValue(int index, string strKey)
         {
-            LuaDataUnion data = stack.Get(index);
+            LuaDataUnion data = CurStack.Get(index);
             LuaDataUnion key = new LuaDataUnion(LuaDataType.String, str: strKey);
             return PushTableValue(data, key);
         }
@@ -32,7 +32,7 @@ namespace CatLua
         /// </summary>
         public LuaDataType PushTableValue(int index, long integerKey)
         {
-            LuaDataUnion data = stack.Get(index);
+            LuaDataUnion data = CurStack.Get(index);
             LuaDataUnion dataKey = new LuaDataUnion(LuaDataType.Integer, integer:integerKey);
             return PushTableValue(data, dataKey);
         }
@@ -42,8 +42,8 @@ namespace CatLua
         /// </summary>
         public LuaDataType PushTableValue(int index)
         {
-            LuaDataUnion data = stack.Get(index);
-            LuaDataUnion key = stack.Pop();
+            LuaDataUnion data = CurStack.Get(index);
+            LuaDataUnion key = CurStack.Pop();
             return PushTableValue(data, key);
         }
 
@@ -58,7 +58,7 @@ namespace CatLua
             }
 
             LuaDataUnion value = data.Table[key];
-            stack.Push(value);
+            CurStack.Push(value);
             return value.Type;
         }
 
@@ -67,9 +67,9 @@ namespace CatLua
         /// </summary>
         public void SetTableValue(int index)
         {
-            LuaDataUnion data = stack.Get(index);
-            LuaDataUnion value = stack.Pop();
-            LuaDataUnion key = stack.Pop();
+            LuaDataUnion data = CurStack.Get(index);
+            LuaDataUnion value = CurStack.Pop();
+            LuaDataUnion key = CurStack.Pop();
             SetTableValue(index,data, key, value);
         }
 
@@ -78,9 +78,9 @@ namespace CatLua
         /// </summary>
         public void SetTableValue(int index, string strKey)
         {
-            LuaDataUnion data = stack.Get(index);
+            LuaDataUnion data = CurStack.Get(index);
             LuaDataUnion key = new LuaDataUnion(LuaDataType.String,str:strKey);
-            LuaDataUnion value = stack.Pop();
+            LuaDataUnion value = CurStack.Pop();
             SetTableValue(index,data, key, value);
         }
 
@@ -89,9 +89,9 @@ namespace CatLua
         /// </summary>
         public void SetTableValue(int index, long integerKey)
         {
-            LuaDataUnion data = stack.Get(index);
+            LuaDataUnion data = CurStack.Get(index);
             LuaDataUnion key = new LuaDataUnion(LuaDataType.Integer, integer: integerKey);
-            LuaDataUnion value = stack.Pop();
+            LuaDataUnion value = CurStack.Pop();
             SetTableValue(index, data, key, value);
         }
 
@@ -106,7 +106,7 @@ namespace CatLua
             }
            
             data.Table[key] = value;
-            stack.Set(index, data);
+            CurStack.Set(index, data);
         }
     }
 }

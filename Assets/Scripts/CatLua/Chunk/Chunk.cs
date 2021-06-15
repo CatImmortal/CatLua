@@ -5,7 +5,7 @@ using UnityEngine;
 namespace CatLua
 {
     /// <summary>
-    /// lua的二进制chunk
+    /// lua的二进制字节码chunk
     /// </summary>
     public struct Chunk
     {

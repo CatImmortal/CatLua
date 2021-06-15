@@ -7,10 +7,13 @@ namespace CatLua
     /// <summary>
     /// Lua中的Table数据结构
     /// </summary>
-    public class LuaTable
+    public struct LuaTable
     {
         public LuaTable(int arrSize,int dictSize)
         {
+            arr = default;
+            dict = default;
+
             if (arrSize > 0)
             {
                 arr = new List<LuaDataUnion>(arrSize);
@@ -27,7 +30,14 @@ namespace CatLua
            
         }
 
+        /// <summary>
+        /// 数组部分
+        /// </summary>
         private List<LuaDataUnion> arr;
+
+        /// <summary>
+        /// 字典部分
+        /// </summary>
         private Dictionary<LuaDataUnion, LuaDataUnion> dict;
         
         /// <summary>
@@ -89,11 +99,12 @@ namespace CatLua
                     //key是整数或者是可以转换为整数索引的浮点数 
                     if (index >= 1 && index <= arr.Count)
                     {
-                        //在数组长度内
+                        //在数组长度内 从数组取
                         return arr[(int)index - 1];
                     }
                 }
 
+                //否则从字典取
                 return dict[key];
             }
 

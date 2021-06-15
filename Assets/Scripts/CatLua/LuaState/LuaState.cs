@@ -9,29 +9,23 @@ namespace CatLua
     /// </summary>
     public partial class LuaState
     {
-        public LuaState(int size, FuncPrototype proto)
+        public LuaState(int size)
         {
-            stack = new LuaStack(size);
-            this.proto = proto;
-            PC = 0;
+            CurStack = new LuaStack(size);
         }
 
         /// <summary>
         /// Lua虚拟栈
         /// </summary>
-        private LuaStack stack;
+        private LuaStack CurStack;
 
-        /// <summary>
-        /// 函数原型
-        /// </summary>
-        private FuncPrototype proto;
 
         public override string ToString()
         {
             string s = "";
-            for (int i = 1; i <= stack.Top; i++)
+            for (int i = 1; i <= CurStack.Top; i++)
             {
-                LuaDataUnion value = stack.Get(i);
+                LuaDataUnion value = CurStack.Get(i);
                 switch (value.Type)
                 {
                   

@@ -10,11 +10,11 @@ namespace CatLua
         /// </summary>
         public LuaDataType GetType(int index)
         {
-            if (!stack.IsValid(index))
+            if (!CurStack.IsValid(index))
             {
                 return LuaDataType.None;
             }
-            return stack.Get(index).Type;
+            return CurStack.Get(index).Type;
         }
 
         /// <summary>
@@ -22,7 +22,7 @@ namespace CatLua
         /// </summary>
         public bool GetBoolean(int index)
         {
-            LuaDataUnion value = stack.Get(index);
+            LuaDataUnion value = CurStack.Get(index);
             return value.ConvertToBoolean();
         }
 
@@ -41,7 +41,7 @@ namespace CatLua
         /// </summary>
         public bool TryGetNumber(int index, out double d)
         {
-            LuaDataUnion value = stack.Get(index);
+            LuaDataUnion value = CurStack.Get(index);
             bool result = value.TryConvertToNumber(out d);
             return result;
         }
@@ -61,7 +61,7 @@ namespace CatLua
         /// </summary>
         public bool TryGetInteger(int index, out long l)
         {
-            LuaDataUnion value = stack.Get(index);
+            LuaDataUnion value = CurStack.Get(index);
             bool result = value.TryConvertToInteger(out l);
             return result;
         }
@@ -71,19 +71,19 @@ namespace CatLua
         /// </summary>
         public string GetString(int index)
         {
-            LuaDataUnion value = stack.Get(index);
+            LuaDataUnion value = CurStack.Get(index);
             string str = string.Empty;
             switch (value.Type)
             {
 
                 case LuaDataType.Integer:
                     str = value.Integer.ToString();
-                    stack.Set(index, new LuaDataUnion(LuaDataType.String, str: str));
+                    CurStack.Set(index, new LuaDataUnion(LuaDataType.String, str: str));
                     break;
 
                 case LuaDataType.Number:
                     str = value.Number.ToString();
-                    stack.Set(index, new LuaDataUnion(LuaDataType.String, str: str));
+                    CurStack.Set(index, new LuaDataUnion(LuaDataType.String, str: str));
                     break;
 
                 case LuaDataType.String:
