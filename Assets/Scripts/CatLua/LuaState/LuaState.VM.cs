@@ -80,8 +80,7 @@ namespace CatLua
             else
             {
                 //栈值
-                //寄存器索引从0开始 但是Lua栈索引从1开始 所以需要+1
-                CopyAndPush(rk + 1);
+                CopyAndPush(rk);
             }
         }
 

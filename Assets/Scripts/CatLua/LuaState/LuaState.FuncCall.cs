@@ -198,8 +198,8 @@ namespace CatLua
             {
                 //不断取出指令执行 直到遇到return
                 Instructoin i = new Instructoin(Fetch());
-                Debug.Log(string.Format("[{0}] {1} {2}", CurStack.PC + 1, i.OpType, CurStack));
                 i.Execute(this);
+                Debug.Log(string.Format("[{0}] {1} {2}", CurStack.PC, i.OpType, this));
                 if (i.OpType == OpCodeType.Return)
                 {
                     break;

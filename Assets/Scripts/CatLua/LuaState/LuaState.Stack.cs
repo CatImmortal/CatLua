@@ -18,15 +18,6 @@ namespace CatLua
             }
         }
 
-
-        /// <summary>
-        /// 获取绝对索引
-        /// </summary>
-        public int GetAbsIndex(int index)
-        {
-            return CurStack.GetAbsIndex(index);
-        }
-
         /// <summary>
         /// 从栈顶弹出n个值
         /// </summary>
@@ -87,10 +78,15 @@ namespace CatLua
         /// </summary>
         public void Rotate(int index, int n)
         {
-            int absIndex = GetAbsIndex(index);
+            if (n == 0)
+            {
+                return;
+            }
+
+            int absIndex = CurStack.GetAbsIndex(index);
 
             int middle;
-            if (n >= 0)
+            if (n > 0)
             {
                 //向栈顶旋转
                 middle = Top - n;
@@ -112,22 +108,32 @@ namespace CatLua
         /// </summary>
         public void SetTop(int index)
         {
-            int newTop = GetAbsIndex(index);
-            int n = Top - newTop;
+            int newTop = CurStack.GetAbsIndex(index);
+            int n = newTop - Top;
+            if (n == 0)
+            {
+                return;
+            }
 
             if (n > 0)
             {
-                for (int i = 0; i < n; i++)
-                {
-                    CurStack.Pop();
-                }
-            }
-            else if (n < 0)
-            {
-                n = -n;
-                for (int i = 0; i < n; i++)
+                //需要增加栈顶
+                //压入n个值
+                int num = n;
+                for (int i = 0; i < num; i++)
                 {
                     CurStack.Push(default);
+                }
+               
+            }
+            else
+            {
+                //需要缩减栈顶
+                //弹出-n个值
+                int num = -n;
+                for (int i = 0; i < num; i++)
+                {
+                    CurStack.Pop();
                 }
             }
 

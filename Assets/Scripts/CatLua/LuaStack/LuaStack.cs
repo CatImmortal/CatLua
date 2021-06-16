@@ -11,8 +11,8 @@ namespace CatLua
     {
         public LuaStack (int size)
         {
-            stack = new LuaDataUnion[size + 1];  //0号位不使用，从1开始索引
-            Top = 0;
+            stack = new LuaDataUnion[size];
+            Top = -1;
         }
 
         /// <summary>
@@ -50,7 +50,7 @@ namespace CatLua
         /// </summary>
         public void Push(LuaDataUnion data)
         {
-            if (Top == stack.Length)
+            if (Top == stack.Length - 1)
             {
                 throw new Exception("stack overflow");
             }
@@ -89,7 +89,7 @@ namespace CatLua
         /// </summary>
         public LuaDataUnion Pop()
         {
-            if (Top < 1)
+            if (Top < 0)
             {
                 throw new Exception("stack underflow");
             }
@@ -137,7 +137,7 @@ namespace CatLua
         public bool IsValid(int index)
         {
             int absIndex = GetAbsIndex(index);
-            bool result = absIndex > 0 && absIndex <= Top;
+            bool result = absIndex >= 0 && absIndex <= Top;
             return result;
         }
 

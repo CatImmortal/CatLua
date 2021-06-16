@@ -69,8 +69,7 @@ namespace CatLua
             //实际上官方Lua编译器里超过200个就无法编译了
 
             i.GetABC(out int a, out int b, out int c);
-            a++;
-            b++;
+
             vm.Copy(b, a);
         }
 
@@ -96,7 +95,7 @@ namespace CatLua
         private static void LoadNilFunc(Instructoin i, LuaState vm)
         {
             i.GetABC(out int a, out int b, out int c);
-            a++;
+
 
             //压入一个nil到栈顶
             vm.Push();
@@ -117,7 +116,6 @@ namespace CatLua
         private static void LoadBoolFunc(Instructoin i, LuaState vm)
         {
             i.GetABC(out int a, out int b, out int c);
-            a++;
 
             vm.Push(b != 0);
             vm.PopAndCopy(a);
@@ -134,7 +132,6 @@ namespace CatLua
         private static void LoadKFunc(Instructoin i, LuaState vm)
         {
             i.GetABx(out int a, out int bx);
-            a++;
 
             vm.PushConst(bx);
             vm.PopAndCopy(a);
@@ -146,7 +143,6 @@ namespace CatLua
         private static void LoadKXFunc(Instructoin i, LuaState vm)
         {
             i.GetABx(out int a, out int bx);
-            a++;
 
             Instructoin next = new Instructoin(vm.Fetch());
             next.GetAx(out int ax);
@@ -161,7 +157,6 @@ namespace CatLua
         private static void BinaryArithFunc(Instructoin i,LuaState vm,ArithOpType type)
         {
             i.GetABC(out int a, out int b, out int c);
-            a++;
 
             vm.PushRK(b);
             vm.PushRK(c);
@@ -175,8 +170,6 @@ namespace CatLua
         private static void UnaryArithFunc(Instructoin i, LuaState vm, ArithOpType type)
         {
             i.GetABC(out int a, out int b, out int c);
-            a++;
-            b++;
 
             vm.CopyAndPush(b);
             vm.Arith(type);
@@ -189,8 +182,6 @@ namespace CatLua
         private static void LenFunc(Instructoin i, LuaState vm)
         {
             i.GetABC(out int a, out int b, out int c);
-            a++;
-            b++;
 
             vm.Len(b);
             vm.PopAndCopy(a);
@@ -202,9 +193,7 @@ namespace CatLua
         private static void ConcatFunc(Instructoin i, LuaState vm)
         {
             i.GetABC(out int a, out int b, out int c);
-            a++;
-            b++;
-            c++;
+
 
             for (int index = b; index <= c; index++)
             {
@@ -242,8 +231,6 @@ namespace CatLua
         private static void NotFunc(Instructoin i, LuaState vm)
         {
             i.GetABC(out int a, out int b, out int c);
-            a++;
-            b++;
 
             bool value = vm.GetBoolean(b);
             vm.Push(!value);
@@ -256,8 +243,6 @@ namespace CatLua
         private static void TestSetFunc(Instructoin i, LuaState vm)
         {
             i.GetABC(out int a, out int b, out int c);
-            a++;
-            b++;
 
             bool value = vm.GetBoolean(b);
             bool target = c != 0;
@@ -278,7 +263,6 @@ namespace CatLua
         private static void TestFunc(Instructoin i, LuaState vm)
         {
             i.GetABC(out int a, out int b, out int c);
-            a++;
 
             bool value = vm.GetBoolean(a);
             bool target = c != 0;
@@ -300,7 +284,6 @@ namespace CatLua
             //a+3 i
 
             i.GetAsBx(out int a, out int sbx);
-            a++;
 
             //R(A) -= R(A + 2)
             vm.CopyAndPush(a);
@@ -319,7 +302,6 @@ namespace CatLua
         private static void ForLoopFunc(Instructoin i, LuaState vm)
         {
             i.GetAsBx(out int a, out int sbx);
-            a++;
 
             //R(A) += R(A + 2)
             vm.CopyAndPush(a);
@@ -353,7 +335,6 @@ namespace CatLua
         private static void NewTableFunc(Instructoin i, LuaState vm)
         {
             i.GetABC(out int a, out int b, out int c);
-            a++;
 
             //为了用9bit表示大于521的数
             //NewTable指令使用了浮点字节编码B和C 需要进行转换
@@ -367,8 +348,6 @@ namespace CatLua
         private static void GetTableFunc(Instructoin i, LuaState vm)
         {
             i.GetABC(out int a, out int b, out int c);
-            a++;
-            b++;
 
             vm.PushRK(c); 
             vm.PushTableValue(b);
@@ -381,7 +360,6 @@ namespace CatLua
         private static void SetTableFunc(Instructoin i, LuaState vm)
         {
             i.GetABC(out int a, out int b, out int c);
-            a++;
 
             vm.PushRK(b);
             vm.PushRK(c);
@@ -395,7 +373,6 @@ namespace CatLua
         private static void SetListFunc(Instructoin i, LuaState vm)
         {
             i.GetABC(out int a, out int b, out int c);
-            a++;
 
             if (c > 0)
             {
@@ -452,7 +429,6 @@ namespace CatLua
         private static void ClosureFunc(Instructoin i, LuaState vm)
         {
             i.GetABx(out int a, out int bx);
-            a++;
 
             vm.PushProto(bx);
             vm.PopAndCopy(a);
@@ -465,7 +441,6 @@ namespace CatLua
         private static void CallFunc(Instructoin i, LuaState vm)
         {
             i.GetABC(out int a, out int b, out int c);
-            a++;
 
             //从a开始，复制并压入函数和参数到栈顶
             int ArgsNum = vm.PushFuncAndArgs(a, b);
@@ -486,7 +461,6 @@ namespace CatLua
         private static void ReturnFunc(Instructoin i, LuaState vm)
         {
             i.GetABC(out int a, out int b, out int c);
-            a++;
 
             if (b == 1)
             {
@@ -513,7 +487,6 @@ namespace CatLua
         private static void VarArgFunc(Instructoin i, LuaState vm)
         {
             i.GetABC(out int a, out int b, out int c);
-            a++;
 
             if (b != 1)
             {
@@ -525,7 +498,6 @@ namespace CatLua
         private static void TailCallFunc(Instructoin i, LuaState vm)
         {
             i.GetABC(out int a, out int b, out int c);
-            a++;
             c = 0;
 
 
@@ -542,8 +514,6 @@ namespace CatLua
         private static void SelfFunc(Instructoin i, LuaState vm)
         {
             i.GetABC(out int a, out int b, out int c);
-            a++;
-            b++;
 
             vm.Copy(b, a + 1);
 

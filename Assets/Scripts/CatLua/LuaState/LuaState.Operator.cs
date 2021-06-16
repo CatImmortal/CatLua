@@ -171,7 +171,7 @@ namespace CatLua
             }
             else
             {
-                throw new Exception("Len方法不能对字符串以外的值使用");
+                throw new Exception("Len方法不能对字符串和Table以外的值使用");
             }
 
             CurStack.Push(new LuaDataUnion(LuaDataType.Integer, integer: len));
