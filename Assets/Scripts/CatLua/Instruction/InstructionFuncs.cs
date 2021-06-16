@@ -52,6 +52,13 @@ namespace CatLua
         public static Action<Instructoin, LuaState> SetTable = SetTableFunc;
         public static Action<Instructoin, LuaState> SetList = SetListFunc;
 
+        public static Action<Instructoin, LuaState> Closure = ClosureFunc;
+        public static Action<Instructoin, LuaState> Call = CallFunc;
+        public static Action<Instructoin, LuaState> Return = ReturnFunc;
+        public static Action<Instructoin, LuaState> VarArg = VarArgFunc;
+        public static Action<Instructoin, LuaState> TailCall = TailCallFunc;
+        public static Action<Instructoin, LuaState> Self = SelfFunc;
+
         /// <summary>
         /// 将b位置的栈值复制到a位置
         /// </summary>
@@ -401,12 +408,148 @@ namespace CatLua
             }
 
             long key = c * Constants.SetListDefaultBatch;
-            for (int num  = 1; num <= b; num ++)
+
+            if (b == 0)
             {
+                //b为0 说明表构造器最后一个元素是函数调用或vararg表达式
+
+                //让b等于起始位置到寄存器的所有值的数量
+                b = (int)(vm.GetInteger(-1)) - a - 1;
+                vm.Pop(-1);
+            }
+
+            for (int num = 1; num <= b; num++)
+            {
+
                 key++;
                 vm.CopyAndPush(a + num);
                 vm.SetTableValue(a, key);
             }
+
+            if (b == 0)
+            {
+                //处理寄存器后到栈顶的所有值
+                //也就是函数返回值或vararg表达式的值
+                for (int j = vm.RegisterCount + 1; j <= vm.Top; j++)
+                {
+                    key++;
+                    vm.CopyAndPush(j);
+                    vm.SetTableValue(a, key);
+                }
+
+                //让栈顶恢复初始状态
+                vm.SetTop(vm.RegisterCount);
+            }
+
+           
+
+         
+        }
+
+        /// <summary>
+        /// 将bx位置的子函数原型实例化为闭包，放入a中
+        /// </summary>
+        private static void ClosureFunc(Instructoin i, LuaState vm)
+        {
+            i.GetABx(out int a, out int bx);
+            a++;
+
+            vm.PushProto(bx);
+            vm.PopAndCopy(a);
+        }
+
+
+        /// <summary>
+        /// 调用a位置的函数，参数有b-1个，返回值有c-1个
+        /// </summary>
+        private static void CallFunc(Instructoin i, LuaState vm)
+        {
+            i.GetABC(out int a, out int b, out int c);
+            a++;
+
+            //从a开始，复制并压入函数和参数到栈顶
+            int ArgsNum = vm.PushFuncAndArgs(a, b);
+
+            //调用函数
+            vm.Call(ArgsNum, c - 1);
+
+            //函数调用结束后，返回值被留在了a开始的栈顶 也就是被调用的函数上
+
+            //这时需要将栈顶的返回值弹出并复制到a开始的部分
+            vm.PopResults(a, c - 1);
+
+        }
+
+        /// <summary>
+        /// 将a开始的b - 1个返回值压入栈顶
+        /// </summary>
+        private static void ReturnFunc(Instructoin i, LuaState vm)
+        {
+            i.GetABC(out int a, out int b, out int c);
+            a++;
+
+            if (b == 1)
+            {
+                return;
+            }
+
+            if (b > 1)
+            {
+                for (int index = a ; index <= a+b-2; index++)
+                {
+                    vm.CopyAndPush(index);
+                }
+            }
+            else
+            {
+                //一部分返回值已经在栈顶了
+                vm.FixStack(a);
+            }
+        }
+
+        /// <summary>
+        /// 若b>1，就将b-1个vararg参数复制到寄存器，若b==0，就复制全部vararg参数到寄存器
+        /// </summary>
+        private static void VarArgFunc(Instructoin i, LuaState vm)
+        {
+            i.GetABC(out int a, out int b, out int c);
+            a++;
+
+            if (b != 1)
+            {
+                vm.PushVarArg(b - 1);
+                vm.PopResults(a, b - 1);
+            }
+        }
+
+        private static void TailCallFunc(Instructoin i, LuaState vm)
+        {
+            i.GetABC(out int a, out int b, out int c);
+            a++;
+            c = 0;
+
+
+            int ArgsNum = vm.PushFuncAndArgs(a, b);
+
+            vm.Call(ArgsNum, c - 1);
+
+            vm.PopResults(a, c - 1);
+        }
+
+        /// <summary>
+        /// 将b位置的table和table的函数(函数key来自c位置的函数名)复制到a + 1和a里
+        /// </summary>
+        private static void SelfFunc(Instructoin i, LuaState vm)
+        {
+            i.GetABC(out int a, out int b, out int c);
+            a++;
+            b++;
+
+            vm.Copy(b, a + 1);
+
+            vm.PushRK(c);  //push table function key
+            vm.PushTableValue(b);  //push function(table[key])
+            vm.PopAndCopy(a);
         }
     }
 

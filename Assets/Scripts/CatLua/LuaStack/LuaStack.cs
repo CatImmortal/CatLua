@@ -62,7 +62,7 @@ namespace CatLua
 
         /// <summary>
         /// 往栈顶压入datas[startIndex]开始的n个值
-        /// 若n为-1则全部压入，若n>可压入的值的数量，则多余部分压入nil值
+        /// 若n为-1则startIndex开始的全部值都压入，若n>可压入的值的数量，则多余部分压入nil值
         /// </summary>
         public void PushN(LuaDataUnion[] datas,int startIndex = 0,int n = -1)
         {
@@ -103,7 +103,7 @@ namespace CatLua
         }
         
         /// <summary>
-        /// 从栈顶弹出n个值
+        /// 从栈顶弹出n个值，栈顶的在数组末尾
         /// </summary>
         public LuaDataUnion[] PopN(int n)
         {

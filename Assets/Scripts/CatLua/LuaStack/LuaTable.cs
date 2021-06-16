@@ -225,9 +225,9 @@ namespace CatLua
             while (true)
             {
                 LuaDataUnion key = new LuaDataUnion(LuaDataType.Integer, integer: index);
-                if (dict.TryGetValue(key, out LuaDataUnion value))
+                if (dict.TryGetValue(key, out LuaDataUnion data))
                 {
-                    arr.Add(value);
+                    arr.Add(data);
                     dict.Remove(key);
                     index++;
                 }

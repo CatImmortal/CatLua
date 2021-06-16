@@ -6,8 +6,16 @@ namespace CatLua
     public partial class LuaState
     {
   
-
-
+        /// <summary>
+        /// 当前栈帧的函数所操作的寄存器数量
+        /// </summary>
+        public int RegisterCount
+        {
+            get
+            {
+                return CurStack.Closure.Proto.MaxStackSize;
+            }
+        }
 
         /// <summary>
         /// 修改PC
@@ -76,6 +84,26 @@ namespace CatLua
                 CopyAndPush(rk + 1);
             }
         }
+
+        /// <summary>
+        /// 将变长参数压入栈顶
+        /// </summary>
+        public void PushVarArg(int n)
+        {
+            CurStack.PushN(CurStack.VarArgs,0,n);
+        }
+
+        /// <summary>
+        /// 将子函数原型中index位置的函数原型实例化为闭包，然后压入栈顶
+        /// </summary>
+        public void PushProto(int index)
+        {
+            FuncPrototype proto = CurStack.Closure.Proto.Protos[index];
+            Closure c = new Closure(proto);
+            Push(c);
+        }
+
+
     }
 
 }
