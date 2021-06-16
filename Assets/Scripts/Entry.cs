@@ -14,8 +14,8 @@ public class Entry : MonoBehaviour
     void Start()
     {
         Application.targetFrameRate = 30;
-        Chunk chunk = TestUndump();
-        TestLuaVM(chunk.MainFunc);
+        //Chunk chunk = TestUndump();
+        //TestLuaVM(chunk.MainFunc);
 
 
         //ls = new LuaState(chunk.MainFunc.MaxStackSize + 8, chunk.MainFunc);
@@ -27,6 +27,10 @@ public class Entry : MonoBehaviour
         //bool b = InstructionFuncs.Equals(1, 2);
         //b = ArithOpFuncs.Equals(1, 2);
         //b = CompareOpFuncs.Equals(1, 2);
+
+        LuaState ls = new LuaState(100);
+        ls.Load(main.bytes, main.name, "b");
+        ls.Call(0, 0);
 
     }
 
@@ -117,91 +121,91 @@ public class Entry : MonoBehaviour
     }
     private void TestLuaStateStack(FuncPrototype proto)
     {
-        LuaState ls = new LuaState(20,proto);
+        //LuaState ls = new LuaState(20,proto);
 
-        ls.Push(true);
-        Debug.Log(ls.ToString());
-
-
-        ls.Push(10);
-        Debug.Log(ls.ToString());
+        //ls.Push(true);
+        //Debug.Log(ls.ToString());
 
 
-        ls.Push();
-        Debug.Log(ls.ToString());
+        //ls.Push(10);
+        //Debug.Log(ls.ToString());
 
 
-        ls.Push("hello");
-        Debug.Log(ls.ToString());
+        //ls.Push();
+        //Debug.Log(ls.ToString());
 
 
-        ls.CopyAndPush(-4);
-        Debug.Log(ls.ToString());
+        //ls.Push("hello");
+        //Debug.Log(ls.ToString());
 
 
-        ls.PopAndCopy(3);
-        Debug.Log(ls.ToString());
+        //ls.CopyAndPush(-4);
+        //Debug.Log(ls.ToString());
 
-        ls.SetTop(6);
-        Debug.Log(ls.ToString());
 
-        ls.Remove(-3);
-        Debug.Log(ls.ToString());
+        //ls.PopAndCopy(3);
+        //Debug.Log(ls.ToString());
 
-        ls.SetTop(-5);
-        Debug.Log(ls.ToString());
+        //ls.SetTop(6);
+        //Debug.Log(ls.ToString());
+
+        //ls.Remove(-3);
+        //Debug.Log(ls.ToString());
+
+        //ls.SetTop(-5);
+        //Debug.Log(ls.ToString());
     }
 
     private void TestLuaStateOperator(FuncPrototype proto)
     {
-        LuaState ls = new LuaState(20,proto);
+        //LuaState ls = new LuaState(20,proto);
 
-        ls.Push(1);
-        ls.Push("2.0");
-        ls.Push("3.0");
-        ls.Push(4.0);
-        Debug.Log(ls.ToString());
+        //ls.Push(1);
+        //ls.Push("2.0");
+        //ls.Push("3.0");
+        //ls.Push(4.0);
+        //Debug.Log(ls.ToString());
 
-        ls.Arith(ArithOpType.Add);
-        Debug.Log(ls.ToString());
+        //ls.Arith(ArithOpType.Add);
+        //Debug.Log(ls.ToString());
 
-        ls.Arith(ArithOpType.BNot);
-        Debug.Log(ls.ToString());
+        //ls.Arith(ArithOpType.BNot);
+        //Debug.Log(ls.ToString());
 
-        ls.Len(2);
-        Debug.Log(ls.ToString());
+        //ls.Len(2);
+        //Debug.Log(ls.ToString());
 
-        ls.Concat(3);
-        Debug.Log(ls.ToString());
+        //ls.Concat(3);
+        //Debug.Log(ls.ToString());
 
-        bool result = ls.Compare(1, 2, CompareOpType.Eq);
-        ls.Push(result);
-        Debug.Log(ls.ToString());
+        //bool result = ls.Compare(1, 2, CompareOpType.Eq);
+        //ls.Push(result);
+        //Debug.Log(ls.ToString());
     }
 
     private void TestLuaVM(FuncPrototype proto)
     {
-        LuaState ls = new LuaState(proto.MaxStackSize + 8, proto);
-        ls.SetTop(proto.MaxStackSize);
+        //LuaState ls = new LuaState(proto.MaxStackSize + 8, proto);
+        //ls.SetTop(proto.MaxStackSize);
 
-        while (true)
-        {
+        //while (true)
+        //{
 
-            int pc = ls.PC;
-            if (pc + 1 == 8)
-            {
-                int i = 1;
-            }
-            Instructoin inst = new Instructoin(ls.Fetch());
-            if (inst.OpCode != (byte)OpCodeType.Return)
-            {
-                inst.Execute(ls);
-               Debug.Log(string.Format("[{0}] {1} {2}", pc + 1, inst.OpType, ls));
-            }
-            else
-            {
-                break;
-            }
-        }
+        //    int pc = ls.PC;
+        //    if (pc + 1 == 8)
+        //    {
+        //        int i = 1;
+        //    }
+        //    Instructoin inst = new Instructoin(ls.Fetch());
+        //    if (inst.OpCode != (byte)OpCodeType.Return)
+        //    {
+        //        inst.Execute(ls);
+        //       Debug.Log(string.Format("[{0}] {1} {2}", pc + 1, inst.OpType, ls));
+        //    }
+        //    else
+        //    {
+        //        break;
+        //    }
+        //}
     }
 }

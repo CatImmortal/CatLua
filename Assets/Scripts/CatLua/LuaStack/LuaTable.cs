@@ -16,7 +16,7 @@ namespace CatLua
 
             if (arrSize > 0)
             {
-                arr = new List<LuaDataUnion>(arrSize);
+                
                 for (int i = 0; i < arrSize; i++)
                 {
                     arr.Add(default);
@@ -122,7 +122,12 @@ namespace CatLua
                 if (TryConvertToArrIndex(key, out long index) && index >= 1)
                 {
                     //key是整数或者是可以转换为整数索引的浮点数 
-                    
+
+                    if (arr == null)
+                    {
+                        arr = new List<LuaDataUnion>();
+                    }
+
                     if (index <= arr.Count)
                     {
                         //在数组长度内 放入数组
@@ -141,7 +146,11 @@ namespace CatLua
                         //不在数组长度内 但只是刚刚超出1位 并且不是nil值
 
                         //可能之前存在字典里 先删掉
-                        dict.Remove(key);
+                        if (dict != null)
+                        {
+                            dict.Remove(key);
+                        }
+                        
 
                         //放入数组 触发扩容
                         arr.Add(value);
@@ -218,6 +227,11 @@ namespace CatLua
         /// </summary>
         private void MoveDictToArr()
         {
+            if (dict == null)
+            {
+                return;
+            }
+
             //将dict中从当前数组长度+1的连续整数key的value移动到数组部分
             //比如数组长度为3 就将字典里key分别为4,5,6,7....的value移动到数组
 

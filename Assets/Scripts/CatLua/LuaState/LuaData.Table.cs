@@ -10,7 +10,7 @@ namespace CatLua
         /// 创建table，并压入栈顶
         /// </summary>
         public void CreateTable(int arrSize = 0, int dictSize = 0)
-        {
+         {
             LuaTable table = new LuaTable(arrSize, dictSize);
             Push(table);
         }

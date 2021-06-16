@@ -137,7 +137,7 @@ namespace CatLua
                 throw new Exception("Call要调用的数据不是函数");
             }
 
-            Debug.Log(string.Format("调用函数，{0}<{1},{2}>", data.Closure.Proto.Source, data.Closure.Proto.LineDefined, data.Closure.Proto.LastLineDefined));
+            Debug.Log(string.Format("<color=#66ccff>调用函数，{0}<{1},{2}></color>", data.Closure.Proto.Source, data.Closure.Proto.LineDefined, data.Closure.Proto.LastLineDefined));
 
             Call(argsNum, resultNum, data.Closure);
         }
@@ -198,6 +198,7 @@ namespace CatLua
             {
                 //不断取出指令执行 直到遇到return
                 Instructoin i = new Instructoin(Fetch());
+                Debug.Log(string.Format("[{0}] {1} {2}", CurStack.PC + 1, i.OpType, CurStack));
                 i.Execute(this);
                 if (i.OpType == OpCodeType.Return)
                 {
