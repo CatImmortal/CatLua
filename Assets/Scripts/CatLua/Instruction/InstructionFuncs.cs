@@ -69,8 +69,10 @@ namespace CatLua
             //实际上官方Lua编译器里超过200个就无法编译了
 
             i.GetABC(out int a, out int b, out int c);
+            a += vm.CurFrameBottom;
+            b += vm.CurFrameBottom;
 
-            vm.Copy(b, a);
+            vm.Copy(b,a);
         }
 
         /// <summary>
@@ -81,7 +83,9 @@ namespace CatLua
 
 
             i.GetAsBx(out int a, out int sbx);
+
             vm.AddPC(sbx);
+
             if (a != 0)
             {
                 //处理upvalue
@@ -95,6 +99,8 @@ namespace CatLua
         private static void LoadNilFunc(Instructoin i, LuaState vm)
         {
             i.GetABC(out int a, out int b, out int c);
+            a += vm.CurFrameBottom;
+            b += vm.CurFrameBottom;
 
 
             //压入一个nil到栈顶
@@ -103,7 +109,7 @@ namespace CatLua
             for (int index = a; index <= a + b; index++)
             {
                 //copy栈顶的nil值到index位置上
-                vm.Copy(-1, index);
+                vm.Copy(-1,index);
             }
 
             //弹出栈顶的nil，恢复栈
@@ -116,6 +122,7 @@ namespace CatLua
         private static void LoadBoolFunc(Instructoin i, LuaState vm)
         {
             i.GetABC(out int a, out int b, out int c);
+            a += vm.CurFrameBottom;
 
             vm.Push(b != 0);
             vm.PopAndCopy(a);
@@ -132,6 +139,7 @@ namespace CatLua
         private static void LoadKFunc(Instructoin i, LuaState vm)
         {
             i.GetABx(out int a, out int bx);
+            a += vm.CurFrameBottom;
 
             vm.PushConst(bx);
             vm.PopAndCopy(a);
@@ -143,6 +151,7 @@ namespace CatLua
         private static void LoadKXFunc(Instructoin i, LuaState vm)
         {
             i.GetABx(out int a, out int bx);
+            a += vm.CurFrameBottom;
 
             Instructoin next = new Instructoin(vm.Fetch());
             next.GetAx(out int ax);
@@ -157,6 +166,7 @@ namespace CatLua
         private static void BinaryArithFunc(Instructoin i,LuaState vm,ArithOpType type)
         {
             i.GetABC(out int a, out int b, out int c);
+            a += vm.CurFrameBottom;
 
             vm.PushRK(b);
             vm.PushRK(c);
@@ -170,6 +180,7 @@ namespace CatLua
         private static void UnaryArithFunc(Instructoin i, LuaState vm, ArithOpType type)
         {
             i.GetABC(out int a, out int b, out int c);
+            a += vm.CurFrameBottom;
 
             vm.CopyAndPush(b);
             vm.Arith(type);
@@ -182,6 +193,8 @@ namespace CatLua
         private static void LenFunc(Instructoin i, LuaState vm)
         {
             i.GetABC(out int a, out int b, out int c);
+            a += vm.CurFrameBottom;
+            b += vm.CurFrameBottom;
 
             vm.Len(b);
             vm.PopAndCopy(a);
@@ -193,6 +206,9 @@ namespace CatLua
         private static void ConcatFunc(Instructoin i, LuaState vm)
         {
             i.GetABC(out int a, out int b, out int c);
+            a += vm.CurFrameBottom;
+            b += vm.CurFrameBottom;
+            c += vm.CurFrameBottom;
 
 
             for (int index = b; index <= c; index++)
@@ -205,7 +221,7 @@ namespace CatLua
         }
 
         /// <summary>
-        /// 将b和c位置的值进行比较，如果结果和a不匹配，就跳过下一条指令
+        /// 将b和c位置的栈值或常量进行比较，如果结果和a不匹配，就跳过下一条指令
         /// </summary>
         private static void CompareFunc(Instructoin i, LuaState vm,CompareOpType type)
         {
@@ -231,6 +247,8 @@ namespace CatLua
         private static void NotFunc(Instructoin i, LuaState vm)
         {
             i.GetABC(out int a, out int b, out int c);
+            a += vm.CurFrameBottom;
+            b += vm.CurFrameBottom;
 
             bool value = vm.GetBoolean(b);
             vm.Push(!value);
@@ -243,6 +261,8 @@ namespace CatLua
         private static void TestSetFunc(Instructoin i, LuaState vm)
         {
             i.GetABC(out int a, out int b, out int c);
+            a += vm.CurFrameBottom;
+            b += vm.CurFrameBottom;
 
             bool value = vm.GetBoolean(b);
             bool target = c != 0;
@@ -263,8 +283,9 @@ namespace CatLua
         private static void TestFunc(Instructoin i, LuaState vm)
         {
             i.GetABC(out int a, out int b, out int c);
+            a += vm.CurFrameBottom;
 
-            bool value = vm.GetBoolean(a);
+            bool value = vm.GetBoolean(vm.CurFrameBottom + a);
             bool target = c != 0;
 
             if (value != target)
@@ -278,12 +299,14 @@ namespace CatLua
         /// </summary>
         private static void ForPrepFunc(Instructoin i, LuaState vm)
         {
-            //a index
-            //a+1 limit
-            //a+2 step
             //a+3 i
+            //a+2 step
+            //a+1 limit
+            //a index
 
             i.GetAsBx(out int a, out int sbx);
+
+            a += vm.CurFrameBottom;
 
             //R(A) -= R(A + 2)
             vm.CopyAndPush(a);
@@ -302,6 +325,7 @@ namespace CatLua
         private static void ForLoopFunc(Instructoin i, LuaState vm)
         {
             i.GetAsBx(out int a, out int sbx);
+            a += vm.CurFrameBottom;
 
             //R(A) += R(A + 2)
             vm.CopyAndPush(a);
@@ -335,6 +359,7 @@ namespace CatLua
         private static void NewTableFunc(Instructoin i, LuaState vm)
         {
             i.GetABC(out int a, out int b, out int c);
+            a += vm.CurFrameBottom;
 
             //为了用9bit表示大于521的数
             //NewTable指令使用了浮点字节编码B和C 需要进行转换
@@ -348,6 +373,8 @@ namespace CatLua
         private static void GetTableFunc(Instructoin i, LuaState vm)
         {
             i.GetABC(out int a, out int b, out int c);
+            a += vm.CurFrameBottom;
+            b += vm.CurFrameBottom;
 
             vm.PushRK(c); 
             vm.PushTableValue(b);
@@ -360,6 +387,7 @@ namespace CatLua
         private static void SetTableFunc(Instructoin i, LuaState vm)
         {
             i.GetABC(out int a, out int b, out int c);
+            a += vm.CurFrameBottom;
 
             vm.PushRK(b);
             vm.PushRK(c);
@@ -373,6 +401,7 @@ namespace CatLua
         private static void SetListFunc(Instructoin i, LuaState vm)
         {
             i.GetABC(out int a, out int b, out int c);
+            a += vm.CurFrameBottom;
 
             if (c > 0)
             {
@@ -407,7 +436,7 @@ namespace CatLua
             {
                 //处理寄存器后到栈顶的所有值
                 //也就是函数返回值或vararg表达式的值
-                for (int j = vm.RegisterCount + 1; j <= vm.Top; j++)
+                for (int j = vm.CurFrameRegsiterCount + 1; j <= vm.Top; j++)
                 {
                     key++;
                     vm.CopyAndPush(j);
@@ -415,7 +444,7 @@ namespace CatLua
                 }
 
                 //让栈顶恢复初始状态
-                vm.SetTop(vm.RegisterCount);
+                vm.SetTop(vm.CurFrameBottom +  (vm.CurFrameRegsiterCount - 1));
             }
 
            
@@ -429,6 +458,7 @@ namespace CatLua
         private static void ClosureFunc(Instructoin i, LuaState vm)
         {
             i.GetABx(out int a, out int bx);
+            a += vm.CurFrameBottom;
 
             vm.PushProto(bx);
             vm.PopAndCopy(a);
@@ -436,14 +466,15 @@ namespace CatLua
 
 
         /// <summary>
-        /// 调用a位置的函数，参数有b-1个，返回值有c-1个
+        /// 调用a位置的函数，参数有b-1个，返回值有c-1个，b或c为0的话，表示有不确定长度的参数或返回值
         /// </summary>
         private static void CallFunc(Instructoin i, LuaState vm)
         {
             i.GetABC(out int a, out int b, out int c);
+            a += vm.CurFrameBottom;
 
             //从a开始，复制并压入函数和参数到栈顶
-            int ArgsNum = vm.PushFuncAndArgs(a, b);
+            int ArgsNum = vm.PushFuncAndArgs(a, b - 1);
 
             //调用函数
             vm.Call(ArgsNum, c - 1);
@@ -461,6 +492,7 @@ namespace CatLua
         private static void ReturnFunc(Instructoin i, LuaState vm)
         {
             i.GetABC(out int a, out int b, out int c);
+            a += vm.CurFrameBottom;
 
             if (b == 1)
             {
@@ -487,6 +519,7 @@ namespace CatLua
         private static void VarArgFunc(Instructoin i, LuaState vm)
         {
             i.GetABC(out int a, out int b, out int c);
+            a += vm.CurFrameBottom;
 
             if (b != 1)
             {
@@ -498,10 +531,11 @@ namespace CatLua
         private static void TailCallFunc(Instructoin i, LuaState vm)
         {
             i.GetABC(out int a, out int b, out int c);
+            a += vm.CurFrameBottom;
             c = 0;
 
 
-            int ArgsNum = vm.PushFuncAndArgs(a, b);
+            int ArgsNum = vm.PushFuncAndArgs(a, b - 1);
 
             vm.Call(ArgsNum, c - 1);
 
@@ -514,6 +548,8 @@ namespace CatLua
         private static void SelfFunc(Instructoin i, LuaState vm)
         {
             i.GetABC(out int a, out int b, out int c);
+            a += vm.CurFrameBottom;
+            b += vm.CurFrameBottom;
 
             vm.Copy(b, a + 1);
 

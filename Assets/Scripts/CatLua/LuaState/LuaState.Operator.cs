@@ -11,12 +11,12 @@ namespace CatLua
         /// </summary>
         public void Arith(ArithOpType type)
         {
-            LuaDataUnion b = CurStack.Pop();
+            LuaDataUnion b = globalStack.Pop();
             LuaDataUnion a = b;
             if (type != ArithOpType.Unm && type != ArithOpType.BNot)
             {
                 //二元运算
-                a = CurStack.Pop();
+                a = globalStack.Pop();
             }
 
             ArithOpConfig operatorConfig = ArithOpConfig.Configs[(int)type];
@@ -27,7 +27,7 @@ namespace CatLua
             {
                 throw new Exception("数学运算出错，结果为nil");
             }
-            CurStack.Push(result);
+            globalStack.Push(result);
         }
 
         /// <summary>
@@ -147,8 +147,8 @@ namespace CatLua
         /// </summary>
         public bool Compare(int index1, int index2, CompareOpType type)
         {
-            LuaDataUnion a = CurStack.Get(index1);
-            LuaDataUnion b = CurStack.Get(index2);
+            LuaDataUnion a = globalStack.Get(index1);
+            LuaDataUnion b = globalStack.Get(index2);
             CompareOpConfig compareOpConfig = CompareOpConfig.Configs[(int)type];
             return compareOpConfig.CompareFunc(a, b);
         }
@@ -158,7 +158,7 @@ namespace CatLua
         /// </summary>
         public void Len(int index)
         {
-            LuaDataUnion value = CurStack.Get(index);
+            LuaDataUnion value = globalStack.Get(index);
             long len;
             if (value.Type == LuaDataType.String)
             {
@@ -174,7 +174,7 @@ namespace CatLua
                 throw new Exception("Len方法不能对字符串和Table以外的值使用");
             }
 
-            CurStack.Push(new LuaDataUnion(LuaDataType.Integer, integer: len));
+            globalStack.Push(new LuaDataUnion(LuaDataType.Integer, integer: len));
         }
 
         /// <summary>
@@ -184,7 +184,7 @@ namespace CatLua
         {
             if (n == 0)
             {
-                CurStack.Push(new LuaDataUnion(LuaDataType.String, str: string.Empty));
+                globalStack.Push(new LuaDataUnion(LuaDataType.String, str: string.Empty));
             }
             else if (n >= 2)
             {
@@ -193,11 +193,11 @@ namespace CatLua
                     //检查栈顶的2个值是否为stirng或可以转换为string
                     if (IsString(-1) && IsString(-2))
                     {
-                        string s2 = CurStack.Pop().ToString();
-                        string s1 = CurStack.Pop().ToString();
+                        string s2 = globalStack.Pop().ToString();
+                        string s1 = globalStack.Pop().ToString();
                         string result = s1 + s2;
 
-                        CurStack.Push(new LuaDataUnion(LuaDataType.String, str: result));
+                        globalStack.Push(new LuaDataUnion(LuaDataType.String, str: result));
 
                     }
                     else

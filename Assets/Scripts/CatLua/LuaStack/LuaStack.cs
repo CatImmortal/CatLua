@@ -21,26 +21,6 @@ namespace CatLua
         private LuaDataUnion[] stack;
 
         /// <summary>
-        /// 指向底下的栈帧
-        /// </summary>
-        public LuaStack Prev;
-
-        /// <summary>
-        /// 闭包
-        /// </summary>
-        public Closure Closure;
-
-        /// <summary>
-        /// 变长参数
-        /// </summary>
-        public LuaDataUnion[] VarArgs;
-
-        /// <summary>
-        /// 指令索引
-        /// </summary>
-        public int PC;
-
-        /// <summary>
         /// 栈顶索引
         /// </summary>
         public int Top;

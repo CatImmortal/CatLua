@@ -7,44 +7,65 @@ namespace CatLua
     public partial class LuaState
     {
         /// <summary>
+        /// 当前栈帧的栈底索引
+        /// </summary>
+        public int CurFrameBottom
+        {
+            get
+            {
+                return curFrame.Bottom;
+            }
+        }
+
+        /// <summary>
+        /// 当前栈帧的最大寄存器数量
+        /// </summary>
+        public int CurFrameRegsiterCount
+        {
+            get
+            {
+                return curFrame.Closure.Proto.MaxStackSize;
+            }
+        }
+
+        /// <summary>
         /// 压入函数调用栈帧
         /// </summary>
-        public void PushLuaStack(LuaStack stack)
+        public void PushFuncCallFrame(FuncCallFrame frame)
         {
-            stack.Prev = CurStack;
-            CurStack = stack;
+            frame.Prev = curFrame;
+            curFrame = frame;
         }
 
         /// <summary>
         /// 弹出函数调用栈帧
         /// </summary>
-        public void PopLuaStack()
+        public void PopFuncCallFrame()
         {
-            LuaStack stack = CurStack;
-            CurStack = CurStack.Prev;
-            stack.Prev = null;
+            FuncCallFrame frame = curFrame;
+            curFrame = curFrame.Prev;
+            frame.Prev = null;
         }
 
 
         /// <summary>
         /// 将a位置开始的函数与参数压入栈顶，返回参数数量
         /// </summary>
-        public int PushFuncAndArgs(int a, int b)
+        public int PushFuncAndArgs(int a, int argsNum)
         {
-            if (b >= 1)
+            if (argsNum >= 0)
             {
-                //需要压栈的参数数量为 b - 1个
-                for (int i = a; i <= a + (b - 1); i++)
+                for (int i = a; i <= a + (argsNum - 1); i++)
                 {
                     CopyAndPush(i);
 
                 }
 
-                return b - 1;
+                return argsNum;
             }
             else
             {
-                //b为0 表示参数个数由另一个函数的返回值决定
+                //b为0 表示参数个数不确定 可能由另一个函数的返回值决定 也可能是变长参数
                 //比如 f(1, 2, g())
 
                 //为f压入函数和参数时，g的返回值和返回值起始位置值全部在栈顶
@@ -53,8 +74,9 @@ namespace CatLua
 
                 FixStack(a);
 
-                int num = Top - RegisterCount - 1;
+                //int num = Top - CurFrameRegsiterCount- 1;
 
+                int num = Top - a;
                 return num;
             }
         }
@@ -109,7 +131,7 @@ namespace CatLua
             }
 
             //向下旋转栈 让f函数和前半部分的参数移动到栈底，后半部分的参数移动到栈顶 旋转次数是前半部分参数的个数
-            Rotate(RegisterCount + 1, x - a);
+            Rotate(curFrame.Closure.Proto.MaxStackSize + 1, x - a);
         }
 
 
@@ -131,7 +153,7 @@ namespace CatLua
         public void Call(int argsNum,int resultNum)
         {
             //从栈顶倒数(argsNum-1)的位置获取到要调用的函数
-            LuaDataUnion data = CurStack.Get(-(argsNum + 1));
+            LuaDataUnion data = globalStack.Get(-(argsNum + 1));
             if (data.Type != LuaDataType.Function)
             {
                 throw new Exception("Call要调用的数据不是函数");
@@ -147,22 +169,23 @@ namespace CatLua
         /// </summary>
         private void Call(int argsNum, int resultNum,Closure c)
         {
+            //从当前栈帧弹出函数与参数
+            LuaDataUnion[] FuncAndParams = globalStack.PopN(argsNum + 1);
+
             int registerNum = c.Proto.MaxStackSize;
             int paramsNum = c.Proto.NumParams;
             bool isVarArg = c.Proto.IsVararg != 0;
 
             //为要调用的函数创建调用栈帧
-            LuaStack newStack = new LuaStack(registerNum + 20);
-            newStack.Closure = c;
+            FuncCallFrame newFrame = new FuncCallFrame();
+            newFrame.Closure = c;
+            newFrame.Bottom = Top + 1;
 
-            //从当前栈帧弹出函数与参数
-            LuaDataUnion[] FuncAndParams = CurStack.PopN(argsNum + 1);
-
-            //将参数压入新的栈帧中
-            newStack.PushN(FuncAndParams, 1, paramsNum);
+            //将参数压入新的栈帧范围内
+            globalStack.PushN(FuncAndParams, 1, paramsNum);
 
             //修改栈顶指针 指向最后一个寄存器
-            newStack.Top = registerNum;
+            globalStack.Top = newFrame.Bottom + (registerNum - 1);
 
             if (argsNum > paramsNum && isVarArg)
             {
@@ -170,22 +193,25 @@ namespace CatLua
                 //就把多出来的参数放入变长参数里处理
                 LuaDataUnion[] varArgs = new LuaDataUnion[FuncAndParams.Length - (paramsNum + 1)];
                 Array.Copy(FuncAndParams, paramsNum + 1, varArgs, 0, varArgs.Length);
-                newStack.VarArgs = varArgs;
+                newFrame.VarArgs = varArgs;
             }
 
             //压入新栈帧 调用函数 弹出新栈帧
-            PushLuaStack(newStack);
+            PushFuncCallFrame(newFrame);
             RunLuaClosure();
-            PopLuaStack();
+            PopFuncCallFrame();
 
             //处理返回值
             if (resultNum != 0)
             {
-                //返回值在新栈帧的registerNum + 1 到 Top的部分
-                LuaDataUnion[] datas = newStack.PopN(newStack.Top - registerNum);
+                ////返回值在新栈帧的registerNum + 1 到 Top的部分
+                //LuaDataUnion[] datas = newStack.PopN(newStack.Top - registerNum);
 
-                //将resultNum个返回值压入前一个栈帧中
-                CurStack.PushN(datas,0,resultNum);
+                ////将resultNum个返回值压入前一个栈帧中
+                //globalStack.PushN(datas,0,resultNum);
+
+                //丢弃多余的返回值 或者用nil填补不足的返回值
+                SetTop(newFrame.Bottom + (resultNum - 1));
             }
         }
 
@@ -199,7 +225,7 @@ namespace CatLua
                 //不断取出指令执行 直到遇到return
                 Instructoin i = new Instructoin(Fetch());
                 i.Execute(this);
-                Debug.Log(string.Format("[{0}] {1} {2}", CurStack.PC, i.OpType, this));
+                Debug.Log(string.Format("[{0}] {1} {2}", curFrame.PC, i.OpType, this));
                 if (i.OpType == OpCodeType.Return)
                 {
                     break;

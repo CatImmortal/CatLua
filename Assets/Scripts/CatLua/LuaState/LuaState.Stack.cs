@@ -14,7 +14,7 @@ namespace CatLua
         {
             get
             {
-                return CurStack.Top;
+                return globalStack.Top;
             }
         }
 
@@ -25,7 +25,7 @@ namespace CatLua
         {
             for (int i = 0; i < n; i++)
             {
-                CurStack.Pop();
+                globalStack.Pop();
             }
         }
 
@@ -34,8 +34,8 @@ namespace CatLua
         /// </summary>
         public void Copy(int form, int target)
         {
-            LuaDataUnion value = CurStack.Get(form);
-            CurStack.Set(target, value);
+            LuaDataUnion value = globalStack.Get(form);
+            globalStack.Set(target, value);
         }
 
         /// <summary>
@@ -43,8 +43,8 @@ namespace CatLua
         /// </summary>
         public void CopyAndPush(int index)
         {
-            LuaDataUnion value = CurStack.Get(index);
-            CurStack.Push(value);
+            LuaDataUnion value = globalStack.Get(index);
+            globalStack.Push(value);
         }
 
         /// <summary>
@@ -52,8 +52,8 @@ namespace CatLua
         /// </summary>
         public void PopAndCopy(int index)
         {
-            LuaDataUnion value = CurStack.Pop();
-            CurStack.Set(index, value);
+            LuaDataUnion value = globalStack.Pop();
+            globalStack.Set(index, value);
         }
 
         /// <summary>
@@ -83,7 +83,7 @@ namespace CatLua
                 return;
             }
 
-            int absIndex = CurStack.GetAbsIndex(index);
+            int absIndex = globalStack.GetAbsIndex(index);
 
             int middle;
             if (n > 0)
@@ -98,9 +98,9 @@ namespace CatLua
             }
 
             //翻转三次
-            CurStack.Reverse(absIndex, middle);
-            CurStack.Reverse(middle + 1, Top);
-            CurStack.Reverse(absIndex, Top);
+            globalStack.Reverse(absIndex, middle);
+            globalStack.Reverse(middle + 1, Top);
+            globalStack.Reverse(absIndex, Top);
         }
 
         /// <summary>
@@ -108,7 +108,7 @@ namespace CatLua
         /// </summary>
         public void SetTop(int index)
         {
-            int newTop = CurStack.GetAbsIndex(index);
+            int newTop = globalStack.GetAbsIndex(index);
             int n = newTop - Top;
             if (n == 0)
             {
@@ -122,7 +122,7 @@ namespace CatLua
                 int num = n;
                 for (int i = 0; i < num; i++)
                 {
-                    CurStack.Push(default);
+                    globalStack.Push(default);
                 }
                
             }
@@ -133,7 +133,7 @@ namespace CatLua
                 int num = -n;
                 for (int i = 0; i < num; i++)
                 {
-                    CurStack.Pop();
+                    globalStack.Pop();
                 }
             }
 
@@ -144,7 +144,7 @@ namespace CatLua
         /// </summary>
         public void Push()
         {
-            CurStack.Push(default);
+            globalStack.Push(default);
         }
 
         /// <summary>
@@ -152,7 +152,7 @@ namespace CatLua
         /// </summary>
         public void Push(bool b)
         {
-            CurStack.Push(new LuaDataUnion(LuaDataType.Boolean, boolean: b));
+            globalStack.Push(new LuaDataUnion(LuaDataType.Boolean, boolean: b));
         }
 
         /// <summary>
@@ -160,7 +160,7 @@ namespace CatLua
         /// </summary>
         public void Push(long l)
         {
-            CurStack.Push(new LuaDataUnion(LuaDataType.Integer, integer: l));
+            globalStack.Push(new LuaDataUnion(LuaDataType.Integer, integer: l));
         }
 
         /// <summary>
@@ -168,7 +168,7 @@ namespace CatLua
         /// </summary>
         public void Push(double d)
         {
-            CurStack.Push(new LuaDataUnion(LuaDataType.Number, number: d));
+            globalStack.Push(new LuaDataUnion(LuaDataType.Number, number: d));
         }
 
         /// <summary>
@@ -176,7 +176,7 @@ namespace CatLua
         /// </summary>
         public void Push(string str)
         {
-            CurStack.Push(new LuaDataUnion(LuaDataType.String, str: str));
+            globalStack.Push(new LuaDataUnion(LuaDataType.String, str: str));
         }
 
         /// <summary>
@@ -184,7 +184,7 @@ namespace CatLua
         /// </summary>
         public void Push(LuaTable table)
         {
-            CurStack.Push(new LuaDataUnion(LuaDataType.Table, table: table));
+            globalStack.Push(new LuaDataUnion(LuaDataType.Table, table: table));
         }
 
         /// <summary>
@@ -192,7 +192,7 @@ namespace CatLua
         /// </summary>
         public void Push(Closure closure)
         {
-            CurStack.Push(new LuaDataUnion(LuaDataType.Function, closure: closure));
+            globalStack.Push(new LuaDataUnion(LuaDataType.Function, closure: closure));
         }
     }
 }

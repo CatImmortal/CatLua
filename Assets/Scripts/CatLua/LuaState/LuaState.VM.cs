@@ -5,24 +5,13 @@ namespace CatLua
 {
     public partial class LuaState
     {
-  
-        /// <summary>
-        /// 当前栈帧的函数所操作的寄存器数量
-        /// </summary>
-        public int RegisterCount
-        {
-            get
-            {
-                return CurStack.Closure.Proto.MaxStackSize;
-            }
-        }
 
         /// <summary>
         /// 修改PC
         /// </summary>
         public void AddPC(int n )
         {
-            CurStack.PC += n;
+            globalStack.PC += n;
         }
 
         /// <summary>
@@ -30,8 +19,8 @@ namespace CatLua
         /// </summary>
         public uint Fetch()
         {
-            uint code = CurStack.Closure.Proto.Code[CurStack.PC];
-            CurStack.PC++;
+            uint code = curFrame.Closure.Proto.Code[curFrame.PC];
+            curFrame.PC++;
             return code;    
         }
 
@@ -40,7 +29,7 @@ namespace CatLua
         /// </summary>
         public void PushConst(int index)
         {
-           LuaConstantUnion constant = CurStack.Closure.Proto.Constants[index];
+           LuaConstantUnion constant = curFrame.Closure.Proto.Constants[index];
             switch (constant.Type)
             {
                 case LuaConstantType.Nil:
@@ -80,7 +69,7 @@ namespace CatLua
             else
             {
                 //栈值
-                CopyAndPush(rk);
+                CopyAndPush(CurFrameBottom + rk);
             }
         }
 
@@ -89,7 +78,7 @@ namespace CatLua
         /// </summary>
         public void PushVarArg(int n)
         {
-            CurStack.PushN(CurStack.VarArgs,0,n);
+            globalStack.PushN(curFrame.VarArgs,0,n);
         }
 
         /// <summary>
@@ -97,7 +86,7 @@ namespace CatLua
         /// </summary>
         public void PushProto(int index)
         {
-            FuncPrototype proto = CurStack.Closure.Proto.Protos[index];
+            FuncPrototype proto = curFrame.Closure.Proto.Protos[index];
             Closure c = new Closure(proto);
             Push(c);
         }

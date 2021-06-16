@@ -11,21 +11,26 @@ namespace CatLua
     {
         public LuaState(int size)
         {
-            CurStack = new LuaStack(size);
+            globalStack = new LuaStack(size);
+            curFrame = new FuncCallFrame();
         }
 
         /// <summary>
-        /// Lua虚拟栈
+        /// 全局Lua虚拟栈
         /// </summary>
-        private LuaStack CurStack;
+        private LuaStack globalStack;
 
+        /// <summary>
+        /// 当前函数调用栈帧
+        /// </summary>
+        private FuncCallFrame curFrame;
 
         public override string ToString()
         {
             string s = "";
-            for (int i = 1; i <= CurStack.Top; i++)
+            for (int i = 1; i <= globalStack.Top; i++)
             {
-                LuaDataUnion value = CurStack.Get(i);
+                LuaDataUnion value = globalStack.Get(i);
                 switch (value.Type)
                 {
                   
