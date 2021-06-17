@@ -100,46 +100,6 @@ namespace CatLua
             }
 
             return default;
-
-            //if (operatorConfig.NumberFunc == null)
-            //{
-            //    //操作数只能 是整数 或者 可以转换为整数
-            //    long l1;
-            //    long l2;
-            //    if (a.TryConvertToInteger(out l1) && b.TryConvertToInteger(out l2))
-            //    {
-            //        long result = operatorConfig.IntegerFunc(l1, l2);
-            //        return new LuaDataUnion(LuaDataType.Integer, integer: result);
-            //    }
-            //}
-
-            ////数学运算
-
-            //if (operatorConfig.IntegerFunc != null)
-            //{
-            //    // add sub mul mod idiv unm
-
-            //    //整数运算
-            //    if (a.Type == LuaDataType.Integer && b.Type == LuaDataType.Integer)
-            //    {
-            //        long result = operatorConfig.IntegerFunc(a.Integer, b.Integer);
-            //        return new LuaDataUnion(LuaDataType.Integer, integer: result);
-            //    }
-
-
-            //}
-
-            ////pow div 或者是其他非整数数学运算
-            //double d1;
-            //double d2;
-            //if (a.TryConvertToNumber(out d1) && b.TryConvertToNumber(out d2))
-            //{
-            //    double result = operatorConfig.NumberFunc(d1, d2);
-            //    return new LuaDataUnion(LuaDataType.Number, number: result);
-            //}
-
-            //return default;
-
         }
 
         /// <summary>

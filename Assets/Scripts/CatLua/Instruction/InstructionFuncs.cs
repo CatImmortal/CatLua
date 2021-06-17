@@ -229,7 +229,7 @@ namespace CatLua
 
             vm.PushRK(b);
             vm.PushRK(c);
-            bool result = vm.Compare(-1, -2, type);
+            bool result = vm.Compare(-2, -1, type);
 
             bool target = a != 0;
 
@@ -316,10 +316,12 @@ namespace CatLua
 
             //PC += sBx
             vm.AddPC(sbx);
+
+
         }
 
         /// <summary>
-        /// 将a位置的值(index)加上2(step)，增加循环的index
+        /// 将a位置的值(index)加上a+2位置的值(step)，增加循环的index
         /// 然后判断index是否达到了limit，如果未达到就让PC增加sbx，指向循环体,并把index值复制给用户的自定义局部变量
         /// </summary>
         private static void ForLoopFunc(Instructoin i, LuaState vm)
@@ -418,10 +420,11 @@ namespace CatLua
             if (b == 0)
             {
                 //b为0 说明表构造器最后一个元素是变长参数这种不确定参数数量的
-                //从a+1到top都是构造表的参数
+                //从a+1到top都是表的value
                 b = vm.Top - a;
             }
 
+            //设置表的数据
             for (int index = 1; index <= b; index++)
             {
 
@@ -452,43 +455,44 @@ namespace CatLua
             i.GetABC(out int a, out int b, out int c);
             a += vm.CurFrameBottom;
 
-            //从a开始，复制并压入函数和参数到栈顶
-            int ArgsNum = vm.PushFuncAndArgs(a, b - 1);
+            //从a位置开始，复制并压入函数和参数到主调栈帧的栈顶
+            int ArgsNum = vm.PushFuncAndArgs(a, b);
 
-            //调用函数
-            vm.Call(ArgsNum, c - 1);
+            //压入被调函数栈帧和参数，调用函数
+            vm.CallFunc(ArgsNum, c - 1);
 
-            //函数调用结束后，返回值被留在了栈顶
-            //这时需要将栈顶的返回值弹出并复制到a开始的部分
+            //将栈顶的来自被调函数的返回值弹出并复制到a开始的部分
             vm.PopResults(a, c - 1);
 
         }
 
         /// <summary>
-        /// 将a开始的b - 1个返回值压入栈顶
+        /// 被调函数的所有指令都执行完毕后，将a开始的b - 1个数据压入栈顶，以作为返回值压入主调函数
         /// </summary>
         private static void ReturnFunc(Instructoin i, LuaState vm)
         {
             i.GetABC(out int a, out int b, out int c);
             a += vm.CurFrameBottom;
 
-            if (b == 1)
+            int resultNum = b - 1;
+
+            if (resultNum == 0)
             {
                 return;
             }
 
-            if (b > 1)
+            if (resultNum == -1)
             {
-                for (int index = a ; index <= a+b-2; index++)
-                {
-                    vm.CopyAndPush(index);
-                }
+                //将a到top的所有值都压入栈顶
+                resultNum = vm.Top - a + 1;
             }
-            else
+
+            for (int index = 0; index < resultNum; index++)
             {
-                ////一部分返回值已经在栈顶了
-                //vm.FixStack(a);
+                vm.CopyAndPush(a + index);
             }
+
+           
         }
 
         /// <summary>
@@ -501,29 +505,36 @@ namespace CatLua
 
             int argsNum = b - 1;
 
-            if (argsNum != 0)
+            if (argsNum == 0)
             {
-                vm.PushVarArg(argsNum);
+                return;
+            }
 
-                if (argsNum == -1)
-                {
-                    //计算变长参数的个数
-                    argsNum = vm.Top - (vm.CurFrameBottom + vm.CurFrameRegsiterCount) + 1;
+            vm.PushVarArg(argsNum);
 
-                }
+            if (argsNum == -1)
+            {
+                //计算变长参数的个数
+                argsNum = vm.Top - (vm.CurFrameBottom + vm.CurFrameRegsiterCount) + 1;
+            }
 
-                //复制变长参数到指定位置
-                LuaDataUnion[] datas = vm.PopN(argsNum);
+            //取出变长参数
+            LuaDataUnion[] datas = vm.PopN(argsNum);
 
-                
-                int maxIndex = (a - 1) + argsNum;
-                vm.SetTop(maxIndex);
+            
+            int targetIndex = (a - 1) + argsNum;
+            if (targetIndex > vm.Top)
+            {
+                //扩充栈顶
+                vm.SetTop(targetIndex);
+            }
+           
 
-                for (int index = 0; index < datas.Length; index++)
-                {
-                    vm.Push(datas[index]);
-                    vm.PopAndCopy(a + index);
-                }
+            //复制变长参数到指定位置
+            for (int index = 0; index < datas.Length; index++)
+            {
+                vm.Push(datas[index]);
+                vm.PopAndCopy(a + index);
             }
         }
 
@@ -536,7 +547,7 @@ namespace CatLua
 
             int ArgsNum = vm.PushFuncAndArgs(a, b - 1);
 
-            vm.Call(ArgsNum, c - 1);
+            vm.CallFunc(ArgsNum, c - 1);
 
             vm.PopResults(a, c - 1);
         }

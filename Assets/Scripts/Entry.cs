@@ -30,7 +30,7 @@ public class Entry : MonoBehaviour
 
         LuaState ls = new LuaState(100);
         ls.Load(main.bytes, main.name, "b");
-        ls.Call(0, 0);
+        ls.CallFunc(0, 0);
 
     }
 
