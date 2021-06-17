@@ -417,39 +417,18 @@ namespace CatLua
 
             if (b == 0)
             {
-                //b为0 说明表构造器最后一个元素是函数调用或vararg表达式
-
-                //让b等于起始位置到寄存器的所有值的数量
-                b = (int)(vm.GetInteger(-1)) - a - 1;
-                vm.Pop(-1);
+                //b为0 说明表构造器最后一个元素是变长参数这种不确定参数数量的
+                //从a+1到top都是构造表的参数
+                b = vm.Top - a;
             }
 
-            for (int num = 1; num <= b; num++)
+            for (int index = 1; index <= b; index++)
             {
 
                 key++;
-                vm.CopyAndPush(a + num);
+                vm.CopyAndPush(a + index);
                 vm.SetTableValue(a, key);
             }
-
-            if (b == 0)
-            {
-                //处理寄存器后到栈顶的所有值
-                //也就是函数返回值或vararg表达式的值
-                for (int j = vm.CurFrameRegsiterCount + 1; j <= vm.Top; j++)
-                {
-                    key++;
-                    vm.CopyAndPush(j);
-                    vm.SetTableValue(a, key);
-                }
-
-                //让栈顶恢复初始状态
-                vm.SetTop(vm.CurFrameBottom +  (vm.CurFrameRegsiterCount - 1));
-            }
-
-           
-
-         
         }
 
         /// <summary>
@@ -479,8 +458,7 @@ namespace CatLua
             //调用函数
             vm.Call(ArgsNum, c - 1);
 
-            //函数调用结束后，返回值被留在了a开始的栈顶 也就是被调用的函数上
-
+            //函数调用结束后，返回值被留在了栈顶
             //这时需要将栈顶的返回值弹出并复制到a开始的部分
             vm.PopResults(a, c - 1);
 
@@ -508,23 +486,44 @@ namespace CatLua
             }
             else
             {
-                //一部分返回值已经在栈顶了
-                vm.FixStack(a);
+                ////一部分返回值已经在栈顶了
+                //vm.FixStack(a);
             }
         }
 
         /// <summary>
-        /// 若b>1，就将b-1个vararg参数复制到寄存器，若b==0，就复制全部vararg参数到寄存器
+        /// 若b>1，就将b-1个vararg参数复制到a开始的位置，若b==0，就复制全部vararg参数到寄存器
         /// </summary>
         private static void VarArgFunc(Instructoin i, LuaState vm)
         {
             i.GetABC(out int a, out int b, out int c);
             a += vm.CurFrameBottom;
 
-            if (b != 1)
+            int argsNum = b - 1;
+
+            if (argsNum != 0)
             {
-                vm.PushVarArg(b - 1);
-                vm.PopResults(a, b - 1);
+                vm.PushVarArg(argsNum);
+
+                if (argsNum == -1)
+                {
+                    //计算变长参数的个数
+                    argsNum = vm.Top - (vm.CurFrameBottom + vm.CurFrameRegsiterCount) + 1;
+
+                }
+
+                //复制变长参数到指定位置
+                LuaDataUnion[] datas = vm.PopN(argsNum);
+
+                
+                int maxIndex = (a - 1) + argsNum;
+                vm.SetTop(maxIndex);
+
+                for (int index = 0; index < datas.Length; index++)
+                {
+                    vm.Push(datas[index]);
+                    vm.PopAndCopy(a + index);
+                }
             }
         }
 

@@ -37,7 +37,7 @@ namespace CatLua
 
             Top++;
             stack[Top] = data;
-            
+            //UnityEngine.Debug.Log("push top ==" + Top + ",data ==" + data);
         }
 
         /// <summary>
@@ -51,11 +51,12 @@ namespace CatLua
                 n = datas.Length - startIndex;
             }
 
-            for (int i = startIndex; i < n; i++)
+            for (int i = 0; i < n; i++)
             {
-                if (i < datas.Length - startIndex)
+                int index = startIndex + i;
+                if (index < datas.Length)
                 {
-                    Push(datas[i]);
+                    Push(datas[index]);
                 }
                 else
                 {
@@ -75,11 +76,11 @@ namespace CatLua
             }
 
             
-            LuaDataUnion value = stack[Top];
+            LuaDataUnion data = stack[Top];
             stack[Top] = default;
             Top--;
-
-            return value;
+            //UnityEngine.Debug.Log("pop top ==" + Top + ",data ==" + data);
+            return data;
         }
         
         /// <summary>

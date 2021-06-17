@@ -11,7 +11,7 @@ end
 
 local function assert(v)
     if not v then
-        --fail()
+       local i = 1
     end
 end
 

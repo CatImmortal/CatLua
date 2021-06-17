@@ -30,6 +30,14 @@ namespace CatLua
         }
 
         /// <summary>
+        /// 从栈顶弹出n个值，栈顶的在数组末尾
+        /// </summary>
+        public LuaDataUnion[] PopN(int n)
+        {
+            return globalStack.PopN(n);
+        }
+
+        /// <summary>
         /// 将栈中form位置的值复制到target位置
         /// </summary>
         public void Copy(int form, int target)
@@ -54,6 +62,8 @@ namespace CatLua
         {
             LuaDataUnion value = globalStack.Pop();
             globalStack.Set(index, value);
+
+            //UnityEngine.Debug.Log("PopAndCopy,index == " + index);
         }
 
         /// <summary>
@@ -137,6 +147,8 @@ namespace CatLua
                 }
             }
 
+            //UnityEngine.Debug.Log("settop,newtop==" + newTop);
+
         }
 
         /// <summary>
@@ -145,6 +157,14 @@ namespace CatLua
         public void Push()
         {
             globalStack.Push(default);
+        }
+
+        /// <summary>
+        /// 压入Lua数据
+        /// </summary>
+        public void Push(LuaDataUnion data)
+        {
+            globalStack.Push(data);
         }
 
         /// <summary>

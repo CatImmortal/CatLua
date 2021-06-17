@@ -11,7 +11,7 @@ namespace CatLua
         /// </summary>
         public void AddPC(int n )
         {
-            globalStack.PC += n;
+            curFrame.PC += n;
         }
 
         /// <summary>

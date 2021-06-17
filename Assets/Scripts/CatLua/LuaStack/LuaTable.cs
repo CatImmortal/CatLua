@@ -16,7 +16,7 @@ namespace CatLua
 
             if (arrSize > 0)
             {
-                
+                arr = new List<LuaDataUnion>(arrSize);
                 for (int i = 0; i < arrSize; i++)
                 {
                     arr.Add(default);
@@ -104,6 +104,11 @@ namespace CatLua
                     }
                 }
 
+                if (!dict.ContainsKey(key))
+                {
+                    int x = 1;
+                }
+
                 //否则从字典取
                 return dict[key];
             }
@@ -166,14 +171,14 @@ namespace CatLua
 
                 //不能放进数组里 只能试试字典了
 
+                if (dict == null)
+                {
+                    dict = new Dictionary<LuaDataUnion, LuaDataUnion>(8);
+                }
+
                 if (value.Type != LuaDataType.Nil)
                 {
                     //value不是nil值 放入字典里
-
-                    if (dict == null)
-                    {
-                        dict = new Dictionary<LuaDataUnion, LuaDataUnion>(8);
-                    }
 
                     dict[key] = value;
                 }

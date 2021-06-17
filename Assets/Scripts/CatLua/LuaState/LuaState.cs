@@ -28,7 +28,7 @@ namespace CatLua
         public override string ToString()
         {
             string s = "";
-            for (int i = 1; i <= globalStack.Top; i++)
+            for (int i = 0; i <= globalStack.Top; i++)
             {
                 LuaDataUnion value = globalStack.Get(i);
                 switch (value.Type)

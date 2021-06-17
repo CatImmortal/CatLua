@@ -33,6 +33,7 @@ namespace CatLua
         /// 前一个函数的调用栈帧
         /// </summary>
         public FuncCallFrame Prev;
+
     }
 }
 
