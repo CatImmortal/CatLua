@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System;
 
 namespace CatLua
 {
@@ -11,14 +12,24 @@ namespace CatLua
         public Closure(FuncPrototype proto)
         {
             Proto = proto;
+            CSFunc = null;
+        }
+
+        public Closure(Func<LuaState, int> csFunc)
+        {
+            Proto = default;
+            CSFunc = csFunc;
         }
 
         /// <summary>
-        /// 闭包函数原型
+        /// Lua函数闭包
         /// </summary>
         public FuncPrototype Proto;
 
-       
+        /// <summary>
+        /// C#函数闭包
+        /// </summary>
+        public Func<LuaState, int> CSFunc;
     }
 }
 

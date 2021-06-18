@@ -117,22 +117,22 @@ namespace CatLua
             byte tag = ReadByte();
             switch (tag)
             {
-                case Constants.tagNil:
+                case Constants.TagNil:
                     constant = new LuaConstantUnion(LuaConstantType.Nil);
                     break;
-                case Constants.tagBoolean:
+                case Constants.TagBoolean:
                     constant = new LuaConstantUnion(LuaConstantType.Boolean, boolean: ReadByte() != 0);
                     break;
-                case Constants.tagInteger:
+                case Constants.TagInteger:
                     constant = new LuaConstantUnion(LuaConstantType.Integer, integer: ReadLuaInteger());
                     break;
-                case Constants.tagNumber:
+                case Constants.TagNumber:
                     constant = new LuaConstantUnion(LuaConstantType.Number, number: ReadLuaNumber());
                     break;
-                case Constants.tagShortStr:
+                case Constants.TagShortStr:
                     constant = new LuaConstantUnion(LuaConstantType.ShorStr, str: ReadString());
                     break;
-                case Constants.tagLongStr:
+                case Constants.TagLongStr:
                     constant = new LuaConstantUnion(LuaConstantType.LongStr, str: ReadString());
                     break;
                 default:

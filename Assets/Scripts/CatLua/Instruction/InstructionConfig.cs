@@ -60,14 +60,14 @@ namespace CatLua
         /// </summary>
         public static InstructionConfig[] Configs =
         {
-            //                    T A      B           C           mode          type
+            //                    T A      B           C           mode          type            func
             new InstructionConfig(0,1,OpArgType.R,OpArgType.N,OpMode.IABC,OpCodeType.Move,InstructionFuncs.Move),
             new InstructionConfig(0,1,OpArgType.K,OpArgType.N,OpMode.IABx,OpCodeType.LoadK,InstructionFuncs.LoadK),
             new InstructionConfig(0,1,OpArgType.N,OpArgType.N,OpMode.IABx,OpCodeType.LoadKX,InstructionFuncs.LoadKX),
             new InstructionConfig(0,1,OpArgType.U,OpArgType.U,OpMode.IABC,OpCodeType.LoadBool,InstructionFuncs.LoadBool),
             new InstructionConfig(0,1,OpArgType.U,OpArgType.N,OpMode.IABC,OpCodeType.LoadNil,InstructionFuncs.LoadNil),
             new InstructionConfig(0,1,OpArgType.U,OpArgType.N,OpMode.IABC,OpCodeType.GetUpValue),
-            new InstructionConfig(0,1,OpArgType.U,OpArgType.K,OpMode.IABC,OpCodeType.GetTabup),
+            new InstructionConfig(0,1,OpArgType.U,OpArgType.K,OpMode.IABC,OpCodeType.GetTabup,InstructionFuncs.GetTabUp),
             new InstructionConfig(0,1,OpArgType.R,OpArgType.K,OpMode.IABC,OpCodeType.GetTable,InstructionFuncs.GetTable),
             new InstructionConfig(0,0,OpArgType.K,OpArgType.K,OpMode.IABC,OpCodeType.SetTabup),
             new InstructionConfig(0,0,OpArgType.U,OpArgType.N,OpMode.IABC,OpCodeType.SetUpvalue),

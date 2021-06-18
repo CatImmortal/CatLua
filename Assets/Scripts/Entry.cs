@@ -14,48 +14,13 @@ public class Entry : MonoBehaviour
     void Start()
     {
         Application.targetFrameRate = 30;
-        //Chunk chunk = TestUndump();
-        //TestLuaVM(chunk.MainFunc);
-
-
-        //ls = new LuaState(chunk.MainFunc.MaxStackSize + 8, chunk.MainFunc);
-        //ls.SetTop(chunk.MainFunc.MaxStackSize);
-        //var c1 = InstructionConfig.Configs;
-        //var c2 = ArithOpConfig.Configs;
-        //var c3 = CompareOpConfig.Configs;
-
-        //bool b = InstructionFuncs.Equals(1, 2);
-        //b = ArithOpFuncs.Equals(1, 2);
-        //b = CompareOpFuncs.Equals(1, 2);
 
         LuaState ls = new LuaState(100);
+        CSFunc.Init(ls);
         ls.Load(main.bytes, main.name, "b");
         ls.CallFunc(0, 0);
 
     }
-
-    //private void Update()
-    //{
-    //    if (Input.GetKeyDown(KeyCode.A))
-    //    {
-    //        Profiler.BeginSample("LuaVM Test");
-    //        while (true)
-    //        {
-    //            //int pc = ls.PC;
-    //            Instructoin inst = new Instructoin(ls.Fetch());
-    //            if (inst.OpCode != (byte)OpCodeType.Return)
-    //            {
-    //                inst.Execute(ls);
-    //                // Debug.Log(string.Format("[{0}] {1} {2}", pc + 1, inst.OpType, ls));
-    //            }
-    //            else
-    //            {
-    //                break;
-    //            }
-    //        }
-    //        Profiler.EndSample();
-    //    }
-    //}
 
     private Chunk TestUndump()
     {

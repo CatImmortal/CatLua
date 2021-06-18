@@ -96,7 +96,7 @@ namespace CatLua
         }
 
         /// <summary>
-        /// table[key] = value
+        /// data.table[key] = value
         /// </summary>
         private void SetTableValue(int index, LuaDataUnion data, LuaDataUnion key,LuaDataUnion value)
         {

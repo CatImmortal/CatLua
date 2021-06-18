@@ -18,13 +18,13 @@ namespace CatLua
         }
 
         /// <summary>
-        /// 当前栈帧的最大预留寄存器数量
+        /// 当前栈帧的非预留寄存器区域的大小（预留区域最大索引到top的那部分的长度）
         /// </summary>
-        public int CurFrameRegsiterCount
+        public int CurFrameNonReserveRegisterSize
         {
             get
             {
-                return curFrame.Closure.Proto.MaxStackSize;
+                return curFrame.GetNonReserveRegisterSize(Top);
             }
         }
 
@@ -81,8 +81,8 @@ namespace CatLua
 
             if (resultNum == -1)
             {
-                //弹出从CurFrameBottom + CurFrameRegsiterCount 到 top 的所有参数
-                resultNum = Top - (CurFrameBottom + CurFrameRegsiterCount - 1);
+                //需要弹出所有非寄存器预留区域的值
+                resultNum = CurFrameNonReserveRegisterSize;
             }
 
             //弹出resultNum个返回值
@@ -122,50 +122,67 @@ namespace CatLua
         /// </summary>
         public void CallFunc(int argsNum,int resultNum)
         {
-            PreFuncCall(argsNum);
-            ExcuteFuncCall();
-            PostFuncCall(resultNum);
-            Debug.Log(string.Format("<color=#66ccff>函数调用结束:{0}</color>" , this));
-        }
-
-        /// <summary>
-        /// 为函数调用作准备，将被调函数和参数压入新栈帧内
-        /// </summary>
-        private void PreFuncCall(int argsNum)
-        {
-            //从主调栈帧的栈顶弹出函数与参数
-            LuaDataUnion[] FuncAndParams = globalStack.PopN(argsNum + 1);
-
-            if (FuncAndParams[0].Type != LuaDataType.Function)
+            LuaDataUnion data = globalStack.Get(-(argsNum + 1));
+            if (data.Type != LuaDataType.Function)
             {
                 throw new Exception("Call调用的数据不是函数类型");
             }
 
-            
+            if (data.Closure.CSFunc == null)
+            {
+                //调用Lua函数
+                Closure c = data.Closure;
+                Debug.Log(string.Format("<color=#66ccff>调用Lua函数：{0}<{1}-{2}></color>,{3}:", c.Proto.Source, c.Proto.LineDefined, c.Proto.LastLineDefined,this));
+
+                PreLuaFuncCall(argsNum);
+                ExcuteLuaFuncCall();
+                PostLuaFuncCall(resultNum);
+            }
+            else
+            {
+                //调用C#函数
+                Debug.Log(string.Format("<color=#66ccff>调用C#函数:{0}</color>", this));
+                CSFuncCall(argsNum,resultNum);
+            }
+
+           
+            Debug.Log(string.Format("<color=#66ccff>函数调用结束:{0}</color>" , this));
+        }
+
+        /// <summary>
+        /// 为Lua函数调用作准备，将被调函数和参数压入新栈帧内
+        /// </summary>
+        private void PreLuaFuncCall(int argsNum)
+        {
+            //从主调栈帧的栈顶弹出函数与参数
+            LuaDataUnion[] FuncAndParams = globalStack.PopN(argsNum + 1);
 
             Closure c = FuncAndParams[0].Closure;
-            Debug.Log(string.Format("<color=#66ccff>调用函数：{0}<{1}-{2}></color>:", c.Proto.Source, c.Proto.LineDefined, c.Proto.LastLineDefined));
+           
             int registerNum = c.Proto.MaxStackSize;
             int paramsNum = c.Proto.NumParams;
             bool isVarArg = c.Proto.IsVararg != 0;
 
-            //为要调用的函数创建调用栈帧
+            //为要调用的函数创建栈帧
             FuncCallFrame newFrame = new FuncCallFrame();
             newFrame.Closure = c;
 
-            //设置新栈帧的栈底 在之前的栈帧之上 用max函数保证不会和之前的栈帧数据重叠
-            //如果之前的栈帧里保存的数据没超过寄存器数量，就设为CurFrameBottom + CurFrameRegsiterCount，否则设为Top + 1
-            newFrame.Bottom = Math.Max(CurFrameBottom + CurFrameRegsiterCount,Top + 1);  
+            //设置被调栈帧的栈底 在之前的栈帧之上 用max函数保证不会和之前的栈帧数据重叠
+            //如果之前的栈帧里保存的数据没超过预留寄存器数量，就设为curFrame.ReserveRegisterMaxIndex + 1，否则设为Top + 1
+            newFrame.Bottom = Math.Max(curFrame.ReserveRegisterMaxIndex + 1,Top + 1);
 
-            //压入新栈帧
+            //压入被调栈帧
             PushFuncCallFrame(newFrame);
+
+            //修改栈顶，指向被调栈帧的栈底
+            SetTop(newFrame.Bottom);
 
             //将固定参数压入被调栈帧
             globalStack.PushN(FuncAndParams, 1, paramsNum);
 
-            //修改栈顶指针 指向最后一个寄存器
-            //这样后续push新值不会占用到栈帧自己预留的寄存器位置，都是在Bottom + registerNum开始的部分push值
-            SetTop(newFrame.Bottom + (registerNum - 1));
+            //再次修改栈顶 指向最后一个寄存器
+            //这样后续push新值不会占用到栈帧自己预留的寄存器位置
+            SetTop(newFrame.ReserveRegisterMaxIndex);
 
             if (argsNum > paramsNum && isVarArg)
             {
@@ -179,9 +196,9 @@ namespace CatLua
         }
 
         /// <summary>
-        /// 执行函数调用
+        /// 执行Lua函数调用
         /// </summary>
-        private void ExcuteFuncCall()
+        private void ExcuteLuaFuncCall()
         {
             while (true)
             {
@@ -198,9 +215,9 @@ namespace CatLua
         }
 
         /// <summary>
-        /// 函数调用完成后，将被调函数栈帧的栈顶返回值压入主调函数栈帧的栈顶
+        /// Lua函数调用完成后，将被调函数栈帧的栈顶返回值压入主调函数栈帧的栈顶
         /// </summary>
-        private void PostFuncCall(int resultNum)
+        private void PostLuaFuncCall(int resultNum)
         {
             FuncCallFrame frame = curFrame;
 
@@ -211,9 +228,11 @@ namespace CatLua
             if (resultNum != 0)
             {
 
-                //返回值在栈顶，计算弹出来的返回值的数量
+                //返回值此时在栈顶，计算需要的返回值数量
                 int popResultNum;
-                int maxPopResultNum = Top - (frame.Bottom + frame.Closure.Proto.MaxStackSize) + 1;
+
+                //最大可返回的值的数量 是非预留寄存器区域的大小
+                int maxPopResultNum = CurFrameNonReserveRegisterSize;
 
                 if (resultNum == -1)
                 {
@@ -228,13 +247,13 @@ namespace CatLua
                 }
 
                 //取出popResultNum个返回值
-                LuaDataUnion[] datas = globalStack.PopN(popResultNum);
+                LuaDataUnion[] results = globalStack.PopN(popResultNum);
 
-                //恢复栈顶指针到主调栈帧的顶部，被调栈帧未被取出的数据就不要了
+                //恢复栈顶指针到主调栈帧的顶部，被调栈帧剩余未被取出的数据就不要了
                 SetTop(frame.Bottom - 1);
 
-                //压入resultNum个返回值到主调栈帧上
-                globalStack.PushN(datas, 0, resultNum);
+                //压入resultNum个返回值到主调栈帧上，不足的部分用nil补
+                globalStack.PushN(results, 0, resultNum);
             }
             else
             {
@@ -242,6 +261,45 @@ namespace CatLua
                 SetTop(frame.Bottom - 1);
             }
 
+        }
+
+        /// <summary>
+        /// C#函数调用
+        /// </summary>
+        private void CSFuncCall(int argsNum, int resultNum)
+        {
+         
+            LuaDataUnion[] FuncAndParams = globalStack.PopN(argsNum + 1);
+
+            Closure c = FuncAndParams[0].Closure;
+
+            FuncCallFrame newFrame = new FuncCallFrame();
+            newFrame.Closure = c;
+            newFrame.Bottom = Math.Max(curFrame.ReserveRegisterMaxIndex + 1, Top + 1);
+            
+
+            PushFuncCallFrame(newFrame);
+
+            SetTop(newFrame.Bottom);
+            globalStack.PushN(FuncAndParams, 1, argsNum);
+
+            int r = c.CSFunc(this);
+
+            PopFuncCallFrame();
+
+            if (resultNum != 0)
+            {
+                //取出r个返回值
+                LuaDataUnion[] results = globalStack.PopN(r);
+
+                SetTop(newFrame.Bottom - 1);
+
+                globalStack.PushN(results, 0, resultNum);
+            }
+            else
+            {
+                SetTop(newFrame.Bottom - 1);
+            }
         }
 
     }

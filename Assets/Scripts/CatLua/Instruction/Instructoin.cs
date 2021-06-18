@@ -104,7 +104,7 @@ namespace CatLua
             GetABx(out a,out bx);
 
             //sbx表示有符号整数
-            sbx = bx - Constants.maxArgSbx;
+            sbx = bx - Constants.MaxArgSbx;
         }
 
         /// <summary>

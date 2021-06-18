@@ -59,6 +59,8 @@ namespace CatLua
         public static Action<Instructoin, LuaState> TailCall = TailCallFunc;
         public static Action<Instructoin, LuaState> Self = SelfFunc;
 
+        public static Action<Instructoin, LuaState> GetTabUp = GetTableFunc;
+
         /// <summary>
         /// 将b位置的栈值复制到a位置
         /// </summary>
@@ -515,7 +517,7 @@ namespace CatLua
             if (argsNum == -1)
             {
                 //计算变长参数的个数
-                argsNum = vm.Top - (vm.CurFrameBottom + vm.CurFrameRegsiterCount) + 1;
+                argsNum = vm.CurFrameNonReserveRegisterSize;
             }
 
             //取出变长参数
@@ -566,6 +568,21 @@ namespace CatLua
             vm.PushRK(c);  //push table function key
             vm.PushTableValue(b);  //push function(table[key])
             vm.PopAndCopy(a);
+        }
+
+        /// <summary>
+        /// 压入_G表和c位置的值，然后压入value = _G[RK(c)]，最后弹出value复制到a位置
+        /// </summary>
+        private static void GetTabUpFunc(Instructoin i, LuaState vm)
+        {
+            i.GetABC(out int a, out int b, out int c);
+            a += vm.CurFrameBottom;
+
+            vm.PushGlobalEnv();
+            vm.PushRK(c);
+            vm.PushTableValue(-2);
+            vm.PopAndCopy(a);
+            vm.Pop(1);
         }
     }
 

@@ -22,20 +22,23 @@ namespace CatLua
         public const short LuacInt = 0x5678;
         public const double LuacNum = 370.5;
 
-        //类型tag
-        public const byte tagNil = 0x00;
-        public const byte tagBoolean = 0x01;
-        public const byte tagNumber = 0x03;
-        public const byte tagInteger = 0x13;
-        public const byte tagShortStr = 0x04;
-        public const byte tagLongStr = 0x14;
+        //常量类型tag
+        public const byte TagNil = 0x00;
+        public const byte TagBoolean = 0x01;
+        public const byte TagNumber = 0x03;
+        public const byte TagInteger = 0x13;
+        public const byte TagShortStr = 0x04;
+        public const byte TagLongStr = 0x14;
 
         //操作数的最大值
-        public const uint maxArgBx = (1 << 18) - 1;
-        public const int maxArgSbx = (int)(maxArgBx >> 1);
+        public const uint MaxArgBx = (1 << 18) - 1;
+        public const int MaxArgSbx = (int)(MaxArgBx >> 1);
 
         //SetList指令的默认批次
         public const int SetListDefaultBatch = 50;
+
+        //全局环境在注册表table里的index
+        public const long GlobalEnvIndex = 2;
     }
 }
 
