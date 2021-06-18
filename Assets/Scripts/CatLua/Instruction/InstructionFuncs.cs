@@ -59,7 +59,7 @@ namespace CatLua
         public static Action<Instructoin, LuaState> TailCall = TailCallFunc;
         public static Action<Instructoin, LuaState> Self = SelfFunc;
 
-        public static Action<Instructoin, LuaState> GetTabUp = GetTableFunc;
+        public static Action<Instructoin, LuaState> GetTabUp = GetTabUpFunc;
 
         /// <summary>
         /// 将b位置的栈值复制到a位置

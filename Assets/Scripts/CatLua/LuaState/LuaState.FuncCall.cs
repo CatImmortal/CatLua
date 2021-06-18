@@ -18,6 +18,17 @@ namespace CatLua
         }
 
         /// <summary>
+        /// 当前栈帧的最大预留寄存器数量
+        /// </summary>
+        public int CurFrameRegisterCount
+        {
+            get
+            {
+                return curFrame.Closure.Proto.MaxStackSize;
+            }
+        }
+
+        /// <summary>
         /// 当前栈帧的非预留寄存器区域的大小（预留区域最大索引到top的那部分的长度）
         /// </summary>
         public int CurFrameNonReserveRegisterSize
@@ -174,8 +185,8 @@ namespace CatLua
             //压入被调栈帧
             PushFuncCallFrame(newFrame);
 
-            //修改栈顶，指向被调栈帧的栈底
-            SetTop(newFrame.Bottom);
+            //修改栈顶，指向被调栈帧的Bottom - 1，这样接下来push参数就是从Bottom位置开始了
+            SetTop(newFrame.Bottom - 1);
 
             //将固定参数压入被调栈帧
             globalStack.PushN(FuncAndParams, 1, paramsNum);
@@ -280,7 +291,7 @@ namespace CatLua
 
             PushFuncCallFrame(newFrame);
 
-            SetTop(newFrame.Bottom);
+            SetTop(newFrame.Bottom - 1);
             globalStack.PushN(FuncAndParams, 1, argsNum);
 
             int r = c.CSFunc(this);
