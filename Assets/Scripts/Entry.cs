@@ -10,6 +10,7 @@ public class Entry : MonoBehaviour
 {
     public TextAsset main;
     private LuaState ls;
+
     // Start is called before the first frame update
     void Start()
     {

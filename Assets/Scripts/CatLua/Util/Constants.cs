@@ -37,8 +37,8 @@ namespace CatLua
         //SetList指令的默认批次
         public const int SetListDefaultBatch = 50;
 
-        //全局环境在注册表table里的index
-        public const long GlobalEnvIndex = 2;
+        //全局环境在注册表table里的key
+        public const long GlobalEnvKey = 2;
     }
 }
 

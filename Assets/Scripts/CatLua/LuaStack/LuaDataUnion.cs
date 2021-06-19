@@ -331,6 +331,35 @@ namespace CatLua
                     return false;
             }
         }
+
+        public void ChangeData(LuaDataUnion data)
+        {
+            Type = data.Type;
+
+            switch (Type)
+            {
+
+                case LuaDataType.Boolean:
+                    Boolean = data.Boolean;
+                    break;
+                case LuaDataType.Integer:
+                    Integer = data.Integer;
+                    break;
+                case LuaDataType.Number:
+                    Number = data.Number;
+                    break;
+                case LuaDataType.String:
+                    Str = data.Str;
+                    break;
+                case LuaDataType.Table:
+                    Table = data.Table;
+                    break;
+                case LuaDataType.Function:
+                    Closure = data.Closure;
+                    break;
+            }
+
+        }
     }
 }
 

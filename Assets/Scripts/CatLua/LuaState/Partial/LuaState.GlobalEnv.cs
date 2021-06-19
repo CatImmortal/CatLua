@@ -11,7 +11,7 @@ namespace CatLua
         /// </summary>
         public void PushGlobalEnv()
         {
-            LuaTable t = registry[Constants.GlobalEnvIndex].Table;
+            LuaTable t = registry[Constants.GlobalEnvKey].Table;
             Push(t);
         }
 
@@ -20,7 +20,7 @@ namespace CatLua
         /// </summary>
         public LuaDataType PushGlobalValue(string key)
         {
-            LuaDataUnion data = registry[Constants.GlobalEnvIndex];
+            LuaDataUnion data = registry[Constants.GlobalEnvKey];
             return PushTableValue(data, Factory.NewString(key));
         }
 
@@ -33,9 +33,9 @@ namespace CatLua
             LuaDataUnion value = globalStack.Pop();
 
 
-            LuaDataUnion data = registry[Constants.GlobalEnvIndex];
+            LuaDataUnion data = registry[Constants.GlobalEnvKey];
             data.Table[dataKey] = value;
-            registry[Constants.GlobalEnvIndex] = data;
+            registry[Constants.GlobalEnvKey] = data;
         }
 
         /// <summary>

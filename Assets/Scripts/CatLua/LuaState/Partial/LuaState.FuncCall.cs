@@ -52,8 +52,8 @@ namespace CatLua
 
             if (c.Proto.UpvalueInfos.Length > 0)
             {
-                //设置_G
-                LuaDataUnion g = registry[Constants.GlobalEnvIndex];
+                //设置_G到upvalue中
+                LuaDataUnion g = registry[Constants.GlobalEnvKey];
                 c.Upvalues[0] = new Upvalue(g);
             }
 
@@ -144,29 +144,6 @@ namespace CatLua
             return curFrame.Closure.Upvalues[index];
         }
 
-        /// <summary>
-        /// 关闭当前栈帧中处于开启状态的upvalue
-        /// </summary>
-        public void CloseUpvalues(int globalIndex)
-        {
-            List<int> needDeleteKeys = new List<int>();
-
-            //被捕获的upvalue退出作用域时，需要将这些upvalue修改为关闭状态
-            foreach (KeyValuePair<int, Upvalue> item in openUpvalues)
-            {
-                if (item.Key >= globalIndex)
-                {
-
-
-                    needDeleteKeys.Add(item.Key);
-                }
-            }
-
-            foreach (int key in needDeleteKeys)
-            {
-                openUpvalues.Remove(key);
-            }
-        }
 
         /// <summary>
         /// 调用函数
@@ -176,7 +153,7 @@ namespace CatLua
             LuaDataUnion data = globalStack.Get(-(argsNum + 1));
             if (data.Type != LuaDataType.Function)
             {
-                throw new Exception("Call调用的数据不是函数类型");
+                throw new Exception("Call调用的数据不是函数类型，而是" + data.Type);
             }
 
             if (data.Closure.CSFunc == null)

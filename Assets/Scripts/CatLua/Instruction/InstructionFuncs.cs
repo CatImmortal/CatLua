@@ -90,14 +90,6 @@ namespace CatLua
             i.GetAsBx(out int a, out int sbx);
 
             vm.AddPC(sbx);
-
-            if (a != 0)
-            {
-                //处理upvalue
-                //闭合所有a及之后索引的Upvalue
-                a += vm.CurFrameBottom;
-                vm.CloseUpvalues(a);
-            }
         }
 
         /// <summary>
@@ -120,7 +112,7 @@ namespace CatLua
             }
 
             //弹出栈顶的nil，恢复栈
-            vm.Pop(1);
+            vm.Pop();
         }
 
         /// <summary>
@@ -465,10 +457,12 @@ namespace CatLua
             //从a位置开始，复制并压入函数和参数到主调栈帧的栈顶
             int ArgsNum = vm.PushFuncAndArgs(a, b);
 
-            //压入被调函数栈帧和参数，调用函数
+            //弹出函数和参数，用函数创建被调栈帧并压入，然后压入参数，执行函数内的指令
             vm.CallFunc(ArgsNum, c - 1);
+            //遇到return指令则调用结束，将返回值复制并压入栈顶
+            //然后弹出栈顶的返回值，弹出被调栈帧，再将这些返回值压入主调栈帧
 
-            //将栈顶的来自被调函数的返回值弹出并复制到a开始的部分
+            //最后弹出主调栈帧栈顶的返回值并复制到a开始的位置
             vm.PopResults(a, c - 1);
 
         }
@@ -600,7 +594,9 @@ namespace CatLua
             vm.CopyAndPush(a);
             LuaDataUnion data = vm.Pop();
 
-            upvalue.value = data;
+            //修改upvalue所指向的data的内部数据
+            //这样如果upvalue是引用的栈上数据，那么栈上的数据会被修改到
+            upvalue.value.ChangeData(data);
         }
 
         /// <summary>
