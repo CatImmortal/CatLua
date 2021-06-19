@@ -8,15 +8,11 @@ namespace CatLua
     /// <summary>
     /// lua常量的模拟union
     /// </summary>
-    public struct LuaConstantUnion
+    public class LuaConstantUnion
     {
-        public LuaConstantUnion(LuaConstantType type, bool boolean = false, long integer = default, double number = default, string str = default)
+        public LuaConstantUnion(LuaConstantType type, bool boolean = default, long integer = default, double number = default, string str = default)
         {
             Type = type;
-            Boolean = default;
-            Integer = default;
-            Number = default;
-            Str = default;
 
             switch (type)
             {

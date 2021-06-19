@@ -12,6 +12,7 @@ namespace CatLua
         public LuaState(int size)
         {
             globalStack = new LuaStack(size);
+
             curFrame = new FuncCallFrame();
 
             registry = new LuaTable();

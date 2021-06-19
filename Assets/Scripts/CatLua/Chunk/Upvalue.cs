@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace CatLua
 {
-    public struct Upvalue
+    public class Upvalue
     {
         public byte Instack;
         public byte Index;

@@ -106,7 +106,6 @@ namespace CatLua
             }
            
             data.Table[key] = value;
-            globalStack.Set(index, data);
         }
     }
 }

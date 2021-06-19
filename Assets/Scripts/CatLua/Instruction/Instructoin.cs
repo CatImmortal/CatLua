@@ -7,7 +7,7 @@ namespace CatLua
     /// <summary>
     /// 指令
     /// </summary>
-    public struct Instructoin
+    public class Instructoin
     {
         public Instructoin(uint code)
         {

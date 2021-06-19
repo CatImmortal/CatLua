@@ -62,8 +62,6 @@ namespace CatLua
         {
             LuaDataUnion value = globalStack.Pop();
             globalStack.Set(index, value);
-
-            //UnityEngine.Debug.Log("PopAndCopy,index == " + index);
         }
 
         /// <summary>
@@ -132,7 +130,7 @@ namespace CatLua
                 int num = n;
                 for (int i = 0; i < num; i++)
                 {
-                    globalStack.Push(default);
+                    globalStack.Push(LuaDataUnion.Nil);
                 }
                
             }
@@ -156,7 +154,7 @@ namespace CatLua
         /// </summary>
         public void Push()
         {
-            globalStack.Push(default);
+            globalStack.Push(LuaDataUnion.Nil);
         }
 
         /// <summary>

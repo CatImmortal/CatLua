@@ -10,18 +10,11 @@ namespace CatLua
     /// </summary>
 
 
-    public struct LuaDataUnion : IEqualityComparer<LuaDataUnion>
+    public class LuaDataUnion
     {
         public LuaDataUnion(LuaDataType type, bool boolean = default, long integer = default, double number = default, string str = default, LuaTable table = default, Closure closure = default)
         {
             Type = type;
-
-            Boolean = default;
-            Integer = default;
-            Number = default;
-            Str = default;
-            Table = default;
-            Closure = default;
 
             switch (type)
             {
@@ -67,6 +60,8 @@ namespace CatLua
 
 
         public Closure Closure;
+
+        public static LuaDataUnion Nil = new LuaDataUnion(LuaDataType.Nil);
 
         /// <summary>
         /// 转换为bool值
@@ -181,28 +176,30 @@ namespace CatLua
             return s;
         }
 
-        public bool Equals(LuaDataUnion x, LuaDataUnion y)
+        public bool Equals(LuaDataUnion other)
         {
             bool result = false;
 
-            switch (x.Type)
+            switch (Type)
             {
                 case LuaDataType.Nil:
-                    result = y.Type == LuaDataType.Nil;
+                    result = other.Type == LuaDataType.Nil;
                     break;
+
                 case LuaDataType.Boolean:
-                    result = x.Boolean == y.Boolean;
+                    result = Boolean == other.Boolean;
                     break;
+
                 case LuaDataType.Integer:
 
-                    switch (y.Type)
+                    switch (other.Type)
                     {
                        
                         case LuaDataType.Integer:
-                            result = x.Integer == y.Integer;
+                            result = Integer == other.Integer;
                             break;
                         case LuaDataType.Number:
-                            result = x.Integer == y.Number;
+                            result = Integer == other.Number;
                             break;
                         default:
                             result = false;
@@ -212,14 +209,14 @@ namespace CatLua
                     break;
                 case LuaDataType.Number:
 
-                    switch (y.Type)
+                    switch (other.Type)
                     {
 
                         case LuaDataType.Integer:
-                            result = x.Number == y.Integer;
+                            result = Number == other.Integer;
                             break;
                         case LuaDataType.Number:
-                            result = x.Number == y.Number;
+                            result = Number == other.Number;
                             break;
                         default:
                             result = false;
@@ -227,8 +224,9 @@ namespace CatLua
                     }
 
                     break;
+
                 case LuaDataType.String:
-                    result = y.Type == LuaDataType.String && x.Str == y.Str;
+                    result = other.Type == LuaDataType.String && Str == other.Str;
                     break;
 
                 case LuaDataType.Table:
@@ -245,13 +243,20 @@ namespace CatLua
             return result;
         }
 
-        public int GetHashCode(LuaDataUnion obj)
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as LuaDataUnion);
+        }
+
+        public override int GetHashCode()
         {
             int hashCode = 0;
 
-            switch (obj.Type)
+            switch (Type)
             {
-                
+                case LuaDataType.Nil:
+                    hashCode = 0;
+                    break;
                 case LuaDataType.Boolean:
                     hashCode = Boolean.GetHashCode();
                     break;
@@ -270,9 +275,32 @@ namespace CatLua
                 case LuaDataType.Function:
                     hashCode = Closure.GetHashCode();
                     break;
+                default:
+                    return base.GetHashCode();
+                    break;
             }
 
             return hashCode;
+        }
+    
+        public static bool operator == (LuaDataUnion x, LuaDataUnion y)
+        {
+            if (x is null && y is null)
+            {
+                return true;
+            }
+
+            if (x is null || y is null)
+            {
+                return false;
+            }
+
+            return x.Equals(y);
+        }
+
+        public static bool operator !=(LuaDataUnion x, LuaDataUnion y)
+        {
+            return !(x == y);
         }
     }
 }

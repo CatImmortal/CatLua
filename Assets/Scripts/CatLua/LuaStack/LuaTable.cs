@@ -7,19 +7,17 @@ namespace CatLua
     /// <summary>
     /// Lua中的Table数据结构
     /// </summary>
-    public struct LuaTable
+    public class LuaTable
     {
-        public LuaTable(int arrSize,int dictSize)
+        public LuaTable(int arrSize = 0,int dictSize = 0)
         {
-            arr = default;
-            dict = default;
 
             if (arrSize > 0)
             {
                 arr = new List<LuaDataUnion>(arrSize);
                 for (int i = 0; i < arrSize; i++)
                 {
-                    arr.Add(default);
+                    arr.Add(LuaDataUnion.Nil);
                 }
             }
 

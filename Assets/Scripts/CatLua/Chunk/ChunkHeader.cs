@@ -7,7 +7,7 @@ namespace CatLua
     /// <summary>
     /// Chunk的头信息
     /// </summary>
-    public struct ChunkHeader
+    public class ChunkHeader
     {
         /// <summary>
         /// 签名 4byte 0x1B 4C 75 61

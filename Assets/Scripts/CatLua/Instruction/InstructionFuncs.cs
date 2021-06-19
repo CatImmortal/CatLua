@@ -469,7 +469,7 @@ namespace CatLua
         }
 
         /// <summary>
-        /// 被调函数的所有指令都执行完毕后，将a开始的b - 1个数据压入栈顶，以作为返回值压入主调函数
+        /// 被调函数的所有指令都执行完毕后，将a开始的b - 1个数据压入栈顶，以作为返回值压入主调函数栈帧
         /// </summary>
         private static void ReturnFunc(Instructoin i, LuaState vm)
         {

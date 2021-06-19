@@ -7,7 +7,7 @@ namespace CatLua
     /// <summary>
     /// 指令配置
     /// </summary>
-    public struct InstructionConfig
+    public class InstructionConfig
     {
         public InstructionConfig(byte testFlag, byte setAFlag, OpArgType argBType, OpArgType argCType, OpMode opMode, OpCodeType type, Action<Instructoin, LuaState> func = null)
         {

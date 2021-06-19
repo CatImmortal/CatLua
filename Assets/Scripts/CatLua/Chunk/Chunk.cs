@@ -7,7 +7,7 @@ namespace CatLua
     /// <summary>
     /// lua的二进制字节码chunk
     /// </summary>
-    public struct Chunk
+    public class Chunk
     {
         /// <summary>
         /// 头信息
@@ -29,7 +29,7 @@ namespace CatLua
         /// </summary>
         public static Chunk Undump(byte[] data)
         {
-            Chunk chunk;
+            Chunk chunk = new Chunk();
             ChunkReader reader = new ChunkReader(data);
             chunk.Header = reader.CheckHeader();
             chunk.UpvaluesSize = reader.ReadByte();

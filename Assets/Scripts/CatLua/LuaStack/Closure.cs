@@ -7,7 +7,7 @@ namespace CatLua
     /// <summary>
     /// 闭包
     /// </summary>
-    public struct Closure
+    public class Closure
     {
         public Closure(FuncPrototype proto)
         {
@@ -17,7 +17,7 @@ namespace CatLua
 
         public Closure(Func<LuaState, int> csFunc)
         {
-            Proto = default;
+            Proto = null;
             CSFunc = csFunc;
         }
 

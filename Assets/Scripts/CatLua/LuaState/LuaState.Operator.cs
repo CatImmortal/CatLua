@@ -54,7 +54,7 @@ namespace CatLua
                 }
                 else
                 {
-                    return default;
+                    return LuaDataUnion.Nil;
                 }
                 
             }
@@ -78,7 +78,7 @@ namespace CatLua
                 }
                 else
                 {
-                    return default;
+                    return LuaDataUnion.Nil;
                 }
 
             }
@@ -99,7 +99,7 @@ namespace CatLua
                 return new LuaDataUnion(LuaDataType.Number, number: result);
             }
 
-            return default;
+            return LuaDataUnion.Nil;
         }
 
         /// <summary>

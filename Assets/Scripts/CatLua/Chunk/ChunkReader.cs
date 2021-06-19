@@ -7,7 +7,7 @@ namespace CatLua
     /// <summary>
     /// Chunk数据读取器
     /// </summary>
-    public struct ChunkReader
+    public class ChunkReader
     {
         public ChunkReader(byte[] data)
         {

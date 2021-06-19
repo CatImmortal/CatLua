@@ -143,7 +143,7 @@ namespace CatLua
             {
                 //调用Lua函数
                 Closure c = data.Closure;
-                Debug.Log(string.Format("<color=#66ccff>调用Lua函数：{0}<{1}-{2}></color>,{3}:", c.Proto.Source, c.Proto.LineDefined, c.Proto.LastLineDefined,this));
+                Debug.Log(string.Format("<color=#66ccff>调用Lua函数，函数和参数压入栈顶</color>：{0}<{1}-{2}>,{3}:", c.Proto.Source, c.Proto.LineDefined, c.Proto.LastLineDefined,this));
 
                 PreLuaFuncCall(argsNum);
                 ExcuteLuaFuncCall();
@@ -152,12 +152,12 @@ namespace CatLua
             else
             {
                 //调用C#函数
-                Debug.Log(string.Format("<color=#66ccff>调用C#函数:{0}</color>", this));
+                Debug.Log(string.Format("<color=#66ccff>调用C#函数，函数和参数压入栈顶</color>:{0}", this));
                 CSFuncCall(argsNum,resultNum);
             }
 
            
-            Debug.Log(string.Format("<color=#66ccff>函数调用结束:{0}</color>" , this));
+            Debug.Log(string.Format("<color=#66ccff>函数调用结束，返回值压入栈顶</color>:{0}", this));
         }
 
         /// <summary>
@@ -170,17 +170,16 @@ namespace CatLua
 
             Closure c = FuncAndParams[0].Closure;
            
-            int registerNum = c.Proto.MaxStackSize;
             int paramsNum = c.Proto.NumParams;
             bool isVarArg = c.Proto.IsVararg != 0;
 
             //为要调用的函数创建栈帧
-            FuncCallFrame newFrame = new FuncCallFrame();
-            newFrame.Closure = c;
 
             //设置被调栈帧的栈底 在之前的栈帧之上 用max函数保证不会和之前的栈帧数据重叠
             //如果之前的栈帧里保存的数据没超过预留寄存器数量，就设为curFrame.ReserveRegisterMaxIndex + 1，否则设为Top + 1
-            newFrame.Bottom = Math.Max(curFrame.ReserveRegisterMaxIndex + 1,Top + 1);
+            int bottom = Math.Max(curFrame.ReserveRegisterMaxIndex + 1, Top + 1);
+
+            FuncCallFrame newFrame = new FuncCallFrame(c,bottom);
 
             //压入被调栈帧
             PushFuncCallFrame(newFrame);
@@ -215,8 +214,13 @@ namespace CatLua
             {
                 //不断取出指令执行 直到遇到return指令
                 Instructoin i = new Instructoin(Fetch());
-                Debug.Log(string.Format("指令执行：[{0}] {1} {2}", curFrame.PC, i.OpType, this));
+                if (i.OpType == OpCodeType.Return)
+                {
+                    int x = 1;
+                }
+                Debug.Log(string.Format("指令执行前：[{0}] {1} {2}", curFrame.PC, i.OpType, this));
                 i.Execute(this);
+                Debug.Log(string.Format("指令执行后：[{0}] {1} {2}", curFrame.PC, i.OpType, this));
                 if (i.OpType == OpCodeType.Return)
                 {
                    //此时已经将返回值准备在栈顶上了
@@ -242,8 +246,8 @@ namespace CatLua
                 //返回值此时在栈顶，计算需要的返回值数量
                 int popResultNum;
 
-                //最大可返回的值的数量 是非预留寄存器区域的大小
-                int maxPopResultNum = CurFrameNonReserveRegisterSize;
+                //最大可返回的值的数量 是被调栈帧非预留寄存器区域的大小
+                int maxPopResultNum = frame.GetNonReserveRegisterSize(Top);
 
                 if (resultNum == -1)
                 {
@@ -284,10 +288,8 @@ namespace CatLua
 
             Closure c = FuncAndParams[0].Closure;
 
-            FuncCallFrame newFrame = new FuncCallFrame();
-            newFrame.Closure = c;
-            newFrame.Bottom = Math.Max(curFrame.ReserveRegisterMaxIndex + 1, Top + 1);
-            
+            int bottom = Math.Max(curFrame.ReserveRegisterMaxIndex + 1, Top + 1);
+            FuncCallFrame newFrame = new FuncCallFrame(c,bottom);
 
             PushFuncCallFrame(newFrame);
 

@@ -9,10 +9,19 @@ namespace CatLua
     public class FuncCallFrame
     {
 
-        /// <summary>
-        /// 闭包
-        /// </summary>
-        public Closure Closure;
+        public FuncCallFrame(Closure closure = null, int bottom = 0)
+        {
+            Closure = closure;
+            Bottom = bottom;
+
+            int size = 0;
+            if (Closure != null && Closure.Proto != null)
+            {
+                size = Closure.Proto.MaxStackSize;
+            }
+            ReserveRegisterMaxIndex = (Bottom - 1) + size; 
+        }
+
 
         /// <summary>
         /// 变长参数
@@ -23,11 +32,6 @@ namespace CatLua
         /// 指令索引
         /// </summary>
         public int PC;
-        
-        /// <summary>
-        /// 本栈帧的栈底索引
-        /// </summary>
-        public int Bottom;
 
         /// <summary>
         /// 前一个函数的调用栈帧
@@ -35,14 +39,30 @@ namespace CatLua
         public FuncCallFrame Prev;
 
         /// <summary>
+        /// 闭包
+        /// </summary>
+        public Closure Closure
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
         /// 栈帧的预留寄存器区域最大索引
         /// </summary>
         public int ReserveRegisterMaxIndex
         {
-            get
-            {
-                return (Bottom - 1) + Closure.Proto.MaxStackSize;
-            }
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// 本栈帧的栈底索引
+        /// </summary>
+        public int Bottom
+        {
+            get;
+            private set;
         }
 
         /// <summary>

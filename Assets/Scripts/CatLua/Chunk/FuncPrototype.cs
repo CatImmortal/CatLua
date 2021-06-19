@@ -7,7 +7,7 @@ namespace CatLua
     /// <summary>
     /// 函数原型
     /// </summary>
-    public struct FuncPrototype
+    public class FuncPrototype
     {
         /// <summary>
         /// 源文件名

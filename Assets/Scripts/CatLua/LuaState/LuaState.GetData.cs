@@ -71,23 +71,25 @@ namespace CatLua
         /// </summary>
         public string GetString(int index)
         {
-            LuaDataUnion value = globalStack.Get(index);
+            LuaDataUnion data = globalStack.Get(index);
             string str = string.Empty;
-            switch (value.Type)
+            switch (data.Type)
             {
 
                 case LuaDataType.Integer:
-                    str = value.Integer.ToString();
-                    globalStack.Set(index, new LuaDataUnion(LuaDataType.String, str: str));
+                    str = data.Integer.ToString();
+                    data.Type = LuaDataType.String;
+                    data.Str = str;
                     break;
 
                 case LuaDataType.Number:
-                    str = value.Number.ToString();
-                    globalStack.Set(index, new LuaDataUnion(LuaDataType.String, str: str));
+                    str = data.Number.ToString();
+                    data.Type = LuaDataType.String;
+                    data.Str = str;
                     break;
 
                 case LuaDataType.String:
-                    str = value.Str;
+                    str = data.Str;
                     break;
             }
 

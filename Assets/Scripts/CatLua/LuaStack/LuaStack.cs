@@ -77,7 +77,7 @@ namespace CatLua
 
             
             LuaDataUnion data = stack[Top];
-            stack[Top] = default;
+            stack[Top] = LuaDataUnion.Nil;
             Top--;
             //UnityEngine.Debug.Log("pop top ==" + Top + ",data ==" + data);
             return data;
@@ -133,7 +133,7 @@ namespace CatLua
                 return stack[absIndex];
             }
 
-            return default;
+            return LuaDataUnion.Nil;
         }
 
         /// <summary>

@@ -7,7 +7,7 @@ namespace CatLua
     /// <summary>
     /// 数学与位运算符配置
     /// </summary>
-    public struct ArithOpConfig
+    public class ArithOpConfig
     {
         public ArithOpConfig(Func<long, long, long> integerFunc, Func<double, double, double> numberFunc)
         {

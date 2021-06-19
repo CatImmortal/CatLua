@@ -7,7 +7,7 @@ namespace CatLua
     /// <summary>
     /// 比较运算符配置
     /// </summary>
-    public struct CompareOpConfig
+    public class CompareOpConfig
     {
         public CompareOpConfig(Func<LuaDataUnion, LuaDataUnion, bool> compareFunc)
         {
