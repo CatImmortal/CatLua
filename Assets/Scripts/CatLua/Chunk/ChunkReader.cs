@@ -329,7 +329,7 @@ namespace CatLua
                 MaxStackSize = ReadByte(),
                 Code = ReadCode(),
                 Constants = ReadConstants(),
-                Upvalues = ReadUpvalues(),
+                UpvalueInfos = ReadUpvalues(),
                 Protos = ReadProtos(source),
                 LineInfo = ReadLineInfo(),
                 Locvars = ReadLocVars(),

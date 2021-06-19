@@ -39,6 +39,27 @@ namespace CatLua
             }
         }
 
+
+        /// <summary>
+        /// 加载一段字节码chunk，将主函数原型实例化为闭包，压入栈顶
+        /// mode表示加载模式，"b"=加载二进制chunk，"t"=加载文本chunk，"pt"=两者都可
+        /// </summary>
+        public int LoadChunk(byte[] bytes, string chunkName, string mode)
+        {
+            Chunk chunk = Chunk.Undump(bytes);
+            Closure c = new Closure(chunk.MainFunc);
+            Push(c);
+
+            if (c.Proto.UpvalueInfos.Length > 0)
+            {
+                //设置_G
+                LuaDataUnion g = registry[Constants.GlobalEnvIndex];
+                c.Upvalues[0] = new Upvalue(g);
+            }
+
+            return 0;
+        }
+
         /// <summary>
         /// 压入函数调用栈帧
         /// </summary>
@@ -115,17 +136,36 @@ namespace CatLua
 
         }
 
+        /// <summary>
+        /// 获取当前栈帧upvalue表中index位置的upvalue值
+        /// </summary>
+        public Upvalue GetCurFrameUpvalue(int index)
+        {
+            return curFrame.Closure.Upvalues[index];
+        }
 
         /// <summary>
-        /// 加载一段字节码chunk，将主函数原型实例化为闭包，压入栈顶
-        /// mode表示加载模式，"b"=加载二进制chunk，"t"=加载文本chunk，"pt"=两者都可
+        /// 关闭当前栈帧中处于开启状态的upvalue
         /// </summary>
-        public int Load(byte[] bytes,string chunkName,string mode)
+        public void CloseUpvalues(int globalIndex)
         {
-            Chunk chunk = Chunk.Undump(bytes);
-            Closure c = new Closure(chunk.MainFunc);
-            Push(c);
-            return 0;
+            List<int> needDeleteKeys = new List<int>();
+
+            //被捕获的upvalue退出作用域时，需要将这些upvalue修改为关闭状态
+            foreach (KeyValuePair<int, Upvalue> item in openUpvalues)
+            {
+                if (item.Key >= globalIndex)
+                {
+
+
+                    needDeleteKeys.Add(item.Key);
+                }
+            }
+
+            foreach (int key in needDeleteKeys)
+            {
+                openUpvalues.Remove(key);
+            }
         }
 
         /// <summary>
@@ -214,10 +254,6 @@ namespace CatLua
             {
                 //不断取出指令执行 直到遇到return指令
                 Instructoin i = new Instructoin(Fetch());
-                if (i.OpType == OpCodeType.Return)
-                {
-                    int x = 1;
-                }
                 Debug.Log(string.Format("指令执行前：[{0}] {1} {2}", curFrame.PC, i.OpType, this));
                 i.Execute(this);
                 Debug.Log(string.Format("指令执行后：[{0}] {1} {2}", curFrame.PC, i.OpType, this));

@@ -59,7 +59,10 @@ namespace CatLua
         public static Action<Instructoin, LuaState> TailCallFunc = TailCall;
         public static Action<Instructoin, LuaState> SelfFunc = Self;
 
+        public static Action<Instructoin, LuaState> GetUpvalueFunc = GetUpvalue;
+        public static Action<Instructoin, LuaState> SetUpvalueFunc = SetUpvalue;
         public static Action<Instructoin, LuaState> GetTabUpFunc = GetTabUp;
+        public static Action<Instructoin, LuaState> SetTabUpFunc = SetTabUp;
 
         /// <summary>
         /// 将b位置的栈值复制到a位置
@@ -91,7 +94,9 @@ namespace CatLua
             if (a != 0)
             {
                 //处理upvalue
-                //todo
+                //闭合所有a及之后索引的Upvalue
+                a += vm.CurFrameBottom;
+                vm.CloseUpvalues(a);
             }
         }
 
@@ -571,18 +576,63 @@ namespace CatLua
         }
 
         /// <summary>
-        /// 压入_G表和c位置的值，然后压入value = _G[RK(c)]，最后弹出value复制到a位置
+        /// 将当前函数upvalues表中b位置的upvalue值复制到栈的a位置
+        /// </summary>
+        private static void GetUpvalue(Instructoin i, LuaState vm)
+        {
+            i.GetABC(out int a, out int b, out int c);
+            a += vm.CurFrameBottom;
+
+            vm.Push(vm.GetCurFrameUpvalue(b).value);
+            vm.PopAndCopy(a);
+
+        }
+
+        /// <summary>
+        /// 将栈中a位置的值赋值给当前函数upvalues表中b位置的upvalue
+        /// </summary>
+        private static void SetUpvalue(Instructoin i, LuaState vm)
+        {
+            i.GetABC(out int a, out int b, out int c);
+            a += vm.CurFrameBottom;
+            Upvalue upvalue = vm.GetCurFrameUpvalue(b);
+
+            vm.CopyAndPush(a);
+            LuaDataUnion data = vm.Pop();
+
+            upvalue.value = data;
+        }
+
+        /// <summary>
+        /// 从当前函数upvalues表中获取b位置的table upvalue，将table[RK(c)]复制到栈中a位置
         /// </summary>
         private static void GetTabUp(Instructoin i, LuaState vm)
         {
             i.GetABC(out int a, out int b, out int c);
             a += vm.CurFrameBottom;
+            Upvalue upvalue = vm.GetCurFrameUpvalue(b);
 
-            vm.PushGlobalEnv();
+            vm.Push(upvalue.value.Table);
             vm.PushRK(c);
             vm.PushTableValue(-2);
             vm.PopAndCopy(a);
-            vm.Pop(1);
+            vm.Pop();
+        }
+
+        /// <summary>
+        /// 从当前函数upvalues表中获取a位置的table upvalue，table[RK(b)] = RK(c)
+        /// </summary>
+        private static void SetTabUp(Instructoin i, LuaState vm)
+        {
+            i.GetABC(out int a, out int b, out int c);
+
+            Upvalue upvalue = vm.GetCurFrameUpvalue(a);
+
+            vm.Push(upvalue.value.Table);
+            vm.PushRK(b);
+            vm.PushRK(c);
+            vm.SetTableValue(-3);
+            vm.Pop();
         }
     }
 

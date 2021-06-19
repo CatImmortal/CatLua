@@ -52,7 +52,7 @@ namespace CatLua
         /// <summary>
         /// upvalue表
         /// </summary>
-        public UpvalueInfo[] Upvalues;
+        public UpvalueInfo[] UpvalueInfos;
 
         /// <summary>
         /// 子函数原型表

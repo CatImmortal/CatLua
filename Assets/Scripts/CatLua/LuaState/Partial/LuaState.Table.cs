@@ -63,7 +63,7 @@ namespace CatLua
         }
 
         /// <summary>
-        /// 从index位置获取table，从栈顶弹出key value，table[key]=value
+        /// 从index位置获取table，从栈顶分别弹出value key ，table[key]=value
         /// </summary>
         public void SetTableValue(int index)
         {

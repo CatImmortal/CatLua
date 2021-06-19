@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace CatLua
 {
     /// <summary>
-    /// Lua解释器状态
+    /// Lua解释器核心
     /// </summary>
     public partial class LuaState
     {
@@ -19,6 +19,8 @@ namespace CatLua
 
             //将全局环境表_G放入注册表
             registry[Constants.GlobalEnvIndex] = Factory.NewTable(new LuaTable());
+
+            openUpvalues = new Dictionary<int, Upvalue>();
         }
 
         /// <summary>
@@ -35,6 +37,11 @@ namespace CatLua
         /// 全局Lua注册表
         /// </summary>
         private LuaTable registry;
+
+        /// <summary>
+        /// 开放状态的upvalue
+        /// </summary>
+        private Dictionary<int, Upvalue> openUpvalues;
 
         public override string ToString()
         {

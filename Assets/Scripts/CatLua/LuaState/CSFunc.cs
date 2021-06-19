@@ -18,6 +18,7 @@ namespace CatLua
         {
             int argsNum = ls.CurFrameNonReserveRegisterSize;
             string s = string.Empty;
+            s += "Lua Print:";
             LuaDataUnion[] datas = ls.PopN(argsNum);
             for (int i = 0; i < argsNum; i++)
             {

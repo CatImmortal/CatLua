@@ -89,6 +89,39 @@ namespace CatLua
             FuncPrototype proto = curFrame.Closure.Proto.Protos[index];
             Closure c = new Closure(proto);
             Push(c);
+
+            //处理upvalue
+            for (int i = 0; i < proto.UpvalueInfos.Length; i++)
+            {
+                UpvalueInfo info = proto.UpvalueInfos[i];
+
+                //upvalue在openUpvalues和stack中的全局索引
+                int globalUpvalueIndex = info.Index + CurFrameBottom;
+                
+                if (info.Instack == 1)
+                {
+                    //upvalue是外层函数的局部变量
+
+                    if (openUpvalues.TryGetValue(globalUpvalueIndex, out Upvalue value))
+                    {
+                        //已经保存到openUpvalues中了，直接获取
+                        c.Upvalues[i] = value;
+                    }
+                    else
+                    {
+                        //没保存到openUpvalues中 从栈中get出来保存并获取
+                        Upvalue newValue = new Upvalue(globalStack.Get(globalUpvalueIndex));
+                        c.Upvalues[i] = newValue;
+                        openUpvalues.Add(globalUpvalueIndex, newValue);
+                    }
+                }
+                else
+                {
+                    //upvalue是更外层函数的局部变量 已被主函数捕获过了 从主函数的upvalue表里获取
+                    //因为主函数的upvalue表不是全局的 所以不用+CurFrameBottom
+                    c.Upvalues[i] = curFrame.Closure.Upvalues[info.Index];
+                }
+            }
         }
 
 

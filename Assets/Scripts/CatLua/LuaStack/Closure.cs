@@ -13,12 +13,22 @@ namespace CatLua
         {
             Proto = proto;
             CSFunc = null;
+
+            if (Proto.UpvalueInfos.Length > 0)
+            {
+                Upvalues = new Upvalue[Proto.UpvalueInfos.Length];
+            }
         }
 
-        public Closure(Func<LuaState, int> csFunc)
+        public Closure(Func<LuaState, int> csFunc,int upvalueNum = 0)
         {
             Proto = null;
             CSFunc = csFunc;
+
+            if (upvalueNum > 0)
+            {
+                Upvalues = new Upvalue[upvalueNum];
+            }
         }
 
         /// <summary>
@@ -30,6 +40,11 @@ namespace CatLua
         /// C#函数闭包
         /// </summary>
         public Func<LuaState, int> CSFunc;
+
+        /// <summary>
+        /// 捕获到的Upvalue列表
+        /// </summary>
+        public Upvalue[] Upvalues;
     }
 }
 

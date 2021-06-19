@@ -9,9 +9,17 @@ namespace CatLua
         /// <summary>
         /// 将C#函数转为C#闭包后压入栈
         /// </summary>
-        public void PushCSFunc(Func<LuaState, int> csFunc)
+        public void PushCSFunc(Func<LuaState, int> csFunc, int upvalueNum = 0)
         {
             Closure c = new Closure(csFunc);
+
+            //处理upvalue
+            for (int i = upvalueNum; i > 0; i--)
+            {
+                LuaDataUnion data = globalStack.Pop();
+                c.Upvalues[upvalueNum - 1] = new Upvalue(data);
+            }
+
             Push(c);
         }
 

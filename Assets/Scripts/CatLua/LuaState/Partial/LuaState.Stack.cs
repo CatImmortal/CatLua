@@ -83,6 +83,15 @@ namespace CatLua
         }
 
         /// <summary>
+        /// 从栈顶弹出一个值
+        /// </summary>
+        /// <returns></returns>
+        public LuaDataUnion Pop()
+        {
+            return globalStack.Pop();
+        }
+
+        /// <summary>
         /// 从栈顶弹出n个值
         /// </summary>
         public void Pop(int n)

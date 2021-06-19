@@ -17,7 +17,7 @@ public class Entry : MonoBehaviour
 
         LuaState ls = new LuaState(100);
         CSFunc.Init(ls);
-        ls.Load(main.bytes, main.name, "b");
+        ls.LoadChunk(main.bytes, main.name, "b");
         ls.CallFunc(0, 0);
 
     }
