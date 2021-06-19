@@ -78,14 +78,12 @@ namespace CatLua
 
                 case LuaDataType.Integer:
                     str = data.Integer.ToString();
-                    data.Type = LuaDataType.String;
-                    data.Str = str;
+                    globalStack.Set(index, Factory.NewString(str));
                     break;
 
                 case LuaDataType.Number:
                     str = data.Number.ToString();
-                    data.Type = LuaDataType.String;
-                    data.Str = str;
+                    globalStack.Set(index, Factory.NewString(str));
                     break;
 
                 case LuaDataType.String:

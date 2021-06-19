@@ -18,7 +18,7 @@ namespace CatLua
             registry = new LuaTable();
 
             //将全局环境表_G放入注册表
-            registry[Constants.GlobalEnvIndex] = new LuaDataUnion(LuaDataType.Table, table: new LuaTable());
+            registry[Constants.GlobalEnvIndex] = Factory.NewTable(new LuaTable());
         }
 
         /// <summary>

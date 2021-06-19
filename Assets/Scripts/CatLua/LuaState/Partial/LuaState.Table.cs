@@ -23,7 +23,7 @@ namespace CatLua
         public LuaDataType PushTableValue(int index, string strKey)
         {
             LuaDataUnion data = globalStack.Get(index);
-            LuaDataUnion key = new LuaDataUnion(LuaDataType.String, str: strKey);
+            LuaDataUnion key = Factory.NewString(strKey);
             return PushTableValue(data, key);
         }
 
@@ -33,8 +33,8 @@ namespace CatLua
         public LuaDataType PushTableValue(int index, long integerKey)
         {
             LuaDataUnion data = globalStack.Get(index);
-            LuaDataUnion dataKey = new LuaDataUnion(LuaDataType.Integer, integer:integerKey);
-            return PushTableValue(data, dataKey);
+            LuaDataUnion key = Factory.NewInteger(integerKey);
+            return PushTableValue(data, key);
         }
 
         /// <summary>
@@ -79,7 +79,7 @@ namespace CatLua
         public void SetTableValue(int index, string strKey)
         {
             LuaDataUnion data = globalStack.Get(index);
-            LuaDataUnion key = new LuaDataUnion(LuaDataType.String,str:strKey);
+            LuaDataUnion key = Factory.NewString(strKey);
             LuaDataUnion value = globalStack.Pop();
             SetTableValue(index,data, key, value);
         }
@@ -90,7 +90,7 @@ namespace CatLua
         public void SetTableValue(int index, long integerKey)
         {
             LuaDataUnion data = globalStack.Get(index);
-            LuaDataUnion key = new LuaDataUnion(LuaDataType.Integer, integer: integerKey);
+            LuaDataUnion key = Factory.NewInteger(integerKey);
             LuaDataUnion value = globalStack.Pop();
             SetTableValue(index, data, key, value);
         }

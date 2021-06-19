@@ -50,7 +50,7 @@ namespace CatLua
                     //操作数都可以转换为整数 
                     //调用整数版本函数实现
                     long result = operatorConfig.IntegerFunc(l1, l2);
-                    return new LuaDataUnion(LuaDataType.Integer, integer: result);
+                    return Factory.NewInteger(result);
                 }
                 else
                 {
@@ -74,7 +74,7 @@ namespace CatLua
                     //操作数都可以转换为浮点数
                     //调用浮点版本函数实现
                     double result = operatorConfig.NumberFunc(d1, d2);
-                    return new LuaDataUnion(LuaDataType.Number, number: result);
+                    return Factory.NewNumber(result);
                 }
                 else
                 {
@@ -89,14 +89,14 @@ namespace CatLua
             if (a.Type == LuaDataType.Integer && b.Type == LuaDataType.Integer)
             {
                 long result = operatorConfig.IntegerFunc(l1, l2);
-                return new LuaDataUnion(LuaDataType.Integer, integer: result);
+                return Factory.NewInteger(result);
             }
 
             //否则尝试调用浮点数版本
             if (d1Result && d2Result)
             {
                 double result = operatorConfig.NumberFunc(d1, d2);
-                return new LuaDataUnion(LuaDataType.Number, number: result);
+                return Factory.NewNumber(result);
             }
 
             return LuaDataUnion.Nil;
@@ -134,7 +134,7 @@ namespace CatLua
                 throw new Exception("Len方法不能对字符串和Table以外的值使用");
             }
 
-            globalStack.Push(new LuaDataUnion(LuaDataType.Integer, integer: len));
+            globalStack.Push(Factory.NewInteger(len));
         }
 
         /// <summary>
@@ -144,7 +144,7 @@ namespace CatLua
         {
             if (n == 0)
             {
-                globalStack.Push(new LuaDataUnion(LuaDataType.String, str: string.Empty));
+                globalStack.Push(Factory.NewString(string.Empty));
             }
             else if (n >= 2)
             {
@@ -157,7 +157,7 @@ namespace CatLua
                         string s1 = globalStack.Pop().ToString();
                         string result = s1 + s2;
 
-                        globalStack.Push(new LuaDataUnion(LuaDataType.String, str: result));
+                        globalStack.Push(Factory.NewString(string.Empty));
 
                     }
                     else

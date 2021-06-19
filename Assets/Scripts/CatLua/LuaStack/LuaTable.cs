@@ -52,11 +52,11 @@ namespace CatLua
         public LuaDataUnion this[long index]
         {
             get {
-                LuaDataUnion key = new LuaDataUnion(LuaDataType.Integer, integer: index);
+                LuaDataUnion key = Factory.NewInteger(index);
                 return this[key];
             }
             set {
-                LuaDataUnion key = new LuaDataUnion(LuaDataType.Integer, integer: index);
+                LuaDataUnion key = Factory.NewInteger(index);
                 this[key] = value;
             }
         }
@@ -65,12 +65,12 @@ namespace CatLua
         {
             get
             {
-                LuaDataUnion key = new LuaDataUnion(LuaDataType.Number,number:index);
+                LuaDataUnion key = Factory.NewNumber(index);
                 return this[key];
             }
             set
             {
-                LuaDataUnion key = new LuaDataUnion(LuaDataType.Number, number: index);
+                LuaDataUnion key = Factory.NewNumber(index);
                 this[key] = value;
             }
         }
@@ -79,12 +79,12 @@ namespace CatLua
         {
             get
             {
-                LuaDataUnion key = new LuaDataUnion(LuaDataType.String,str:index);
+                LuaDataUnion key = Factory.NewString(index);
                 return this[key];
             }
             set
             {
-                LuaDataUnion key = new LuaDataUnion(LuaDataType.String, str: index);
+                LuaDataUnion key = Factory.NewString(index);
                 this[key] = value;
             }
         }
@@ -266,7 +266,7 @@ namespace CatLua
             int index = arr.Count + 1;
             while (true)
             {
-                LuaDataUnion key = new LuaDataUnion(LuaDataType.Integer, integer: index);
+                LuaDataUnion key = Factory.NewInteger(index);
                 if (dict.TryGetValue(key, out LuaDataUnion data))
                 {
                     arr.Add(data);

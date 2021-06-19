@@ -19,6 +19,70 @@ namespace CatLua
         }
 
         /// <summary>
+        /// 压入nil值
+        /// </summary>
+        public void Push()
+        {
+            globalStack.Push(LuaDataUnion.Nil);
+        }
+
+        /// <summary>
+        /// 压入Lua数据
+        /// </summary>
+        public void Push(LuaDataUnion data)
+        {
+            globalStack.Push(data);
+        }
+
+        /// <summary>
+        /// 压入bool值
+        /// </summary>
+        public void Push(bool b)
+        {
+            globalStack.Push(Factory.NewBool(b));
+        }
+
+        /// <summary>
+        /// 压入integer值
+        /// </summary>
+        public void Push(long l)
+        {
+            globalStack.Push(Factory.NewInteger(l));
+        }
+
+        /// <summary>
+        /// 压入number值
+        /// </summary>
+        public void Push(double d)
+        {
+            globalStack.Push(Factory.NewNumber(d));
+        }
+
+        /// <summary>
+        /// 压入string值
+        /// </summary>
+        public void Push(string str)
+        {
+            globalStack.Push(Factory.NewString(str));
+        }
+
+        /// <summary>
+        /// 压入table值
+        /// </summary>
+        public void Push(LuaTable table)
+        {
+            globalStack.Push(Factory.NewTable(table));
+        }
+
+        /// <summary>
+        /// 压入Closure值
+        /// </summary>
+        public void Push(Closure closure)
+        {
+            globalStack.Push(Factory.NewFunc(closure));
+        }
+
+        /// <summary>
         /// 从栈顶弹出n个值
         /// </summary>
         public void Pop(int n)
@@ -125,8 +189,8 @@ namespace CatLua
 
             if (n > 0)
             {
-                //需要增加栈顶
-                //压入n个值
+                //需要扩充栈顶
+                //压入n个nil值
                 int num = n;
                 for (int i = 0; i < num; i++)
                 {
@@ -145,72 +209,8 @@ namespace CatLua
                 }
             }
 
-            //UnityEngine.Debug.Log("settop,newtop==" + newTop);
-
         }
 
-        /// <summary>
-        /// 压入nil值
-        /// </summary>
-        public void Push()
-        {
-            globalStack.Push(LuaDataUnion.Nil);
-        }
-
-        /// <summary>
-        /// 压入Lua数据
-        /// </summary>
-        public void Push(LuaDataUnion data)
-        {
-            globalStack.Push(data);
-        }
-
-        /// <summary>
-        /// 压入bool值
-        /// </summary>
-        public void Push(bool b)
-        {
-            globalStack.Push(new LuaDataUnion(LuaDataType.Boolean, boolean: b));
-        }
-
-        /// <summary>
-        /// 压入integer值
-        /// </summary>
-        public void Push(long l)
-        {
-            globalStack.Push(new LuaDataUnion(LuaDataType.Integer, integer: l));
-        }
-
-        /// <summary>
-        /// 压入number值
-        /// </summary>
-        public void Push(double d)
-        {
-            globalStack.Push(new LuaDataUnion(LuaDataType.Number, number: d));
-        }
-
-        /// <summary>
-        /// 压入string值
-        /// </summary>
-        public void Push(string str)
-        {
-            globalStack.Push(new LuaDataUnion(LuaDataType.String, str: str));
-        }
-
-        /// <summary>
-        /// 压入table值
-        /// </summary>
-        public void Push(LuaTable table)
-        {
-            globalStack.Push(new LuaDataUnion(LuaDataType.Table, table: table));
-        }
-
-        /// <summary>
-        /// 压入Closure值
-        /// </summary>
-        public void Push(Closure closure)
-        {
-            globalStack.Push(new LuaDataUnion(LuaDataType.Function, closure: closure));
-        }
+        
     }
 }

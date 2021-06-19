@@ -36,33 +36,59 @@ namespace CatLua
                 case LuaDataType.Function:
                     Closure = closure;
                     break;
-                    
+
             }
         }
 
-
-        public LuaDataType Type;
-
-
-        public bool Boolean;
-
-
-        public long Integer;
-
-
-        public double Number;
-
-
-        public string Str;
-
-
-        public LuaTable Table;
-
-
-        public Closure Closure;
-
         public static LuaDataUnion Nil = new LuaDataUnion(LuaDataType.Nil);
 
+        public LuaDataType Type
+        {
+            get;
+            private set;
+        }
+
+
+        public bool Boolean
+        {
+            get;
+            private set;
+        }
+
+
+        public long Integer
+        {
+            get;
+            private set;
+        }
+
+
+        public double Number
+        {
+            get;
+            private set;
+        }
+
+
+        public string Str
+        {
+            get;
+            private set;
+        }
+
+
+        public LuaTable Table
+        {
+            get;
+            private set;
+        }
+
+
+        public Closure Closure
+        {
+            get;
+            private set;
+        }
 
         public override string ToString()
         {
@@ -217,8 +243,10 @@ namespace CatLua
             return !(x == y);
         }
 
+      
+
         /// <summary>
-        /// 转换为bool值
+        /// 转换bool
         /// </summary>
         public bool ConvertToBoolean()
         {
@@ -239,7 +267,7 @@ namespace CatLua
         }
 
         /// <summary>
-        /// 尝试转换到number
+        /// 尝试转换number
         /// </summary>
         public bool TryConvertToNumber(out double d)
         {
@@ -264,7 +292,7 @@ namespace CatLua
         }
 
         /// <summary>
-        /// 尝试转换到integer
+        /// 尝试转换integer
         /// </summary>
         public bool TryConvertToInteger(out long l)
         {
@@ -303,8 +331,6 @@ namespace CatLua
                     return false;
             }
         }
-
-
     }
 }
 

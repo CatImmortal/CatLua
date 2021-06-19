@@ -53,7 +53,6 @@ namespace CatLua
 
             Top++;
             stack[Top] = data;
-            //UnityEngine.Debug.Log("push top ==" + Top + ",data ==" + data);
         }
 
         /// <summary>
@@ -76,7 +75,7 @@ namespace CatLua
                 }
                 else
                 {
-                    Push(new LuaDataUnion(LuaDataType.Nil));
+                    Push(LuaDataUnion.Nil);
                 }
             }
         }
@@ -95,7 +94,6 @@ namespace CatLua
             LuaDataUnion data = stack[Top];
             stack[Top] = LuaDataUnion.Nil;
             Top--;
-            //UnityEngine.Debug.Log("pop top ==" + Top + ",data ==" + data);
             return data;
         }
         
@@ -157,6 +155,10 @@ namespace CatLua
         /// </summary>
         public void Set(int index, LuaDataUnion value)
         {
+            //参数只接收LuaDataUnion
+            //而LuaDataUnion的内部数据没有public set，只能用新数据创建新LuaDataUnion来调用Set
+            //从而实现了写时复制
+
             int absIndex = GetAbsIndex(index);
             if (IsValid(index))
             {
