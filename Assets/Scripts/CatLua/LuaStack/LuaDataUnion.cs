@@ -69,7 +69,6 @@ namespace CatLua
             string s;
             switch (Type)
             {
-
                 case LuaDataType.Boolean:
                     s = Boolean.ToString();
                     break;
@@ -81,6 +80,9 @@ namespace CatLua
                     break;
                 case LuaDataType.String:
                     s = Str;
+                    break;
+                case LuaDataType.Table:
+                    s = Table.ToString();
                     break;
                 default:
                     s = Type.ToString();

@@ -35,7 +35,7 @@ namespace CatLua
 
                 LuaDataUnion value = Get(i);
 
-                s += string.Format("[{0}]", value);
+                s += $"[{value}]";
 
             }
             return s;

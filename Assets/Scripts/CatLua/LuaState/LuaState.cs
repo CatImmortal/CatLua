@@ -38,7 +38,7 @@ namespace CatLua
 
         public override string ToString()
         {
-            string s = "";
+          
             FuncCallFrame frame = curFrame;
             Stack<int> bottomStacks = new Stack<int>();
             Stack<int> registerAreaStacks = new Stack<int>();
@@ -48,6 +48,8 @@ namespace CatLua
                 registerAreaStacks.Push(frame.ReserveRegisterMaxIndex);
                 frame = frame.Prev;
             }
+
+            string s = string.Empty;
 
             for (int i = 0; i <= globalStack.Top; i++)
             {
@@ -60,27 +62,7 @@ namespace CatLua
                 }
 
                 LuaDataUnion value = globalStack.Get(i);
-                switch (value.Type)
-                {
-                  
-                    case LuaDataType.Boolean:
-                        s += string.Format("[{0}]", GetBoolean(i));
-                        break;
-                  
-                    case LuaDataType.Integer:
-                        s += string.Format("[{0}]", GetInteger(i));
-                        break;
-                    case LuaDataType.Number:
-                        s += string.Format("[{0}]", GetNumber(i));
-                        break;
-                    case LuaDataType.String:
-                        s += string.Format("[\"{0}\"]", GetString(i));
-                        break;
-                    default:
-                        s += string.Format("[{0}]", value.Type.ToString());
-                        break;
-
-                }
+                s += $"[{value}]";
 
                 if (registerAreaStacks.Count != 0 && i == registerAreaStacks.Peek())
                 {

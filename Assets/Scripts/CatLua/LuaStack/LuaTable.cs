@@ -102,24 +102,20 @@ namespace CatLua
                     }
                 }
 
-                if (!dict.ContainsKey(key))
-                {
-                    int x = 1;
-                }
-
                 //否则从字典取
                 return dict[key];
             }
 
             set {
+
                 if (key.Type == LuaDataType.Nil)
                 {
-                    throw new Exception("table的index不能为nil");
+                    throw new Exception("table的key不能为nil");
                 }
 
                 if (key.Type == LuaDataType.Number && double.IsNaN(key.Number))
                 {
-                    throw new Exception("table的index不能为nan");
+                    throw new Exception("table的key不能为NaN");
                 }
 
                 if (TryConvertToArrIndex(key, out long index) && index >= 1)
@@ -186,6 +182,35 @@ namespace CatLua
                     dict.Remove(key);
                 }
             }
+        }
+
+        public override string ToString()
+        {
+            string s = string.Empty;
+
+            s += "table:{";
+
+            if (arr != null)
+            {
+                for (int i = 0; i < arr.Count; i++)
+                {
+                    s += $"{i + 1} = {arr[i]},";
+                }
+            }
+
+
+            if (dict != null)
+            {
+                foreach (KeyValuePair<LuaDataUnion, LuaDataUnion> item in dict)
+                {
+                    s += $"{item.Key} = {item.Value},";
+                }
+            }
+            
+
+            s += "}";
+
+            return s;
         }
 
         /// <summary>
