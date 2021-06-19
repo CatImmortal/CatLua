@@ -9,62 +9,62 @@ namespace CatLua
     /// </summary>
     public class InstructionFuncs
     {
-        public static Action<Instructoin, LuaState> Move = MoveFunc;
-        public static Action<Instructoin, LuaState> Jmp = JmpFunc;
-        public static Action<Instructoin, LuaState> LoadNil = LoadNilFunc;
-        public static Action<Instructoin, LuaState> LoadBool = LoadBoolFunc;
-        public static Action<Instructoin, LuaState> LoadK = LoadKFunc;
-        public static Action<Instructoin, LuaState> LoadKX = LoadKXFunc;
+        public static Action<Instructoin, LuaState> MoveFunc = Move;
+        public static Action<Instructoin, LuaState> JmpFunc = Jmp;
+        public static Action<Instructoin, LuaState> LoadNilFunc = LoadNil;
+        public static Action<Instructoin, LuaState> LoadBoolFunc = LoadBool;
+        public static Action<Instructoin, LuaState> LoadKFunc = LoadK;
+        public static Action<Instructoin, LuaState> LoadKXFunc = LoadKX;
 
-        public static Action<Instructoin, LuaState> Add = (i, vm) => { BinaryArithFunc(i, vm, ArithOpType.Add); };
-        public static Action<Instructoin, LuaState> Sub = (i, vm) => { BinaryArithFunc(i, vm, ArithOpType.Sub); };
-        public static Action<Instructoin, LuaState> Mul = (i, vm) => { BinaryArithFunc(i, vm, ArithOpType.Mul); };
-        public static Action<Instructoin, LuaState> Mod = (i, vm) => { BinaryArithFunc(i, vm, ArithOpType.Mod); };
-        public static Action<Instructoin, LuaState> Pow = (i, vm) => { BinaryArithFunc(i, vm, ArithOpType.Pow); };
-        public static Action<Instructoin, LuaState> Div = (i, vm) => { BinaryArithFunc(i, vm, ArithOpType.Div); };
-        public static Action<Instructoin, LuaState> IDiv = (i, vm) => { BinaryArithFunc(i, vm, ArithOpType.IDiv); };
-        public static Action<Instructoin, LuaState> BAnd = (i, vm) => { BinaryArithFunc(i, vm, ArithOpType.BAnd); };
-        public static Action<Instructoin, LuaState> BOr = (i, vm) => { BinaryArithFunc(i, vm, ArithOpType.BOr); };
-        public static Action<Instructoin, LuaState> BXOr = (i, vm) => { BinaryArithFunc(i, vm, ArithOpType.BXor); };
-        public static Action<Instructoin, LuaState> ShL = (i, vm) => { BinaryArithFunc(i, vm, ArithOpType.ShL); };
-        public static Action<Instructoin, LuaState> ShR = (i, vm) => { BinaryArithFunc(i, vm, ArithOpType.ShR); };
-        public static Action<Instructoin, LuaState> Unm = (i, vm) => { UnaryArithFunc(i, vm, ArithOpType.Unm); };
-        public static Action<Instructoin, LuaState> BNot = (i, vm) => { UnaryArithFunc(i, vm, ArithOpType.BNot); };
+        public static Action<Instructoin, LuaState> AddFunc = (i, vm) => { BinaryArith(i, vm, ArithOpType.Add); };
+        public static Action<Instructoin, LuaState> SubFunc = (i, vm) => { BinaryArith(i, vm, ArithOpType.Sub); };
+        public static Action<Instructoin, LuaState> MulFunc = (i, vm) => { BinaryArith(i, vm, ArithOpType.Mul); };
+        public static Action<Instructoin, LuaState> ModFunc = (i, vm) => { BinaryArith(i, vm, ArithOpType.Mod); };
+        public static Action<Instructoin, LuaState> PowFunc = (i, vm) => { BinaryArith(i, vm, ArithOpType.Pow); };
+        public static Action<Instructoin, LuaState> DivFunc = (i, vm) => { BinaryArith(i, vm, ArithOpType.Div); };
+        public static Action<Instructoin, LuaState> IDivFunc = (i, vm) => { BinaryArith(i, vm, ArithOpType.IDiv); };
+        public static Action<Instructoin, LuaState> BAndFunc = (i, vm) => { BinaryArith(i, vm, ArithOpType.BAnd); };
+        public static Action<Instructoin, LuaState> BOrFunc = (i, vm) => { BinaryArith(i, vm, ArithOpType.BOr); };
+        public static Action<Instructoin, LuaState> BXOrFunc = (i, vm) => { BinaryArith(i, vm, ArithOpType.BXor); };
+        public static Action<Instructoin, LuaState> ShLFunc = (i, vm) => { BinaryArith(i, vm, ArithOpType.ShL); };
+        public static Action<Instructoin, LuaState> ShRFunc = (i, vm) => { BinaryArith(i, vm, ArithOpType.ShR); };
+        public static Action<Instructoin, LuaState> UnmFunc = (i, vm) => { UnaryArith(i, vm, ArithOpType.Unm); };
+        public static Action<Instructoin, LuaState> BNotFunc = (i, vm) => { UnaryArith(i, vm, ArithOpType.BNot); };
 
-        public static Action<Instructoin, LuaState> Len = LenFunc;
-        public static Action<Instructoin, LuaState> Concat = ConcatFunc;
+        public static Action<Instructoin, LuaState> LenFunc = Len;
+        public static Action<Instructoin, LuaState> ConcatFunc = Concat;
 
-        public static Action<Instructoin, LuaState> Eq = (i, vm) => { CompareFunc(i, vm, CompareOpType.Eq); };
-        public static Action<Instructoin, LuaState> Lt = (i, vm) => { CompareFunc(i, vm, CompareOpType.Lt); };
-        public static Action<Instructoin, LuaState> Le = (i, vm) => { CompareFunc(i, vm, CompareOpType.Le); };
+        public static Action<Instructoin, LuaState> EqFunc = (i, vm) => { Compare(i, vm, CompareOpType.Eq); };
+        public static Action<Instructoin, LuaState> LtFunc = (i, vm) => { Compare(i, vm, CompareOpType.Lt); };
+        public static Action<Instructoin, LuaState> LeFunc = (i, vm) => { Compare(i, vm, CompareOpType.Le); };
 
 
-        public static Action<Instructoin, LuaState> Not = NotFunc;
+        public static Action<Instructoin, LuaState> NotFunc = Not;
 
-        public static Action<Instructoin, LuaState> TestSet = TestSetFunc;
-        public static Action<Instructoin, LuaState> Test = TestFunc;
+        public static Action<Instructoin, LuaState> TestSetFunc = TestSet;
+        public static Action<Instructoin, LuaState> TestFunc = Test;
 
-        public static Action<Instructoin, LuaState> ForPrep = ForPrepFunc;
-        public static Action<Instructoin, LuaState> ForLoop = ForLoopFunc;
+        public static Action<Instructoin, LuaState> ForPrepFunc = ForPrep;
+        public static Action<Instructoin, LuaState> ForLoopFunc = ForLoop;
 
-        public static Action<Instructoin, LuaState> NewTable = NewTableFunc;
-        public static Action<Instructoin, LuaState> GetTable = GetTableFunc;
-        public static Action<Instructoin, LuaState> SetTable = SetTableFunc;
-        public static Action<Instructoin, LuaState> SetList = SetListFunc;
+        public static Action<Instructoin, LuaState> NewTableFunc = NewTable;
+        public static Action<Instructoin, LuaState> GetTableFunc = GetTable;
+        public static Action<Instructoin, LuaState> SetTableFunc = SetTable;
+        public static Action<Instructoin, LuaState> SetListFunc = SetList;
 
-        public static Action<Instructoin, LuaState> Closure = ClosureFunc;
-        public static Action<Instructoin, LuaState> Call = CallFunc;
-        public static Action<Instructoin, LuaState> Return = ReturnFunc;
-        public static Action<Instructoin, LuaState> VarArg = VarArgFunc;
-        public static Action<Instructoin, LuaState> TailCall = TailCallFunc;
-        public static Action<Instructoin, LuaState> Self = SelfFunc;
+        public static Action<Instructoin, LuaState> ClosureFunc = Closure;
+        public static Action<Instructoin, LuaState> CallFunc = Call;
+        public static Action<Instructoin, LuaState> ReturnFunc = Return;
+        public static Action<Instructoin, LuaState> VarArgFunc = VarArg;
+        public static Action<Instructoin, LuaState> TailCallFunc = TailCall;
+        public static Action<Instructoin, LuaState> SelfFunc = Self;
 
-        public static Action<Instructoin, LuaState> GetTabUp = GetTabUpFunc;
+        public static Action<Instructoin, LuaState> GetTabUpFunc = GetTabUp;
 
         /// <summary>
         /// 将b位置的栈值复制到a位置
         /// </summary>
-        private static void MoveFunc(Instructoin i, LuaState vm)
+        private static void Move(Instructoin i, LuaState vm)
         {
             //Lua的局部变量都在寄存器里
             //用8bit编码目标寄存器索引（参数A），所以理论上Lua局部变量不能超过255个
@@ -80,7 +80,7 @@ namespace CatLua
         /// <summary>
         /// 为PC加上sbx的值
         /// </summary>
-        private static void JmpFunc(Instructoin i, LuaState vm)
+        private static void Jmp(Instructoin i, LuaState vm)
         {
 
 
@@ -98,7 +98,7 @@ namespace CatLua
         /// <summary>
         /// 将a到b位置的栈值设为nil
         /// </summary>
-        private static void LoadNilFunc(Instructoin i, LuaState vm)
+        private static void LoadNil(Instructoin i, LuaState vm)
         {
             i.GetABC(out int a, out int b, out int c);
             a += vm.CurFrameBottom;
@@ -121,7 +121,7 @@ namespace CatLua
         /// <summary>
         /// 将a位置的栈值设为bool类型的b，如果c不是0,就跳过下一条指令
         /// </summary>
-        private static void LoadBoolFunc(Instructoin i, LuaState vm)
+        private static void LoadBool(Instructoin i, LuaState vm)
         {
             i.GetABC(out int a, out int b, out int c);
             a += vm.CurFrameBottom;
@@ -138,7 +138,7 @@ namespace CatLua
         /// <summary>
         /// 将常量表bx位置的值复制到栈中a位置
         /// </summary>
-        private static void LoadKFunc(Instructoin i, LuaState vm)
+        private static void LoadK(Instructoin i, LuaState vm)
         {
             i.GetABx(out int a, out int bx);
             a += vm.CurFrameBottom;
@@ -150,7 +150,7 @@ namespace CatLua
         /// <summary>
         /// 将常量表ax位置的值复制到栈中a位置，常量数量超过262143时使用
         /// </summary>
-        private static void LoadKXFunc(Instructoin i, LuaState vm)
+        private static void LoadKX(Instructoin i, LuaState vm)
         {
             i.GetABx(out int a, out int bx);
             a += vm.CurFrameBottom;
@@ -165,7 +165,7 @@ namespace CatLua
         /// <summary>
         /// 将b和c位置的值进行二元运算，然后将结果复制到栈的a位置
         /// </summary>
-        private static void BinaryArithFunc(Instructoin i,LuaState vm,ArithOpType type)
+        private static void BinaryArith(Instructoin i,LuaState vm,ArithOpType type)
         {
             i.GetABC(out int a, out int b, out int c);
             a += vm.CurFrameBottom;
@@ -179,7 +179,7 @@ namespace CatLua
         /// <summary>
         /// 对b位置的值进行一元运算，然后将结果复制到栈的a位置
         /// </summary>
-        private static void UnaryArithFunc(Instructoin i, LuaState vm, ArithOpType type)
+        private static void UnaryArith(Instructoin i, LuaState vm, ArithOpType type)
         {
             i.GetABC(out int a, out int b, out int c);
             a += vm.CurFrameBottom;
@@ -192,7 +192,7 @@ namespace CatLua
         /// <summary>
         /// 将b位置的字符串的长度复制到a位置
         /// </summary>
-        private static void LenFunc(Instructoin i, LuaState vm)
+        private static void Len(Instructoin i, LuaState vm)
         {
             i.GetABC(out int a, out int b, out int c);
             a += vm.CurFrameBottom;
@@ -205,7 +205,7 @@ namespace CatLua
         /// <summary>
         /// 将b到c位置的值连接，然后复制到a位置
         /// </summary>
-        private static void ConcatFunc(Instructoin i, LuaState vm)
+        private static void Concat(Instructoin i, LuaState vm)
         {
             i.GetABC(out int a, out int b, out int c);
             a += vm.CurFrameBottom;
@@ -225,7 +225,7 @@ namespace CatLua
         /// <summary>
         /// 将b和c位置的栈值或常量进行比较，如果结果和a不匹配，就跳过下一条指令
         /// </summary>
-        private static void CompareFunc(Instructoin i, LuaState vm,CompareOpType type)
+        private static void Compare(Instructoin i, LuaState vm,CompareOpType type)
         {
             i.GetABC(out int a, out int b, out int c);
 
@@ -246,7 +246,7 @@ namespace CatLua
         /// <summary>
         /// 将b位置的bool值取反，然后复制到a位置
         /// </summary>
-        private static void NotFunc(Instructoin i, LuaState vm)
+        private static void Not(Instructoin i, LuaState vm)
         {
             i.GetABC(out int a, out int b, out int c);
             a += vm.CurFrameBottom;
@@ -260,7 +260,7 @@ namespace CatLua
         /// <summary>
         /// 将b中的bool值和c作比较，如果一样就将b的值复制到a中，否则跳过下一条指令
         /// </summary>
-        private static void TestSetFunc(Instructoin i, LuaState vm)
+        private static void TestSet(Instructoin i, LuaState vm)
         {
             i.GetABC(out int a, out int b, out int c);
             a += vm.CurFrameBottom;
@@ -282,7 +282,7 @@ namespace CatLua
         /// <summary>
         /// 将a中的bool值和c作比较，如果不一样，就跳过下一条指令
         /// </summary>
-        private static void TestFunc(Instructoin i, LuaState vm)
+        private static void Test(Instructoin i, LuaState vm)
         {
             i.GetABC(out int a, out int b, out int c);
             a += vm.CurFrameBottom;
@@ -299,7 +299,7 @@ namespace CatLua
         /// <summary>
         /// 将a位置的值(index)减去a+2的值(step)，初始化index,然后让PC增加sbx，指向循环体
         /// </summary>
-        private static void ForPrepFunc(Instructoin i, LuaState vm)
+        private static void ForPrep(Instructoin i, LuaState vm)
         {
             //a+3 i
             //a+2 step
@@ -326,7 +326,7 @@ namespace CatLua
         /// 将a位置的值(index)加上a+2位置的值(step)，增加循环的index
         /// 然后判断index是否达到了limit，如果未达到就让PC增加sbx，指向循环体,并把index值复制给用户的自定义局部变量
         /// </summary>
-        private static void ForLoopFunc(Instructoin i, LuaState vm)
+        private static void ForLoop(Instructoin i, LuaState vm)
         {
             i.GetAsBx(out int a, out int sbx);
             a += vm.CurFrameBottom;
@@ -360,7 +360,7 @@ namespace CatLua
         /// <summary>
         /// 创建空表，放入a位置，空表的数组大小=b，字典大小=c
         /// </summary>
-        private static void NewTableFunc(Instructoin i, LuaState vm)
+        private static void NewTable(Instructoin i, LuaState vm)
         {
             i.GetABC(out int a, out int b, out int c);
             a += vm.CurFrameBottom;
@@ -374,7 +374,7 @@ namespace CatLua
         /// <summary>
         /// 从b位置获取table,从c位置获取key，将table[key]放入a位置
         /// </summary>
-        private static void GetTableFunc(Instructoin i, LuaState vm)
+        private static void GetTable(Instructoin i, LuaState vm)
         {
             i.GetABC(out int a, out int b, out int c);
             a += vm.CurFrameBottom;
@@ -388,7 +388,7 @@ namespace CatLua
         /// <summary>
         /// 从a位置获取table,从b位置获取key，从c位置获取value,table[key] = value
         /// </summary>
-        private static void SetTableFunc(Instructoin i, LuaState vm)
+        private static void SetTable(Instructoin i, LuaState vm)
         {
             i.GetABC(out int a, out int b, out int c);
             a += vm.CurFrameBottom;
@@ -402,7 +402,7 @@ namespace CatLua
         /// 将从a+1位置开始的b个值放入a位置table的数组部分，c表示批次数，起始索引=批次数*批大小
         /// 如果c>0，那么c表示批次数+1，否则批次数放在了下一条指令的ax里
         /// </summary>
-        private static void SetListFunc(Instructoin i, LuaState vm)
+        private static void SetList(Instructoin i, LuaState vm)
         {
             i.GetABC(out int a, out int b, out int c);
             a += vm.CurFrameBottom;
@@ -439,7 +439,7 @@ namespace CatLua
         /// <summary>
         /// 将bx位置的子函数原型实例化为闭包，放入a中
         /// </summary>
-        private static void ClosureFunc(Instructoin i, LuaState vm)
+        private static void Closure(Instructoin i, LuaState vm)
         {
             i.GetABx(out int a, out int bx);
             a += vm.CurFrameBottom;
@@ -452,7 +452,7 @@ namespace CatLua
         /// <summary>
         /// 调用a位置的函数，参数有b-1个，返回值有c-1个，b或c为0的话，表示有不确定长度的参数或返回值
         /// </summary>
-        private static void CallFunc(Instructoin i, LuaState vm)
+        private static void Call(Instructoin i, LuaState vm)
         {
             i.GetABC(out int a, out int b, out int c);
             a += vm.CurFrameBottom;
@@ -471,7 +471,7 @@ namespace CatLua
         /// <summary>
         /// 被调函数的所有指令都执行完毕后，将a开始的b - 1个数据压入栈顶，以作为返回值压入主调函数栈帧
         /// </summary>
-        private static void ReturnFunc(Instructoin i, LuaState vm)
+        private static void Return(Instructoin i, LuaState vm)
         {
             i.GetABC(out int a, out int b, out int c);
             a += vm.CurFrameBottom;
@@ -500,7 +500,7 @@ namespace CatLua
         /// <summary>
         /// 若b>1，就将b-1个vararg参数复制到a开始的位置，若b==0，就复制全部vararg参数到寄存器
         /// </summary>
-        private static void VarArgFunc(Instructoin i, LuaState vm)
+        private static void VarArg(Instructoin i, LuaState vm)
         {
             i.GetABC(out int a, out int b, out int c);
             a += vm.CurFrameBottom;
@@ -540,7 +540,7 @@ namespace CatLua
             }
         }
 
-        private static void TailCallFunc(Instructoin i, LuaState vm)
+        private static void TailCall(Instructoin i, LuaState vm)
         {
             i.GetABC(out int a, out int b, out int c);
             a += vm.CurFrameBottom;
@@ -557,7 +557,7 @@ namespace CatLua
         /// <summary>
         /// 将b位置的table和table的函数(函数key来自c位置的函数名)复制到a + 1和a里
         /// </summary>
-        private static void SelfFunc(Instructoin i, LuaState vm)
+        private static void Self(Instructoin i, LuaState vm)
         {
             i.GetABC(out int a, out int b, out int c);
             a += vm.CurFrameBottom;
@@ -573,7 +573,7 @@ namespace CatLua
         /// <summary>
         /// 压入_G表和c位置的值，然后压入value = _G[RK(c)]，最后弹出value复制到a位置
         /// </summary>
-        private static void GetTabUpFunc(Instructoin i, LuaState vm)
+        private static void GetTabUp(Instructoin i, LuaState vm)
         {
             i.GetABC(out int a, out int b, out int c);
             a += vm.CurFrameBottom;

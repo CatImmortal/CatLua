@@ -52,7 +52,7 @@ namespace CatLua
         /// <summary>
         /// upvalue表
         /// </summary>
-        public Upvalue[] Upvalues;
+        public UpvalueInfo[] Upvalues;
 
         /// <summary>
         /// 子函数原型表
@@ -67,7 +67,7 @@ namespace CatLua
         /// <summary>
         /// 局部变量表
         /// </summary>
-        public LocalVar[] Locvars;
+        public LocalVarInfo[] Locvars;
 
         /// <summary>
         /// upvalue名列表

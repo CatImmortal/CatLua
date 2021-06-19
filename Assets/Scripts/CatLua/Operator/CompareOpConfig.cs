@@ -24,9 +24,9 @@ namespace CatLua
         /// </summary>
         public static CompareOpConfig[] Configs =
         {
-           new CompareOpConfig(CompareOpFuncs.Eq),
-           new CompareOpConfig(CompareOpFuncs.Lt),
-           new CompareOpConfig(CompareOpFuncs.Le),
+           new CompareOpConfig(CompareOpFuncs.EqFunc),
+           new CompareOpConfig(CompareOpFuncs.LtFunc),
+           new CompareOpConfig(CompareOpFuncs.LeFunc),
         };
 
 

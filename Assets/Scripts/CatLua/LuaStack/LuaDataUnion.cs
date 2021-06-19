@@ -63,6 +63,158 @@ namespace CatLua
 
         public static LuaDataUnion Nil = new LuaDataUnion(LuaDataType.Nil);
 
+
+        public override string ToString()
+        {
+            string s;
+            switch (Type)
+            {
+
+                case LuaDataType.Boolean:
+                    s = Boolean.ToString();
+                    break;
+                case LuaDataType.Integer:
+                    s = Integer.ToString();
+                    break;
+                case LuaDataType.Number:
+                    s = Number.ToString();
+                    break;
+                case LuaDataType.String:
+                    s = Str;
+                    break;
+                default:
+                    s = Type.ToString();
+                    break;
+            }
+            return s;
+        }
+
+        public bool Equals(LuaDataUnion other)
+        {
+            bool result = false;
+
+            switch (Type)
+            {
+                case LuaDataType.Nil:
+                    result = other.Type == LuaDataType.Nil;
+                    break;
+
+                case LuaDataType.Boolean:
+                    result = Boolean == other.Boolean;
+                    break;
+
+                case LuaDataType.Integer:
+
+                    switch (other.Type)
+                    {
+
+                        case LuaDataType.Integer:
+                            result = Integer == other.Integer;
+                            break;
+                        case LuaDataType.Number:
+                            result = Integer == other.Number;
+                            break;
+                        default:
+                            result = false;
+                            break;
+                    }
+
+                    break;
+                case LuaDataType.Number:
+
+                    switch (other.Type)
+                    {
+
+                        case LuaDataType.Integer:
+                            result = Number == other.Integer;
+                            break;
+                        case LuaDataType.Number:
+                            result = Number == other.Number;
+                            break;
+                        default:
+                            result = false;
+                            break;
+                    }
+
+                    break;
+
+                case LuaDataType.String:
+                    result = other.Type == LuaDataType.String && Str == other.Str;
+                    break;
+
+                case LuaDataType.Table:
+                    result = Table.Equals(Table);
+                    break;
+
+                case LuaDataType.Function:
+                    result = Closure.Equals(Closure);
+                    break;
+
+
+            }
+
+            return result;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as LuaDataUnion);
+        }
+
+        public override int GetHashCode()
+        {
+            int hashCode;
+            switch (Type)
+            {
+                case LuaDataType.Nil:
+                    hashCode = 0;
+                    break;
+                case LuaDataType.Boolean:
+                    hashCode = Boolean.GetHashCode();
+                    break;
+                case LuaDataType.Integer:
+                    hashCode = Integer.GetHashCode();
+                    break;
+                case LuaDataType.Number:
+                    hashCode = Number.GetHashCode();
+                    break;
+                case LuaDataType.String:
+                    hashCode = Str.GetHashCode();
+                    break;
+                case LuaDataType.Table:
+                    hashCode = Table.GetHashCode();
+                    break;
+                case LuaDataType.Function:
+                    hashCode = Closure.GetHashCode();
+                    break;
+                default:
+                    hashCode = base.GetHashCode();
+                    break;
+            }
+
+            return hashCode;
+        }
+
+        public static bool operator ==(LuaDataUnion x, LuaDataUnion y)
+        {
+            if (x is null && y is null)
+            {
+                return true;
+            }
+
+            if (x is null || y is null)
+            {
+                return false;
+            }
+
+            return x.Equals(y);
+        }
+
+        public static bool operator !=(LuaDataUnion x, LuaDataUnion y)
+        {
+            return !(x == y);
+        }
+
         /// <summary>
         /// 转换为bool值
         /// </summary>
@@ -151,157 +303,6 @@ namespace CatLua
         }
 
 
-        public override string ToString()
-        {
-            string s;
-            switch (Type)
-            {
-
-                case LuaDataType.Boolean:
-                    s = Boolean.ToString();
-                    break;
-                case LuaDataType.Integer:
-                    s = Integer.ToString();
-                    break;
-                case LuaDataType.Number:
-                    s = Number.ToString();
-                    break;
-                case LuaDataType.String:
-                    s = Str;
-                    break;
-                default:
-                    s = Type.ToString();
-                    break;
-            }
-            return s;
-        }
-
-        public bool Equals(LuaDataUnion other)
-        {
-            bool result = false;
-
-            switch (Type)
-            {
-                case LuaDataType.Nil:
-                    result = other.Type == LuaDataType.Nil;
-                    break;
-
-                case LuaDataType.Boolean:
-                    result = Boolean == other.Boolean;
-                    break;
-
-                case LuaDataType.Integer:
-
-                    switch (other.Type)
-                    {
-                       
-                        case LuaDataType.Integer:
-                            result = Integer == other.Integer;
-                            break;
-                        case LuaDataType.Number:
-                            result = Integer == other.Number;
-                            break;
-                        default:
-                            result = false;
-                            break;
-                    }
-
-                    break;
-                case LuaDataType.Number:
-
-                    switch (other.Type)
-                    {
-
-                        case LuaDataType.Integer:
-                            result = Number == other.Integer;
-                            break;
-                        case LuaDataType.Number:
-                            result = Number == other.Number;
-                            break;
-                        default:
-                            result = false;
-                            break;
-                    }
-
-                    break;
-
-                case LuaDataType.String:
-                    result = other.Type == LuaDataType.String && Str == other.Str;
-                    break;
-
-                case LuaDataType.Table:
-                    result = Table.Equals(Table);
-                    break;
-
-                case LuaDataType.Function:
-                    result = Closure.Equals(Closure);
-                    break;
-
-
-            }
-
-            return result;
-        }
-
-        public override bool Equals(object obj)
-        {
-            return Equals(obj as LuaDataUnion);
-        }
-
-        public override int GetHashCode()
-        {
-            int hashCode = 0;
-
-            switch (Type)
-            {
-                case LuaDataType.Nil:
-                    hashCode = 0;
-                    break;
-                case LuaDataType.Boolean:
-                    hashCode = Boolean.GetHashCode();
-                    break;
-                case LuaDataType.Integer:
-                    hashCode = Integer.GetHashCode();
-                    break;
-                case LuaDataType.Number:
-                    hashCode = Number.GetHashCode();
-                    break;
-                case LuaDataType.String:
-                    hashCode = Str.GetHashCode();
-                    break;
-                case LuaDataType.Table:
-                    hashCode = Table.GetHashCode();
-                    break;
-                case LuaDataType.Function:
-                    hashCode = Closure.GetHashCode();
-                    break;
-                default:
-                    return base.GetHashCode();
-                    break;
-            }
-
-            return hashCode;
-        }
-    
-        public static bool operator == (LuaDataUnion x, LuaDataUnion y)
-        {
-            if (x is null && y is null)
-            {
-                return true;
-            }
-
-            if (x is null || y is null)
-            {
-                return false;
-            }
-
-            return x.Equals(y);
-        }
-
-        public static bool operator !=(LuaDataUnion x, LuaDataUnion y)
-        {
-            return !(x == y);
-        }
     }
 }
 

@@ -30,20 +30,20 @@ namespace CatLua
         /// </summary>
         public static ArithOpConfig[] Configs =
         {
-            new ArithOpConfig(ArithOpFuncs.IAdd,ArithOpFuncs.NAdd),
-            new ArithOpConfig(ArithOpFuncs.ISub,ArithOpFuncs.NSub),
-            new ArithOpConfig(ArithOpFuncs.IMul,ArithOpFuncs.NMul),
-            new ArithOpConfig(ArithOpFuncs.IMod,ArithOpFuncs.NMod),
-            new ArithOpConfig(null,ArithOpFuncs.Pow),
-            new ArithOpConfig(null,ArithOpFuncs.Div),
-            new ArithOpConfig(ArithOpFuncs.IIdiv,ArithOpFuncs.NIdiv),
-            new ArithOpConfig(ArithOpFuncs.BAnd,null),
-            new ArithOpConfig(ArithOpFuncs.BOr,null),
-            new ArithOpConfig(ArithOpFuncs.BXor,null),
-            new ArithOpConfig(ArithOpFuncs.ShL,null),
-            new ArithOpConfig(ArithOpFuncs.ShR,null),
-            new ArithOpConfig(ArithOpFuncs.IUnm,ArithOpFuncs.NUnm),
-            new ArithOpConfig(ArithOpFuncs.BNot,null),
+            new ArithOpConfig(ArithOpFuncs.IAddFunc,ArithOpFuncs.NAddFunc),
+            new ArithOpConfig(ArithOpFuncs.ISubFunc,ArithOpFuncs.NSubFunc),
+            new ArithOpConfig(ArithOpFuncs.IMulFunc,ArithOpFuncs.NMulFunc),
+            new ArithOpConfig(ArithOpFuncs.IModFunc,ArithOpFuncs.NModFunc),
+            new ArithOpConfig(null,ArithOpFuncs.PowFunc),
+            new ArithOpConfig(null,ArithOpFuncs.DivFunc),
+            new ArithOpConfig(ArithOpFuncs.IIdivFunc,ArithOpFuncs.NIdivFunc),
+            new ArithOpConfig(ArithOpFuncs.BAndFunc,null),
+            new ArithOpConfig(ArithOpFuncs.BOrFunc,null),
+            new ArithOpConfig(ArithOpFuncs.BXorFunc,null),
+            new ArithOpConfig(ArithOpFuncs.ShLFunc,null),
+            new ArithOpConfig(ArithOpFuncs.ShRFunc,null),
+            new ArithOpConfig(ArithOpFuncs.IUnmFunc,ArithOpFuncs.NUnmFunc),
+            new ArithOpConfig(ArithOpFuncs.BNotFunc,null),
         };
     }
 }

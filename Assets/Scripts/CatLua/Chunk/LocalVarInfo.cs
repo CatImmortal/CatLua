@@ -7,7 +7,7 @@ namespace CatLua
     /// <summary>
     /// 局部变量
     /// </summary>
-    public class LocalVar
+    public class LocalVarInfo
     {
         /// <summary>
         /// 变量名

@@ -10,19 +10,19 @@ namespace CatLua
     public static class CompareOpFuncs
     {
 
-        public static Func<LuaDataUnion, LuaDataUnion, bool> Eq = EqFunc;
+        public static Func<LuaDataUnion, LuaDataUnion, bool> EqFunc = Eq;
 
-        public static Func<LuaDataUnion, LuaDataUnion, bool> Lt = LtFunc;
+        public static Func<LuaDataUnion, LuaDataUnion, bool> LtFunc = Lt;
 
-        public static Func<LuaDataUnion, LuaDataUnion, bool> Le = LeFunc;
+        public static Func<LuaDataUnion, LuaDataUnion, bool> LeFunc = Le;
 
-        private static bool EqFunc(LuaDataUnion a, LuaDataUnion b)
+        private static bool Eq(LuaDataUnion a, LuaDataUnion b)
         {
             return a.Equals(b);
             
         }
 
-        private static bool LtFunc(LuaDataUnion a, LuaDataUnion b)
+        private static bool Lt(LuaDataUnion a, LuaDataUnion b)
         {
             switch (a.Type)
             {
@@ -56,7 +56,7 @@ namespace CatLua
             throw new Exception(string.Format("{0}不能与{1}进行比较",a.Type,b.Type));
         }
 
-        private static bool LeFunc(LuaDataUnion a, LuaDataUnion b)
+        private static bool Le(LuaDataUnion a, LuaDataUnion b)
         {
             switch (a.Type)
             {

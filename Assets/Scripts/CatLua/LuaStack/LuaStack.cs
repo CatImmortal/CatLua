@@ -25,6 +25,22 @@ namespace CatLua
         /// </summary>
         public int Top;
 
+        public override string ToString()
+        {
+            string s = "";
+
+
+            for (int i = 0; i <= Top; i++)
+            {
+
+                LuaDataUnion value = Get(i);
+
+                s += string.Format("[{0}]", value);
+
+            }
+            return s;
+        }
+
         /// <summary>
         /// 往栈顶压入值
         /// </summary>
@@ -163,6 +179,8 @@ namespace CatLua
                 to--;
             }
         }
+
+     
     }
 
 }

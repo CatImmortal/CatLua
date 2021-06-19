@@ -158,12 +158,12 @@ namespace CatLua
         /// <summary>
         /// 读取upvalue表
         /// </summary>
-        public Upvalue[] ReadUpvalues()
+        public UpvalueInfo[] ReadUpvalues()
         {
-            Upvalue[] upvalues = new Upvalue[ReadUint()];
+            UpvalueInfo[] upvalues = new UpvalueInfo[ReadUint()];
             for (int i = 0; i < upvalues.Length; i++)
             {
-                Upvalue upvalue = new Upvalue
+                UpvalueInfo upvalue = new UpvalueInfo
                 {
                     Instack = ReadByte(),
                     Index = ReadByte()
@@ -202,12 +202,12 @@ namespace CatLua
         /// <summary>
         /// 读取局部变量表
         /// </summary>
-        public LocalVar[] ReadLocVars()
+        public LocalVarInfo[] ReadLocVars()
         {
-            LocalVar[] locvars = new LocalVar[ReadUint()];
+            LocalVarInfo[] locvars = new LocalVarInfo[ReadUint()];
             for (int i = 0; i < locvars.Length; i++)
             {
-                LocalVar locVar = new LocalVar();
+                LocalVarInfo locVar = new LocalVarInfo();
                 locVar.VarName = ReadString();
                 locVar.StartPC = ReadUint();
                 locVar.EndPC = ReadUint();
