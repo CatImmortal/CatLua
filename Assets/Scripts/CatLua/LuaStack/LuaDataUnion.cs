@@ -360,6 +360,11 @@ namespace CatLua
             }
 
         }
+   
+        public LuaDataUnion Copy()
+        {
+            return (LuaDataUnion)MemberwiseClone();
+        }
     }
 }
 
