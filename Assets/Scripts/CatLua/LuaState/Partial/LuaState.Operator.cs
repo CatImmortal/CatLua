@@ -11,12 +11,12 @@ namespace CatLua
         /// </summary>
         public void Arith(ArithOpType type)
         {
-            LuaDataUnion b = globalStack.Pop();
+            LuaDataUnion b = Pop();
             LuaDataUnion a = b;
             if (type != ArithOpType.Unm && type != ArithOpType.BNot)
             {
                 //二元运算
-                a = globalStack.Pop();
+                a = Pop();
             }
 
             ArithOpConfig operatorConfig = ArithOpConfig.Configs[(int)type];
@@ -25,9 +25,17 @@ namespace CatLua
 
             if (result.Type == LuaDataType.Nil)
             {
-                throw new Exception("数学运算出错，结果为nil");
+                //无法进行运算 尝试调用元方法进行运算
+                if (!TryCallMetaMethod(a, b, operatorConfig.MetaMethodName, out result))
+                {
+                    throw new Exception("运算失败,type == " + type);
+                }
             }
+
+
+
             globalStack.Push(result);
+            return;
         }
 
         /// <summary>
@@ -110,7 +118,7 @@ namespace CatLua
             LuaDataUnion a = globalStack.Get(index1);
             LuaDataUnion b = globalStack.Get(index2);
             CompareOpConfig compareOpConfig = CompareOpConfig.Configs[(int)type];
-            return compareOpConfig.CompareFunc(a, b);
+            return compareOpConfig.CompareFunc(a, b,this);
         }
 
         /// <summary>
@@ -119,22 +127,27 @@ namespace CatLua
         public void Len(int index)
         {
             LuaDataUnion value = globalStack.Get(index);
-            long len;
+  
             if (value.Type == LuaDataType.String)
             {
-                len = value.Str.Length;
-               
+                globalStack.Push(Factory.NewInteger(value.Str.Length));
+                return;
+
             }
-            else if (value.Type == LuaDataType.Table)
+            
+            if (value.Type == LuaDataType.Table)
             {
-                len = value.Table.Length;
-            }
-            else
-            {
-                throw new Exception("Len方法不能对字符串和Table以外的值使用");
+                globalStack.Push(Factory.NewInteger(value.Table.Length));
+                return;
             }
 
-            globalStack.Push(Factory.NewInteger(len));
+            //不是string或table 尝试调用元方法
+            if (!TryCallMetaMethod(value,value,"__len",out LuaDataUnion result))
+            {
+                throw new Exception("len方法调用失败");
+            }
+
+            globalStack.Push(result);
         }
 
         /// <summary>
@@ -150,19 +163,30 @@ namespace CatLua
             {
                 for (int i = 1; i < n; i++)
                 {
-                    //检查栈顶的2个值是否为stirng或可以转换为string
+                    
                     if (IsString(-1) && IsString(-2))
                     {
-                        string s2 = globalStack.Pop().ToString();
-                        string s1 = globalStack.Pop().ToString();
+                        //检查栈顶的2个值是否为stirng或可以转换为string
+                        string s2 = Pop().ToString();
+                        string s1 = Pop().ToString();
                         string result = s1 + s2;
 
-                        globalStack.Push(Factory.NewString(result));
+                        Push(result);
 
                     }
                     else
                     {
-                        throw new Exception(string.Format("Concat错误"));
+                        //有无法转换string的 尝试调用元方法进行拼接
+                        LuaDataUnion b = Pop();
+                        LuaDataUnion a = Pop();
+                        if (TryCallMetaMethod(a,b,"__concat",out LuaDataUnion result))
+                        {
+                            Push(result.Str);
+                        }
+                        else
+                        {
+                            throw new Exception("Concat调用失败");
+                        }
                     }
                 }
             }

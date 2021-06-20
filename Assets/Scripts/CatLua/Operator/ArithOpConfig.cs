@@ -9,10 +9,11 @@ namespace CatLua
     /// </summary>
     public class ArithOpConfig
     {
-        public ArithOpConfig(Func<long, long, long> integerFunc, Func<double, double, double> numberFunc)
+        public ArithOpConfig(Func<long, long, long> integerFunc, Func<double, double, double> numberFunc, string metaMethodName)
         {
             IntegerFunc = integerFunc;
             NumberFunc = numberFunc;
+            MetaMethodName = metaMethodName;
         }
 
         /// <summary>
@@ -26,24 +27,29 @@ namespace CatLua
         public Func<double, double, double> NumberFunc;
 
         /// <summary>
+        /// 元方法名
+        /// </summary>
+        public string MetaMethodName;
+
+        /// <summary>
         /// 所有数学与位运算符的配置
         /// </summary>
         public static ArithOpConfig[] Configs =
         {
-            new ArithOpConfig(ArithOpFuncs.IAddFunc,ArithOpFuncs.NAddFunc),
-            new ArithOpConfig(ArithOpFuncs.ISubFunc,ArithOpFuncs.NSubFunc),
-            new ArithOpConfig(ArithOpFuncs.IMulFunc,ArithOpFuncs.NMulFunc),
-            new ArithOpConfig(ArithOpFuncs.IModFunc,ArithOpFuncs.NModFunc),
-            new ArithOpConfig(null,ArithOpFuncs.PowFunc),
-            new ArithOpConfig(null,ArithOpFuncs.DivFunc),
-            new ArithOpConfig(ArithOpFuncs.IIdivFunc,ArithOpFuncs.NIdivFunc),
-            new ArithOpConfig(ArithOpFuncs.BAndFunc,null),
-            new ArithOpConfig(ArithOpFuncs.BOrFunc,null),
-            new ArithOpConfig(ArithOpFuncs.BXorFunc,null),
-            new ArithOpConfig(ArithOpFuncs.ShLFunc,null),
-            new ArithOpConfig(ArithOpFuncs.ShRFunc,null),
-            new ArithOpConfig(ArithOpFuncs.IUnmFunc,ArithOpFuncs.NUnmFunc),
-            new ArithOpConfig(ArithOpFuncs.BNotFunc,null),
+            new ArithOpConfig(ArithOpFuncs.IAddFunc,ArithOpFuncs.NAddFunc,"__add"),
+            new ArithOpConfig(ArithOpFuncs.ISubFunc,ArithOpFuncs.NSubFunc,"__sub"),
+            new ArithOpConfig(ArithOpFuncs.IMulFunc,ArithOpFuncs.NMulFunc,"__mul"),
+            new ArithOpConfig(ArithOpFuncs.IModFunc,ArithOpFuncs.NModFunc,"__mod"),
+            new ArithOpConfig(null,ArithOpFuncs.PowFunc,"__pow"),
+            new ArithOpConfig(null,ArithOpFuncs.DivFunc,"__div"),
+            new ArithOpConfig(ArithOpFuncs.IIdivFunc,ArithOpFuncs.NIdivFunc,"__idiv"),
+            new ArithOpConfig(ArithOpFuncs.BAndFunc,null,"__band"),
+            new ArithOpConfig(ArithOpFuncs.BOrFunc,null,"__bor"),
+            new ArithOpConfig(ArithOpFuncs.BXorFunc,null,"__bxor"),
+            new ArithOpConfig(ArithOpFuncs.ShLFunc,null,"__shl"),
+            new ArithOpConfig(ArithOpFuncs.ShRFunc,null,"__shr"),
+            new ArithOpConfig(ArithOpFuncs.IUnmFunc,ArithOpFuncs.NUnmFunc,"__unm"),
+            new ArithOpConfig(ArithOpFuncs.BNotFunc,null,"__bnot"),
         };
     }
 }

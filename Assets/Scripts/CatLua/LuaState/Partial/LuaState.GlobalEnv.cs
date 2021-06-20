@@ -30,7 +30,7 @@ namespace CatLua
         public void SetGlobalValue(string key)
         {
             LuaDataUnion dataKey = Factory.NewString(key);
-            LuaDataUnion value = globalStack.Pop();
+            LuaDataUnion value = Pop();
 
 
             LuaDataUnion data = registry[Constants.GlobalEnvKey];

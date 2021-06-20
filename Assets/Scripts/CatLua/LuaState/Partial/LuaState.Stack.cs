@@ -98,7 +98,7 @@ namespace CatLua
         {
             for (int i = 0; i < n; i++)
             {
-                globalStack.Pop();
+                Pop();
             }
         }
 
@@ -133,7 +133,7 @@ namespace CatLua
         /// </summary>
         public void PopAndCopy(int index)
         {
-            LuaDataUnion value = globalStack.Pop();
+            LuaDataUnion value = Pop();
             globalStack.Set(index, value);
         }
 
@@ -214,7 +214,7 @@ namespace CatLua
                 int num = -n;
                 for (int i = 0; i < num; i++)
                 {
-                    globalStack.Pop();
+                    Pop();
                 }
             }
 

@@ -16,7 +16,7 @@ namespace CatLua
             //处理upvalue
             for (int i = upvalueNum; i > 0; i--)
             {
-                LuaDataUnion data = globalStack.Pop();
+                LuaDataUnion data = Pop();
                 c.Upvalues[upvalueNum - 1] = new Upvalue(data);
             }
 

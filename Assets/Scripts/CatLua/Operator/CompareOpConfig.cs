@@ -9,7 +9,7 @@ namespace CatLua
     /// </summary>
     public class CompareOpConfig
     {
-        public CompareOpConfig(Func<LuaDataUnion, LuaDataUnion, bool> compareFunc)
+        public CompareOpConfig(Func<LuaDataUnion, LuaDataUnion,LuaState, bool> compareFunc)
         {
             CompareFunc = compareFunc;
         }
@@ -17,7 +17,7 @@ namespace CatLua
         /// <summary>
         /// 比较运算的函数实现
         /// </summary>
-        public Func<LuaDataUnion, LuaDataUnion, bool> CompareFunc;
+        public Func<LuaDataUnion, LuaDataUnion,LuaState, bool> CompareFunc;
 
         /// <summary>
         /// 所有比较运算符的配置

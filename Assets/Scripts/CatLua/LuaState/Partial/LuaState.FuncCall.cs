@@ -145,7 +145,7 @@ namespace CatLua
         }
 
         /// <summary>
-        /// 将栈中globalStackIndex后的所有开放状态的upvalue关闭
+        /// 将栈中globalStackIndex位置开始的所有开放状态的upvalue关闭
         /// </summary>
         public void CloseUpvalue(int globalStackIndex)
         {

@@ -37,7 +37,12 @@ namespace CatLua
         /// 字典部分
         /// </summary>
         private Dictionary<LuaDataUnion, LuaDataUnion> dict;
-        
+
+        /// <summary>
+        /// 元表
+        /// </summary>
+        public LuaTable MetaTable;
+
         /// <summary>
         /// 数组部分的长度
         /// </summary>
@@ -102,8 +107,13 @@ namespace CatLua
                     }
                 }
 
+                if (!dict.TryGetValue(key,out LuaDataUnion value))
+                {
+                    return default;
+                }
+
                 //否则从字典取
-                return dict[key];
+                return value;
             }
 
             set {

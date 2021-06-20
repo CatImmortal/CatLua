@@ -10,19 +10,29 @@ namespace CatLua
     public static class CompareOpFuncs
     {
 
-        public static Func<LuaDataUnion, LuaDataUnion, bool> EqFunc = Eq;
+        public static Func<LuaDataUnion, LuaDataUnion, LuaState, bool> EqFunc = Eq;
 
-        public static Func<LuaDataUnion, LuaDataUnion, bool> LtFunc = Lt;
+        public static Func<LuaDataUnion, LuaDataUnion, LuaState, bool> LtFunc = Lt;
 
-        public static Func<LuaDataUnion, LuaDataUnion, bool> LeFunc = Le;
+        public static Func<LuaDataUnion, LuaDataUnion, LuaState, bool> LeFunc = Le;
 
-        private static bool Eq(LuaDataUnion a, LuaDataUnion b)
+        private static bool Eq(LuaDataUnion a, LuaDataUnion b, LuaState vm)
         {
-            return a.Equals(b);
-            
+            bool flag = a.Equals(b);
+
+            //a b是不同的table时 尝试调用元方法
+            if (!flag && a.Type == LuaDataType.Table && b.Type == LuaDataType.Table)
+            {
+                if (vm.TryCallMetaMethod(a,b,"__eq",out LuaDataUnion result))
+                {
+                    return result.ConvertToBoolean();
+                }
+            }
+
+            return flag;
         }
 
-        private static bool Lt(LuaDataUnion a, LuaDataUnion b)
+        private static bool Lt(LuaDataUnion a, LuaDataUnion b, LuaState vm)
         {
             switch (a.Type)
             {
@@ -53,10 +63,16 @@ namespace CatLua
               
             }
 
+            //<比较的是数字和字符串以外的 尝试调用元方法
+            if (vm.TryCallMetaMethod(a,b,"__lt",out LuaDataUnion result))
+            {
+                return result.ConvertToBoolean();
+            }
+
             throw new Exception(string.Format("{0}不能与{1}进行比较",a.Type,b.Type));
         }
 
-        private static bool Le(LuaDataUnion a, LuaDataUnion b)
+        private static bool Le(LuaDataUnion a, LuaDataUnion b, LuaState vm)
         {
             switch (a.Type)
             {
@@ -86,6 +102,18 @@ namespace CatLua
                     }
                     break;
 
+            }
+
+            //<=比较的是数字和字符串以外的 尝试调用元方法
+            //找不到__le会去尝试找__lt
+            //因为a <= b 等价于not (b < a)
+            if (vm.TryCallMetaMethod(a,b,"__le",out LuaDataUnion data))
+            {
+                return data.ConvertToBoolean();
+            }
+            else if (vm.TryCallMetaMethod(b, a, "__lt", out data))
+            {
+                return !data.ConvertToBoolean();
             }
 
             throw new Exception(string.Format("{0}不能与{1}进行比较", a.Type, b.Type));
