@@ -8,7 +8,7 @@ end
 
 foo()
 
-print(b)
+print(b) -- 1
 
 
 

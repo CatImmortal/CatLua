@@ -54,7 +54,7 @@ namespace CatLua
                 }
                 else
                 {
-                    return LuaDataUnion.Nil;
+                    return default;
                 }
                 
             }
@@ -78,7 +78,7 @@ namespace CatLua
                 }
                 else
                 {
-                    return LuaDataUnion.Nil;
+                    return default;
                 }
 
             }
@@ -99,7 +99,7 @@ namespace CatLua
                 return Factory.NewNumber(result);
             }
 
-            return LuaDataUnion.Nil;
+            return default;
         }
 
         /// <summary>
@@ -157,7 +157,7 @@ namespace CatLua
                         string s1 = globalStack.Pop().ToString();
                         string result = s1 + s2;
 
-                        globalStack.Push(Factory.NewString(string.Empty));
+                        globalStack.Push(Factory.NewString(result));
 
                     }
                     else

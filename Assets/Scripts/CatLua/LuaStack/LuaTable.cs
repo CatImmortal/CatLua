@@ -17,7 +17,7 @@ namespace CatLua
                 arr = new List<LuaDataUnion>(arrSize);
                 for (int i = 0; i < arrSize; i++)
                 {
-                    arr.Add(LuaDataUnion.Nil);
+                    arr.Add(default);
                 }
             }
 

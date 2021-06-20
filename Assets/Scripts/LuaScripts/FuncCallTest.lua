@@ -11,5 +11,6 @@ end
 
 
 local v2,i2 = max(3,9,7,128,35)
+print(v2,i2)
 
 

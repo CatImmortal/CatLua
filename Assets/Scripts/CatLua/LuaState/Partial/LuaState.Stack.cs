@@ -23,7 +23,7 @@ namespace CatLua
         /// </summary>
         public void Push()
         {
-            globalStack.Push(LuaDataUnion.Nil);
+            globalStack.Push(default);
         }
 
         /// <summary>
@@ -203,7 +203,7 @@ namespace CatLua
                 int num = n;
                 for (int i = 0; i < num; i++)
                 {
-                    globalStack.Push(LuaDataUnion.Nil);
+                    globalStack.Push(default);
                 }
                
             }

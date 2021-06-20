@@ -96,13 +96,20 @@ namespace CatLua
                 UpvalueInfo info = proto.UpvalueInfos[i];
 
                 //upvalue在stack中的全局索引
-                int globalUpvalueIndex = info.Index + CurFrameBottom;
+                int globalStackIndex = info.Index + CurFrameBottom;
                 
                 if (info.Instack == 1)
                 {
                     //upvalue是外层函数的局部变量
-                    Upvalue newValue = new Upvalue(globalStack.Get(globalUpvalueIndex));
-                    c.Upvalues[i] = newValue;
+
+                    //尝试从openUpvlaues里获取
+                    if (!openUpvalues.TryGetValue(globalStackIndex,out Upvalue upvalue))
+                    {
+                        //没从openUpvlaues获取到就从栈里获取，并保存到openUpvlaues中
+                        upvalue = new Upvalue(globalStack.Get(globalStackIndex),true,globalStackIndex);
+                        openUpvalues.Add(globalStackIndex, upvalue);
+                    }
+                    c.Upvalues[i] = upvalue;
                 }
                 else
                 {

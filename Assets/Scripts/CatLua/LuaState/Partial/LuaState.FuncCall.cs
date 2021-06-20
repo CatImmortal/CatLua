@@ -52,7 +52,7 @@ namespace CatLua
 
             if (c.Proto.UpvalueInfos.Length > 0)
             {
-                //设置_G到upvalue中
+                //设置_G到入口函数的upvalue中
                 LuaDataUnion g = registry[Constants.GlobalEnvKey];
                 c.Upvalues[0] = new Upvalue(g);
             }
@@ -144,6 +144,27 @@ namespace CatLua
             return curFrame.Closure.Upvalues[index];
         }
 
+        /// <summary>
+        /// 将栈中globalStackIndex后的所有开放状态的upvalue关闭
+        /// </summary>
+        public void CloseUpvalue(int globalStackIndex)
+        {
+            List<int> needDeleteKey = new List<int>();
+            foreach (KeyValuePair<int, Upvalue> item in openUpvalues)
+            {
+                if (item.Key >= globalStackIndex)
+                {
+                    needDeleteKey.Add(item.Key);
+
+                    item.Value.IsOpen = false;
+                }
+            }
+
+            foreach (int key in needDeleteKey)
+            {
+                openUpvalues.Remove(key);
+            }
+        }
 
         /// <summary>
         /// 调用函数
@@ -247,6 +268,10 @@ namespace CatLua
         /// </summary>
         private void PostLuaFuncCall(int resultNum)
         {
+
+            //闭合此栈帧上的局部变量所构造的Upvalue
+            CloseUpvalue(CurFrameBottom);
+
             FuncCallFrame frame = curFrame;
 
             //弹出栈帧
@@ -310,6 +335,10 @@ namespace CatLua
             globalStack.PushN(FuncAndParams, 1, argsNum);
 
             int r = c.CSFunc(this);
+
+
+            //闭合此栈帧上的局部变量所构造的Upvalue
+            CloseUpvalue(CurFrameBottom);
 
             PopFuncCallFrame();
 

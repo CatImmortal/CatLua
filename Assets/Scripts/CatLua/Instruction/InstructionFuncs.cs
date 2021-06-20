@@ -85,11 +85,16 @@ namespace CatLua
         /// </summary>
         private static void Jmp(Instructoin i, LuaState vm)
         {
-
-
             i.GetAsBx(out int a, out int sbx);
 
             vm.AddPC(sbx);
+
+            if (a != 0)
+            {
+                //处理upvalue
+                a += vm.CurFrameBottom - 1;  //这里传的栈索引从1开始 需要再-1
+                vm.CloseUpvalue(a);
+            }
         }
 
         /// <summary>
@@ -577,7 +582,7 @@ namespace CatLua
             i.GetABC(out int a, out int b, out int c);
             a += vm.CurFrameBottom;
 
-            vm.Push(vm.GetCurFrameUpvalue(b).value);
+            vm.Push(vm.GetCurFrameUpvalue(b).Value);
             vm.PopAndCopy(a);
 
         }
@@ -594,9 +599,7 @@ namespace CatLua
             vm.CopyAndPush(a);
             LuaDataUnion data = vm.Pop();
 
-            //修改upvalue所指向的data的内部数据
-            //这样如果upvalue是引用的栈上数据，那么栈上的数据会被修改到
-            upvalue.value.ChangeData(data);
+            upvalue.SetValue(data,vm);
         }
 
         /// <summary>
@@ -608,7 +611,7 @@ namespace CatLua
             a += vm.CurFrameBottom;
             Upvalue upvalue = vm.GetCurFrameUpvalue(b);
 
-            vm.Push(upvalue.value.Table);
+            vm.Push(upvalue.Value.Table);
             vm.PushRK(c);
             vm.PushTableValue(-2);
             vm.PopAndCopy(a);
@@ -624,7 +627,7 @@ namespace CatLua
 
             Upvalue upvalue = vm.GetCurFrameUpvalue(a);
 
-            vm.Push(upvalue.value.Table);
+            vm.Push(upvalue.Value.Table);
             vm.PushRK(b);
             vm.PushRK(c);
             vm.SetTableValue(-3);

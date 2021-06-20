@@ -75,7 +75,7 @@ namespace CatLua
                 }
                 else
                 {
-                    Push(LuaDataUnion.Nil);
+                    Push(default);
                 }
             }
         }
@@ -92,7 +92,7 @@ namespace CatLua
 
             
             LuaDataUnion data = stack[Top];
-            stack[Top] = LuaDataUnion.Nil;
+            stack[Top] = default;
             Top--;
             return data;
         }
@@ -147,7 +147,7 @@ namespace CatLua
                 return stack[absIndex];
             }
 
-            return LuaDataUnion.Nil;
+            return default;
         }
 
         /// <summary>

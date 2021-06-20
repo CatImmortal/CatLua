@@ -15,7 +15,7 @@ local func1 = function()
     
     func2()
 
-    print(a)
+    print(a)--2
 end
 
-func1()
+func1()  

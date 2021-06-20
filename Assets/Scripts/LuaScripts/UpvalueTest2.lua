@@ -2,6 +2,7 @@
 local foo
 
 do
+    --闭合upvalue测试
     local b = "b"
     foo = function()
         b = "bb"
@@ -10,5 +11,5 @@ do
 
 end
 
-foo()
+foo() --bb
 

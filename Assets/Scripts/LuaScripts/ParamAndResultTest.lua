@@ -3,3 +3,5 @@ local function f()
 end
 
 local t = {11,22,f()}
+
+print(t)

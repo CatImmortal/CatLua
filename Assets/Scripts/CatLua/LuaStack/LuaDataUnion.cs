@@ -10,11 +10,17 @@ namespace CatLua
     /// </summary>
 
 
-    public class LuaDataUnion
+    public struct LuaDataUnion : IEqualityComparer<LuaDataUnion>
     {
         public LuaDataUnion(LuaDataType type, bool boolean = default, long integer = default, double number = default, string str = default, LuaTable table = default, Closure closure = default)
         {
             Type = type;
+            Boolean = default;
+            Integer = default;
+            Number = default;
+            Str = default;
+            Table = default;
+            Closure = default;
 
             switch (type)
             {
@@ -40,7 +46,7 @@ namespace CatLua
             }
         }
 
-        public static LuaDataUnion Nil = new LuaDataUnion(LuaDataType.Nil);
+
 
         public LuaDataType Type
         {
@@ -184,10 +190,6 @@ namespace CatLua
             return result;
         }
 
-        public override bool Equals(object obj)
-        {
-            return Equals(obj as LuaDataUnion);
-        }
 
         public override int GetHashCode()
         {
@@ -223,27 +225,16 @@ namespace CatLua
             return hashCode;
         }
 
-        public static bool operator ==(LuaDataUnion x, LuaDataUnion y)
+        public bool Equals(LuaDataUnion x, LuaDataUnion y)
         {
-            if (x is null && y is null)
-            {
-                return true;
-            }
-
-            if (x is null || y is null)
-            {
-                return false;
-            }
-
             return x.Equals(y);
         }
 
-        public static bool operator !=(LuaDataUnion x, LuaDataUnion y)
+        public int GetHashCode(LuaDataUnion obj)
         {
-            return !(x == y);
+            return obj.GetHashCode();
         }
 
-      
 
         /// <summary>
         /// 转换bool
@@ -332,39 +323,7 @@ namespace CatLua
             }
         }
 
-        public void ChangeData(LuaDataUnion data)
-        {
-            Type = data.Type;
 
-            switch (Type)
-            {
-
-                case LuaDataType.Boolean:
-                    Boolean = data.Boolean;
-                    break;
-                case LuaDataType.Integer:
-                    Integer = data.Integer;
-                    break;
-                case LuaDataType.Number:
-                    Number = data.Number;
-                    break;
-                case LuaDataType.String:
-                    Str = data.Str;
-                    break;
-                case LuaDataType.Table:
-                    Table = data.Table;
-                    break;
-                case LuaDataType.Function:
-                    Closure = data.Closure;
-                    break;
-            }
-
-        }
-   
-        public LuaDataUnion Copy()
-        {
-            return (LuaDataUnion)MemberwiseClone();
-        }
     }
 }
 
