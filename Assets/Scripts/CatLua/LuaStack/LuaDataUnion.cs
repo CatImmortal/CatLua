@@ -177,11 +177,11 @@ namespace CatLua
                     break;
 
                 case LuaDataType.Table:
-                    result = Table.Equals(Table);
+                    result = Table.Equals(other.Table);
                     break;
 
                 case LuaDataType.Function:
-                    result = Closure.Equals(Closure);
+                    result = Closure.Equals(other.Closure);
                     break;
 
 

@@ -48,18 +48,57 @@ namespace CatLua
         }
 
         /// <summary>
-        /// 压入table[key]
+        /// 压入data.table[key]
         /// </summary>
-        private LuaDataType PushTableValue(LuaDataUnion data, LuaDataUnion key)
+        private LuaDataType PushTableValue(LuaDataUnion data, LuaDataUnion key,bool raw = false)
         {
-            if (data.Type != LuaDataType.Table)
+            if (data.Type == LuaDataType.Table)
             {
-                throw new Exception("GetTableValue的data不是table");
+                //data是table
+
+                LuaDataUnion value = data.Table[key];
+
+                if (value.Type != LuaDataType.Nil)
+                {
+                    //value不为nil值 直接push   
+                    globalStack.Push(value);
+                    return value.Type;
+                }
+
             }
 
-            LuaDataUnion value = data.Table[key];
-            globalStack.Push(value);
-            return value.Type;
+            //data不是table 或者 data.table[key] == nil
+            //尝试调用__index元方法
+
+            //raw调用 或者 没有关联的__index元方法  push一个nil
+            if (raw || !HasMetaMethod(data, "__index"))
+            {
+                globalStack.Push(default);
+                return default;
+            }
+
+
+            //否则根据__index关联的类型进行处理
+            LuaTable mt = GetMetaTable(data);
+            LuaDataUnion mtValue = mt["__index"];
+            switch (mtValue.Type)
+            {
+                
+                case LuaDataType.Table:
+                    //__index关联的是table，去这个table里找value
+                    return PushTableValue(mtValue, key, false);
+
+                case LuaDataType.Function:
+                    //__index关联的是函数 以table和key为参数调用这个函数 把1个返回值压入栈顶
+                    Push(mtValue.Closure);
+                    Push(data);
+                    Push(key);
+                    CallFunc(2, 1);
+                    LuaDataUnion result = globalStack.Get(-1);
+                    return result.Type;
+            }
+
+            return default;
         }
 
         /// <summary>
@@ -70,7 +109,7 @@ namespace CatLua
             LuaDataUnion data = globalStack.Get(index);
             LuaDataUnion value = Pop();
             LuaDataUnion key = Pop();
-            SetTableValue(index,data, key, value);
+            SetTableValue(data, key, value);
         }
 
         /// <summary>
@@ -81,7 +120,7 @@ namespace CatLua
             LuaDataUnion data = globalStack.Get(index);
             LuaDataUnion key = Factory.NewString(strKey);
             LuaDataUnion value = Pop();
-            SetTableValue(index,data, key, value);
+            SetTableValue(data, key, value);
         }
 
         /// <summary>
@@ -92,20 +131,60 @@ namespace CatLua
             LuaDataUnion data = globalStack.Get(index);
             LuaDataUnion key = Factory.NewInteger(integerKey);
             LuaDataUnion value = Pop();
-            SetTableValue(index, data, key, value);
+            SetTableValue(data, key, value);
         }
 
         /// <summary>
         /// data.table[key] = value
         /// </summary>
-        private void SetTableValue(int index, LuaDataUnion data, LuaDataUnion key,LuaDataUnion value)
+        private void SetTableValue(LuaDataUnion data, LuaDataUnion key,LuaDataUnion value,bool raw = false)
         {
-            if (data.Type != LuaDataType.Table)
+
+
+            if (data.Type == LuaDataType.Table)
             {
-                throw new Exception("SetTableValue的data不是table");
+                //data是table
+
+                if (data.Table[key].Type != LuaDataType.Nil)
+                {
+                    //key在表中存在
+                    data.Table[key] = value;
+                    return;
+                }
+                
             }
-           
-            data.Table[key] = value;
+
+            //data不是table 或者 data.table[key] == nil
+            //尝试调用__newindex元方法
+
+            //raw调用 或者 没有关联的__newindex元方法
+            if (raw || !HasMetaMethod(data, "__newindex"))
+            {
+                data.Table[key] = value;
+                return;
+            }
+
+
+            //否则根据__index关联的类型进行处理
+            LuaTable mt = GetMetaTable(data);
+            LuaDataUnion mtValue = mt["__index"];
+            switch (mtValue.Type)
+            {
+
+                case LuaDataType.Table:
+                    //__newindex关联的是table，就set到这个table里
+                    SetTableValue(mtValue, key, value, false);
+                    break;
+                case LuaDataType.Function:
+                    //__index关联的是函数 以table和key value为参数调用这个函数 没有返回值
+                    Push(mtValue.Closure);
+                    Push(data);
+                    Push(key);
+                    Push(value);
+                    CallFunc(3, 0);
+                    break;
+            }
+
         }
 
 

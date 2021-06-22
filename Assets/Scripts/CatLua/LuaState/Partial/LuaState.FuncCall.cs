@@ -174,7 +174,24 @@ namespace CatLua
             LuaDataUnion data = globalStack.Get(-(argsNum + 1));
             if (data.Type != LuaDataType.Function)
             {
-                throw new Exception("Call调用的数据不是函数类型，而是" + data.Type);
+                //不是函数 尝试调用__call元方法
+                LuaTable mt = GetMetaTable(data);
+                LuaDataUnion mtData = mt["__call"];
+                if (mt != null && mtData.Type == LuaDataType.Function)
+                {
+                    //以被调用的data为第一个参数，后续跟其他参数
+
+                    //插入到原本要调用的函数和参数前面 后续会调用这个__call关联的函数
+                    Push(mtData);
+                    PopAndInsert(-(argsNum + 2));  
+
+                    argsNum++;
+                    data = mtData;  //这里将原本要调用的换成__call
+                }
+                else
+                {
+                    throw new Exception("调用函数失败:" + this);
+                }
             }
 
             if (data.Closure.CSFunc == null)

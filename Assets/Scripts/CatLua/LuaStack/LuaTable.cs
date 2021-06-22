@@ -12,20 +12,14 @@ namespace CatLua
         public LuaTable(int arrSize = 0,int dictSize = 0)
         {
 
-            if (arrSize > 0)
+            arr = new List<LuaDataUnion>(arrSize);
+            for (int i = 0; i < arrSize; i++)
             {
-                arr = new List<LuaDataUnion>(arrSize);
-                for (int i = 0; i < arrSize; i++)
-                {
-                    arr.Add(default);
-                }
+                arr.Add(default);
             }
 
-            if (dictSize > 0)
-            {
-                dict = new Dictionary<LuaDataUnion, LuaDataUnion>(dictSize);
-            }
-           
+            dict = new Dictionary<LuaDataUnion, LuaDataUnion>(dictSize);
+
         }
 
         /// <summary>
@@ -132,11 +126,6 @@ namespace CatLua
                 {
                     //key是整数或者是可以转换为整数索引的浮点数 
 
-                    if (arr == null)
-                    {
-                        arr = new List<LuaDataUnion>();
-                    }
-
                     if (index <= arr.Count)
                     {
                         //在数组长度内 放入数组
@@ -174,11 +163,6 @@ namespace CatLua
                 }
 
                 //不能放进数组里 只能试试字典了
-
-                if (dict == null)
-                {
-                    dict = new Dictionary<LuaDataUnion, LuaDataUnion>(8);
-                }
 
                 if (value.Type != LuaDataType.Nil)
                 {

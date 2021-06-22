@@ -546,16 +546,7 @@ namespace CatLua
 
         private static void TailCall(Instructoin i, LuaState vm)
         {
-            i.GetABC(out int a, out int b, out int c);
-            a += vm.CurFrameBottom;
-            c = 0;
-
-
-            int ArgsNum = vm.PushFuncAndArgs(a, b - 1);
-
-            vm.CallFunc(ArgsNum, c - 1);
-
-            vm.PopResults(a, c - 1);
+            Call(i, vm);
         }
 
         /// <summary>

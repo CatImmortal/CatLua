@@ -9,17 +9,19 @@ namespace CatLua
     /// </summary>
     public static class CSFunc
     {
-        public static void Init(LuaState ls)
+        public static void Init(LuaState vm)
         {
-            ls.RegisteCSFunc("print", Print);
+            vm.RegisteCSFunc("print", Print);
+            vm.RegisteCSFunc("getmetatable", GetMetaTable);
+            vm.RegisteCSFunc("setmetatable", SetMetaTable);
         }
 
-        public static int Print(LuaState ls)
+        public static int Print(LuaState vm)
         {
-            int argsNum = ls.CurFrameNonReserveRegisterSize;
+            int argsNum = vm.CurFrameNonReserveRegisterSize;
             string s = string.Empty;
             s += "Lua Print:";
-            LuaDataUnion[] datas = ls.PopN(argsNum);
+            LuaDataUnion[] datas = vm.PopN(argsNum);
             for (int i = 0; i < argsNum; i++)
             {
                 s += datas[i].ToString();
@@ -29,6 +31,21 @@ namespace CatLua
             Debug.Log(s);
 
             return 0;
+        }
+
+        public static int GetMetaTable(LuaState vm)
+        {
+            if (!vm.PushMetaTable(vm.CurFrameBottom))
+            {
+                vm.Push();
+            }
+            return 1;
+        }
+
+        public static int SetMetaTable(LuaState vm)
+        {
+            vm.SetMetaTable(vm.CurFrameBottom);
+            return 1;
         }
     }
 

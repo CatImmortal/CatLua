@@ -135,16 +135,17 @@ namespace CatLua
 
             }
             
-            if (value.Type == LuaDataType.Table)
-            {
-                globalStack.Push(Factory.NewInteger(value.Table.Length));
-                return;
-            }
+           
 
-            //不是string或table 尝试调用元方法
+            //不是string尝试调用元方法
             if (!TryCallMetaMethod(value,value,"__len",out LuaDataUnion result))
             {
-                throw new Exception("len方法调用失败");
+                //没有__len关联的元方法 但是是个table 返回数组部分长度
+                if (value.Type == LuaDataType.Table)
+                {
+                    globalStack.Push(Factory.NewInteger(value.Table.Length));
+                    return;
+                }
             }
 
             globalStack.Push(result);
