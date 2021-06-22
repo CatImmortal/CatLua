@@ -9,7 +9,7 @@ namespace CatLua
         /// <summary>
         /// 将C#函数转为C#闭包后压入栈
         /// </summary>
-        public void PushCSFunc(Func<LuaState, int> csFunc, int upvalueNum = 0)
+        public void PushCSFunc(Func<LuaState, int, int> csFunc, int upvalueNum = 0)
         {
             Closure c = new Closure(csFunc);
 
@@ -36,7 +36,7 @@ namespace CatLua
         /// <summary>
         /// 将栈中index位置的值转换为C#函数并返回
         /// </summary>
-        public Func<LuaState, int> ToCSFunc(int index)
+        public Func<LuaState, int, int> ToCSFunc(int index)
         {
             LuaDataUnion data = globalStack.Get(index);
             if (data.Type == LuaDataType.Function && data.Closure.CSFunc != null)

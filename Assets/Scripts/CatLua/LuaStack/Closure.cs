@@ -20,7 +20,7 @@ namespace CatLua
             }
         }
 
-        public Closure(Func<LuaState, int> csFunc,int upvalueNum = 0)
+        public Closure(Func<LuaState, int, int> csFunc,int upvalueNum = 0)
         {
             Proto = null;
             CSFunc = csFunc;
@@ -39,7 +39,7 @@ namespace CatLua
         /// <summary>
         /// C#函数闭包
         /// </summary>
-        public Func<LuaState, int> CSFunc;
+        public Func<LuaState, int,int> CSFunc;
 
         /// <summary>
         /// 捕获到的Upvalue列表

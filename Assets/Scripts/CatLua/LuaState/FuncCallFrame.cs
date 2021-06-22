@@ -65,14 +65,6 @@ namespace CatLua
             private set;
         }
 
-        /// <summary>
-        /// 获取栈帧的非预留寄存器区域的大小（预留区域最大索引到top的那部分的长度）
-        /// </summary>
-        public int GetNonReserveRegisterSize(int top)
-        {
-            return top - ReserveRegisterMaxIndex;
-        }
-
     }
 }
 

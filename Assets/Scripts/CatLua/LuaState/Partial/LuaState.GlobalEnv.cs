@@ -41,7 +41,7 @@ namespace CatLua
         /// <summary>
         /// 注册C#函数到_G
         /// </summary>
-        public void RegisteCSFunc(string key, Func<LuaState, int> csFunc)
+        public void RegisteCSFunc(string key, Func<LuaState, int, int> csFunc)
         {
             PushCSFunc(csFunc);
             SetGlobalValue(key);

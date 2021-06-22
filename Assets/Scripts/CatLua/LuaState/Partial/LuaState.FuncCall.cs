@@ -33,17 +33,6 @@ namespace CatLua
             }
         }
 
-        /// <summary>
-        /// 当前栈帧的非预留寄存器区域的大小（预留区域最大索引到top的那部分的长度）
-        /// </summary>
-        public int CurFrameNonReserveRegisterSize
-        {
-            get
-            {
-                return curFrame.GetNonReserveRegisterSize(Top);
-            }
-        }
-
 
 
         /// <summary>
@@ -342,7 +331,7 @@ namespace CatLua
             SetTop(newFrame.Bottom - 1);
             globalStack.PushN(FuncAndParams, 1, argsNum);
 
-            int r = c.CSFunc(this);
+            int r = c.CSFunc(this,argsNum);
 
 
             //闭合此栈帧上的局部变量所构造的Upvalue
