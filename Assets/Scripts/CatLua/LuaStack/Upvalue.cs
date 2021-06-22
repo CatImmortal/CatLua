@@ -35,7 +35,9 @@ namespace CatLua
         }
 
 
-
+        /// <summary>
+        /// 修改引用到的Lua值
+        /// </summary>
         public void SetValue(LuaDataUnion value,LuaState vm)
         {
 
@@ -43,7 +45,7 @@ namespace CatLua
 
             if (IsOpen)
             {
-                //upvalue处于开放状态 意味着引用的Lua值在栈中，需要更新栈
+                //upvalue处于开放状态 意味着引用的Lua值在栈中，需要一并更新栈
                 vm.Push(Value);
                 vm.PopAndCopy(GlobalStackIndex);
             }

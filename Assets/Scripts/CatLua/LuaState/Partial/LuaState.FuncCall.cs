@@ -23,7 +23,7 @@ namespace CatLua
         }
 
         /// <summary>
-        /// 当前栈帧的变长参数数量
+        /// 当前函数的变长参数数量
         /// </summary>
         public int CurFrameVarArgsNum
         {
@@ -32,8 +32,6 @@ namespace CatLua
                 return curFrame.VarArgs.Length;
             }
         }
-
-
 
         /// <summary>
         /// 加载一段字节码chunk，将主函数原型实例化为闭包，压入栈顶
@@ -118,7 +116,7 @@ namespace CatLua
             int targetIndex = (a - 1) + resultNum;
             if (targetIndex > Top)
             {
-                //扩充栈顶
+                //所有返回值复制后 会超出原top 需要扩充栈顶
                 SetTop(targetIndex);
             }
 
@@ -228,7 +226,7 @@ namespace CatLua
 
             //为要调用的函数创建栈帧
 
-            //设置被调栈帧的栈底 在之前的栈帧之上 用max函数保证不会和之前的栈帧数据重叠
+            //设置被调栈帧的栈底 需要保证在之前的栈帧之上 不会和之前的栈帧数据重叠
             //如果之前的栈帧里保存的数据没超过预留寄存器数量，就设为curFrame.ReserveRegisterMaxIndex + 1，否则设为Top + 1
             int bottom = Math.Max(curFrame.ReserveRegisterMaxIndex + 1, Top + 1);
 
@@ -237,14 +235,14 @@ namespace CatLua
             //压入被调栈帧
             PushFuncCallFrame(newFrame);
 
-            //修改栈顶，指向被调栈帧的Bottom - 1，这样接下来push参数就是从Bottom位置开始了
+            //修改栈顶，指向被调栈帧的Bottom - 1，这样接下来push固定参数就是从Bottom位置开始了
             SetTop(newFrame.Bottom - 1);
 
             //将固定参数压入被调栈帧
             globalStack.PushN(FuncAndParams, 1, paramsNum);
 
             //再次修改栈顶 指向最后一个寄存器
-            //这样后续push新值不会占用到栈帧自己预留的寄存器位置
+            //这样后续push任意新值不会占用到栈帧自己预留的寄存器位置
             SetTop(newFrame.ReserveRegisterMaxIndex);
 
             if (argsNum > paramsNum && isVarArg)
@@ -296,7 +294,7 @@ namespace CatLua
             if (resultNum != 0)
             {
 
-                //取出返回值
+                //取出所有返回值
                 LuaDataUnion[] results = globalStack.PopN(CallFrameReturnResultNum) ;
 
                 //恢复栈顶指针到主调栈帧的顶部，被调栈帧剩余未被取出的数据就不要了
@@ -318,19 +316,20 @@ namespace CatLua
         /// </summary>
         private void CSFuncCall(int argsNum, int resultNum)
         {
-         
+            //取出函数和参数
             LuaDataUnion[] FuncAndParams = globalStack.PopN(argsNum + 1);
-
             Closure c = FuncAndParams[0].Closure;
-
+            
+            //创建被调栈帧并压入
             int bottom = Math.Max(curFrame.ReserveRegisterMaxIndex + 1, Top + 1);
             FuncCallFrame newFrame = new FuncCallFrame(c,bottom);
-
             PushFuncCallFrame(newFrame);
 
+            //设置栈顶 压入参数
             SetTop(newFrame.Bottom - 1);
             globalStack.PushN(FuncAndParams, 1, argsNum);
 
+            //调用C#函数
             int r = c.CSFunc(this,argsNum);
 
 
@@ -344,8 +343,10 @@ namespace CatLua
                 //取出r个返回值
                 LuaDataUnion[] results = globalStack.PopN(r);
 
+                //恢复栈顶
                 SetTop(newFrame.Bottom - 1);
 
+                //压入返回值到主调栈帧的栈顶
                 globalStack.PushN(results, 0, resultNum);
             }
             else
