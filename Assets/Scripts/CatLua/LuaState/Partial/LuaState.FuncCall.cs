@@ -39,6 +39,21 @@ namespace CatLua
             }
         }
 
+        /// <summary>
+        /// 当前栈帧的函数，实际返回的返回值数量
+        /// </summary>
+        public int CurFrameReturnResultNum
+        {
+            get
+            {
+                return curFrame.ReturnResultNum;
+            }
+
+            set
+            {
+                curFrame.ReturnResultNum = value;
+            }
+        }
 
         /// <summary>
         /// 加载一段字节码chunk，将主函数原型实例化为闭包，压入栈顶
@@ -301,8 +316,8 @@ namespace CatLua
                 //返回值此时在栈顶，计算需要的返回值数量
                 int popResultNum;
 
-                //最大可返回的值的数量 是被调栈帧非预留寄存器区域的大小
-                int maxPopResultNum = frame.GetNonReserveRegisterSize(Top);
+                //最大可返回的值的数量 是被调栈帧的函数实际的返回值数量 在Return指令的函数实现中计算得到
+                int maxPopResultNum = frame.ReturnResultNum;
 
                 if (resultNum == -1)
                 {

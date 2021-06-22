@@ -39,6 +39,11 @@ namespace CatLua
         public FuncCallFrame Prev;
 
         /// <summary>
+        /// 当前栈帧的函数，实际返回的返回值数量
+        /// </summary>
+        public int ReturnResultNum;
+
+        /// <summary>
         /// 闭包
         /// </summary>
         public Closure Closure

@@ -498,7 +498,7 @@ namespace CatLua
                 vm.CopyAndPush(a + index);
             }
 
-           
+            vm.CurFrameReturnResultNum = resultNum;
         }
 
         /// <summary>

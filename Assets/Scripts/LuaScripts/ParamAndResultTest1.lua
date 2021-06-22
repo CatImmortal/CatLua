@@ -3,7 +3,7 @@ local function g()
 end
 
 local function f()
-    return g()  --尾调用 返回值处理有问题 之后再修
+    return g()  
 end
 
 local t = {11,22,f()}
