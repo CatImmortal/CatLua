@@ -498,7 +498,7 @@ namespace CatLua
                 vm.CopyAndPush(a + index);
             }
 
-            vm.CurFrameReturnResultNum = resultNum;
+            vm.CallFrameReturnResultNum = resultNum;
         }
 
         /// <summary>
@@ -520,8 +520,8 @@ namespace CatLua
 
             if (argsNum == -1)
             {
-                //计算变长参数的个数
-                argsNum = vm.CurFrameNonReserveRegisterSize;
+                //要复制所有变长参数
+                argsNum = vm.CurFrameVarArgsNum;
             }
 
             //取出变长参数

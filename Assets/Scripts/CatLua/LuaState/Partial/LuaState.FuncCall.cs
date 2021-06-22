@@ -7,6 +7,11 @@ namespace CatLua
     public partial class LuaState
     {
         /// <summary>
+        /// 当前被调栈帧的函数，实际返回的返回值数量
+        /// </summary>
+        public int CallFrameReturnResultNum;
+
+        /// <summary>
         /// 当前栈帧的栈底索引
         /// </summary>
         public int CurFrameBottom
@@ -18,13 +23,13 @@ namespace CatLua
         }
 
         /// <summary>
-        /// 当前栈帧的最大预留寄存器数量
+        /// 当前栈帧的变长参数数量
         /// </summary>
-        public int CurFrameRegisterCount
+        public int CurFrameVarArgsNum
         {
             get
             {
-                return curFrame.Closure.Proto.MaxStackSize;
+                return curFrame.VarArgs.Length;
             }
         }
 
@@ -39,21 +44,7 @@ namespace CatLua
             }
         }
 
-        /// <summary>
-        /// 当前栈帧的函数，实际返回的返回值数量
-        /// </summary>
-        public int CurFrameReturnResultNum
-        {
-            get
-            {
-                return curFrame.ReturnResultNum;
-            }
 
-            set
-            {
-                curFrame.ReturnResultNum = value;
-            }
-        }
 
         /// <summary>
         /// 加载一段字节码chunk，将主函数原型实例化为闭包，压入栈顶
@@ -117,7 +108,7 @@ namespace CatLua
         }
 
         /// <summary>
-        /// 弹出栈顶的返回值并复制到以a位置开始的寄存器里
+        /// 弹出栈顶来自被调栈帧的返回值并复制到以a位置开始的寄存器里
         /// </summary>
         public void PopResults(int a, int resultNum)
         {
@@ -128,8 +119,8 @@ namespace CatLua
 
             if (resultNum == -1)
             {
-                //需要弹出所有非寄存器预留区域的值
-                resultNum = CurFrameNonReserveRegisterSize;
+                //需要弹出所有返回值
+                resultNum = CallFrameReturnResultNum;
             }
 
             //弹出resultNum个返回值
@@ -209,8 +200,11 @@ namespace CatLua
                 }
             }
 
+          
+
             if (data.Closure.CSFunc == null)
             {
+
                 //调用Lua函数
                 Closure c = data.Closure;
                 Debug.Log(string.Format("<color=#66ccff>调用Lua函数，函数和参数压入栈顶</color>：{0}<{1}-{2}>,{3}:", c.Proto.Source, c.Proto.LineDefined, c.Proto.LastLineDefined,this));
@@ -313,26 +307,8 @@ namespace CatLua
             if (resultNum != 0)
             {
 
-                //返回值此时在栈顶，计算需要的返回值数量
-                int popResultNum;
-
-                //最大可返回的值的数量 是被调栈帧的函数实际的返回值数量 在Return指令的函数实现中计算得到
-                int maxPopResultNum = frame.ReturnResultNum;
-
-                if (resultNum == -1)
-                {
-                    //需要全部弹出
-                    popResultNum = maxPopResultNum;
-                    resultNum = maxPopResultNum;
-                }
-                else
-                {
-                    //最多弹出maxPopResultNum个
-                    popResultNum = Math.Min(resultNum, maxPopResultNum);
-                }
-
-                //取出popResultNum个返回值
-                LuaDataUnion[] results = globalStack.PopN(popResultNum);
+                //取出返回值
+                LuaDataUnion[] results = globalStack.PopN(CallFrameReturnResultNum) ;
 
                 //恢复栈顶指针到主调栈帧的顶部，被调栈帧剩余未被取出的数据就不要了
                 SetTop(frame.Bottom - 1);
