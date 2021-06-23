@@ -17,6 +17,8 @@ namespace CatLua
             vm.RegisteCSFunc("next", Next);
             vm.RegisteCSFunc("pairs", Pairs);
             vm.RegisteCSFunc("ipairs", IPairs);
+            vm.RegisteCSFunc("error", Error);
+            vm.RegisteCSFunc("pcall", PCall);
         }
 
         private static int Print(LuaState vm,int argsNum)
@@ -111,7 +113,18 @@ namespace CatLua
             return 3;
         }
 
+        private static int Error(LuaState vm, int argsNum)
+        {
+            return vm.Error();
+        }
 
+        private static int PCall(LuaState vm, int argsNum)
+        {
+            FuncCallState state = vm.PCall(argsNum, -1,0);
+            vm.Push(state == FuncCallState.Ok);
+            vm.PopAndInsert(vm.CurFrameBottom);
+            return argsNum + 1;
+        }
     }
 
 }
