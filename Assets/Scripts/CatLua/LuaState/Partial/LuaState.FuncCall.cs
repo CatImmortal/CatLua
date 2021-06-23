@@ -301,6 +301,7 @@ namespace CatLua
                 SetTop(frame.Bottom - 1);
 
                 //压入resultNum个返回值到主调栈帧上，不足的部分用nil补
+                //resultNum为-1时就全部压入
                 globalStack.PushN(results, 0, resultNum);
             }
             else

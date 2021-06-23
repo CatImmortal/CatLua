@@ -64,6 +64,9 @@ namespace CatLua
         public static Action<Instructoin, LuaState> GetTabUpFunc = GetTabUp;
         public static Action<Instructoin, LuaState> SetTabUpFunc = SetTabUp;
 
+        public static Action<Instructoin, LuaState> TForCallFunc = TForCall;
+        public static Action<Instructoin, LuaState> TForLoopFunc = TForLoop;
+
         /// <summary>
         /// 将b位置的栈值复制到a位置
         /// </summary>
@@ -172,8 +175,8 @@ namespace CatLua
             i.GetABC(out int a, out int b, out int c);
             a += vm.CurFrameBottom;
 
-            vm.PushRK(b);
-            vm.PushRK(c);
+            vm.PushConstOrData(b);
+            vm.PushConstOrData(c);
             vm.Arith(type);
             vm.PopAndCopy(a);
         }
@@ -231,8 +234,8 @@ namespace CatLua
         {
             i.GetABC(out int a, out int b, out int c);
 
-            vm.PushRK(b);
-            vm.PushRK(c);
+            vm.PushConstOrData(b);
+            vm.PushConstOrData(c);
             bool result = vm.Compare(-2, -1, type);
 
             bool target = a != 0;
@@ -382,7 +385,7 @@ namespace CatLua
             a += vm.CurFrameBottom;
             b += vm.CurFrameBottom;
 
-            vm.PushRK(c); 
+            vm.PushConstOrData(c); 
             vm.PushTableValue(b);
             vm.PopAndCopy(a);
         }
@@ -395,8 +398,8 @@ namespace CatLua
             i.GetABC(out int a, out int b, out int c);
             a += vm.CurFrameBottom;
 
-            vm.PushRK(b);
-            vm.PushRK(c);
+            vm.PushConstOrData(b);
+            vm.PushConstOrData(c);
             vm.SetTableValue(a);
         }
 
@@ -560,7 +563,7 @@ namespace CatLua
 
             vm.Copy(b, a + 1);
 
-            vm.PushRK(c);  //push table function key
+            vm.PushConstOrData(c);  //push table function key
             vm.PushTableValue(b);  //push function(table[key])
             vm.PopAndCopy(a);
         }
@@ -600,10 +603,11 @@ namespace CatLua
         {
             i.GetABC(out int a, out int b, out int c);
             a += vm.CurFrameBottom;
+
             Upvalue upvalue = vm.GetCurFrameUpvalue(b);
 
             vm.Push(upvalue.Value.Table);
-            vm.PushRK(c);
+            vm.PushConstOrData(c);
             vm.PushTableValue(-2);
             vm.PopAndCopy(a);
             vm.Pop();
@@ -619,10 +623,52 @@ namespace CatLua
             Upvalue upvalue = vm.GetCurFrameUpvalue(a);
 
             vm.Push(upvalue.Value.Table);
-            vm.PushRK(b);
-            vm.PushRK(c);
+            vm.PushConstOrData(b);
+            vm.PushConstOrData(c);
             vm.SetTableValue(-3);
             vm.Pop();
+        }
+
+        /// <summary>
+        /// 将f（自定义迭代器函数） s（表） var（key） 压入a开始的位置，调用f，然后弹出c - 1个返回值复制到a + 3开始的位置
+        /// </summary>
+        private static void TForCall(Instructoin i, LuaState vm)
+        {
+            //a+2+c v
+            //a+3   k
+            //a+2   var
+            //a+1   s
+            //a     f
+
+            i.GetABC(out int a, out int b, out int c);
+            a += vm.CurFrameBottom;
+
+            //压入f s var
+            vm.PushFuncAndArgs(a, 3);
+
+            //调用迭代器函数f
+            vm.CallFunc(2, c);
+
+            //将栈顶k v复制到a+3开始的位置
+            vm.PopResults(a + 3, c);
+        }
+
+        /// <summary>
+        /// 检查a + 1处的值是否为nil，如果不是就将a + 1的值复制到a，然后将PC增加sbx，指向下一次循环
+        /// </summary>
+        private static void TForLoop(Instructoin i, LuaState vm)
+        {
+            //a+1 k
+            //a   var
+
+            i.GetAsBx(out int a, out int sbx);
+            a += vm.CurFrameBottom;
+
+            if (!vm.IsNil(a + 1))
+            {
+                vm.Copy(a + 1, a);
+                vm.AddPC(sbx);
+            }
         }
     }
 

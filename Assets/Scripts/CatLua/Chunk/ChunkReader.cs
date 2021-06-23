@@ -238,6 +238,7 @@ namespace CatLua
 
             header.Signature = ReadBytes(4);
             string sign = Encoding.UTF8.GetString(header.Signature);
+            
             if (sign != Constants.LuaSignature)
             {
                 throw new Exception("签名不对");

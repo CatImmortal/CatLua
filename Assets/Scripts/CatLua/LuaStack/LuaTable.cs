@@ -19,7 +19,6 @@ namespace CatLua
             }
 
             dict = new Dictionary<LuaDataUnion, LuaDataUnion>(dictSize);
-
         }
 
         /// <summary>
@@ -36,6 +35,12 @@ namespace CatLua
         /// 元表
         /// </summary>
         public LuaTable MetaTable;
+
+
+        /// <summary>
+        /// 迭代器遍历用的key和next key映射
+        /// </summary>
+        private Dictionary<LuaDataUnion,LuaDataUnion> keyAndNextKey;
 
         /// <summary>
         /// 数组部分的长度
@@ -274,7 +279,51 @@ namespace CatLua
             }
         }
     
-        
+        /// <summary>
+        /// 获取key对应的next key
+        /// </summary>
+        public LuaDataUnion NextKey(LuaDataUnion key)
+        {
+            if (key.Type == LuaDataType.Nil)
+            {
+                if (keyAndNextKey == null)
+                {
+                    keyAndNextKey = new Dictionary<LuaDataUnion, LuaDataUnion>(arr.Count + dict.Count);
+                }
+                else
+                {
+                    keyAndNextKey.Clear();
+                }
+
+                //初始化key列表
+
+                LuaDataUnion curKey = default;
+
+                for (int i = 0; i < arr.Count; i++)
+                {
+                    if (arr[i].Type != LuaDataType.Nil)
+                    {
+                        LuaDataUnion nextKey = Factory.NewInteger(i + 1);
+                        keyAndNextKey[curKey] = nextKey;
+
+                        curKey = nextKey;
+                    }
+                }
+
+                foreach (KeyValuePair<LuaDataUnion, LuaDataUnion> item in dict)
+                {
+                    LuaDataUnion nextKey = item.Key;
+                    keyAndNextKey[curKey] = nextKey;
+
+                    curKey = nextKey;
+                }
+
+                //最后一个Key对应的next key是nil值
+                keyAndNextKey[curKey] = default;
+            }
+
+            return keyAndNextKey[key];
+        }
     }
 }
 

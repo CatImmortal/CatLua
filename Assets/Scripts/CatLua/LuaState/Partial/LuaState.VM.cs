@@ -56,20 +56,20 @@ namespace CatLua
         /// <summary>
         /// 将指定常量或栈里的值压入栈顶
         /// </summary>
-        public void PushRK(int rk)
+        public void PushConstOrData(int arg)
         {
-            //rk是一个iABC指令编码模式下的K类型参数，共9 bit
+            //arg是一个iABC指令编码模式下的K类型参数，共9 bit
             //最高位是1的话低8位表示常量表索引，否则低8位表示寄存器索引
 
-            if (rk > 0xff)
+            if (arg > 0xff)
             {
                 //常量 取出低8位
-                PushConst(rk & 0xff);
+                PushConst(arg & 0xff);
             }
             else
             {
                 //栈值
-                CopyAndPush(CurFrameBottom + rk);
+                CopyAndPush(CurFrameBottom + arg);
             }
         }
 
@@ -113,7 +113,7 @@ namespace CatLua
                 }
                 else
                 {
-                    //upvalue是更外层函数的局部变量 已被主函数捕获过了 从主函数的upvalue表里获取
+                    //upvalue是更外层函数的局部变量 已被主函数捕获过了 直接从主函数的upvalue表里获取
                     //因为主函数的upvalue表不是全局的 所以不用+CurFrameBottom
                     c.Upvalues[i] = curFrame.Closure.Upvalues[info.Index];
                 }

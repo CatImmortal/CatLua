@@ -6,12 +6,12 @@ namespace CatLua
     public partial class LuaState
     {
         /// <summary>
-        /// 栈中index位置的值是否是None或Nil
+        /// 栈中index位置的值是否是Nil
         /// </summary>
-        public bool IsNoneOrNil(int index)
+        public bool IsNil(int index)
         {
             LuaDataUnion value = globalStack.Get(index);
-            return value.Type == LuaDataType.None || value.Type == LuaDataType.Nil;
+            return  value.Type == LuaDataType.Nil;
         }
 
         /// <summary>

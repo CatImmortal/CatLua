@@ -187,7 +187,33 @@ namespace CatLua
 
         }
 
+        /// <summary>
+        /// 获取index位置的table，从栈顶弹出key，压入此key在table中对应的next key和table[nextKey]
+        /// </summary>
+        public bool Next(int index)
+        {
+            LuaDataUnion data = globalStack.Get(index);
+            if (data.Type != LuaDataType.Table)
+            {
+                throw new Exception("Next调用失败，目标不是Table，而是:" + data.Type);
+            }
 
+            LuaDataUnion key = Pop();
+
+            LuaDataUnion nextKey = data.Table.NextKey(key);
+
+            if (nextKey.Type == LuaDataType.Nil)
+            {
+                //是最后一个key了
+                return false;
+            }
+
+            Push(nextKey);
+            Push(data.Table[nextKey]);
+            return true;
+        }
+
+        
     }
 }
 
