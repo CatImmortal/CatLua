@@ -120,10 +120,10 @@ namespace CatLua
 
         private static int PCall(LuaState vm, int argsNum)
         {
-            FuncCallState state = vm.PCall(argsNum, -1,0);
-            vm.Push(state == FuncCallState.Ok);
-            vm.PopAndInsert(vm.CurFrameBottom);
-            return argsNum + 1;
+            FuncCallState state = vm.PCall(argsNum - 1, -1,0);  //有一个参数是要pcall的函数 所以要-1
+            vm.Push(state == FuncCallState.Ok);  //将是否调用成功作为返回值压入栈顶
+            vm.PopAndInsert(vm.CurFrameBottom);  //移动到栈帧底部
+            return vm.CallFrameReturnResultNum + 1;  //在栈帧底部放了个pcall的返回值  所以要+1
         }
     }
 
