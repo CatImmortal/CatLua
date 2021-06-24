@@ -54,22 +54,32 @@ namespace CatLua
         }
 
         /// <summary>
-        /// 压入函数调用栈帧
+        /// 压入函数调用栈帧，并修改栈顶
         /// </summary>
         public void PushFuncCallFrame(FuncCallFrame frame)
         {
             frame.Prev = curFrame;
             curFrame = frame;
+
+            //修改栈顶，指向被调栈帧的Bottom - 1，这样接下来push固定参数就是从Bottom位置开始了
+            SetTop(CurFrameBottom - 1);
         }
 
         /// <summary>
-        /// 弹出函数调用栈帧
+        /// 弹出函数调用栈帧，并闭合upvalue以及恢复栈顶
         /// </summary>
         public void PopFuncCallFrame()
         {
+            //闭合被调栈帧上的局部变量所构造的Upvalue
+            CloseUpvalue(CurFrameBottom);
+
+            //恢复栈顶到主调栈帧上 被调栈帧的数据就不要了
+            SetTop(CurFrameBottom - 1);
+
             FuncCallFrame frame = curFrame;
             curFrame = curFrame.Prev;
             frame.Prev = null;
+
         }
 
 
@@ -235,9 +245,6 @@ namespace CatLua
             //压入被调栈帧
             PushFuncCallFrame(newFrame);
 
-            //修改栈顶，指向被调栈帧的Bottom - 1，这样接下来push固定参数就是从Bottom位置开始了
-            SetTop(newFrame.Bottom - 1);
-
             //将固定参数压入被调栈帧
             globalStack.PushN(FuncAndParams, 1, paramsNum);
 
@@ -281,35 +288,23 @@ namespace CatLua
         /// </summary>
         private void PostLuaFuncCall(int resultNum)
         {
+            if (resultNum == 0)
+            {
+                //没返回值 直接弹出被调栈帧
+                PopFuncCallFrame();
+                return;
+            }
 
-            //闭合此栈帧上的局部变量所构造的Upvalue
-            CloseUpvalue(CurFrameBottom);
 
-            FuncCallFrame frame = curFrame;
+            //取出所有返回值
+            LuaDataUnion[] results = globalStack.PopN(CallFrameReturnResultNum);
 
-            //弹出栈帧
+            //弹出被调栈帧
             PopFuncCallFrame();
 
-            //处理返回值
-            if (resultNum != 0)
-            {
-
-                //取出所有返回值
-                LuaDataUnion[] results = globalStack.PopN(CallFrameReturnResultNum) ;
-
-                //恢复栈顶指针到主调栈帧的顶部，被调栈帧剩余未被取出的数据就不要了
-                SetTop(frame.Bottom - 1);
-
-                //压入resultNum个返回值到主调栈帧上，不足的部分用nil补
-                //resultNum为-1时就全部压入
-                globalStack.PushN(results, 0, resultNum);
-            }
-            else
-            {
-                //恢复栈顶指针到主调栈帧的顶部
-                SetTop(frame.Bottom - 1);
-            }
-
+            //压入resultNum个返回值到主调栈帧上，不足的部分用nil补
+            //resultNum为-1时就全部压入
+            globalStack.PushN(results, 0, resultNum);
         }
 
         /// <summary>
@@ -321,39 +316,37 @@ namespace CatLua
             LuaDataUnion[] FuncAndParams = globalStack.PopN(argsNum + 1);
             Closure c = FuncAndParams[0].Closure;
             
-            //创建被调栈帧并压入
+            //创建被调栈帧
             int bottom = Math.Max(curFrame.ReserveRegisterMaxIndex + 1, Top + 1);
             FuncCallFrame newFrame = new FuncCallFrame(c,bottom);
+
+            //压入被调栈帧
             PushFuncCallFrame(newFrame);
 
-            //设置栈顶 压入参数
-            SetTop(newFrame.Bottom - 1);
+            //压入固定参数
             globalStack.PushN(FuncAndParams, 1, argsNum);
 
             //调用C#函数
             int r = c.CSFunc(this,argsNum);
 
 
-            //闭合此栈帧上的局部变量所构造的Upvalue
-            CloseUpvalue(CurFrameBottom);
+            if (resultNum == 0)
+            {
+                //没返回值 直接弹出被调栈帧
+                PopFuncCallFrame();
+                return;
+            }
 
+            //取出r个返回值
+            LuaDataUnion[] results = globalStack.PopN(r);
+
+            //弹出被调栈帧
             PopFuncCallFrame();
 
-            if (resultNum != 0)
-            {
-                //取出r个返回值
-                LuaDataUnion[] results = globalStack.PopN(r);
+            //压入返回值到主调栈帧的栈顶
+            globalStack.PushN(results, 0, resultNum);
 
-                //恢复栈顶
-                SetTop(newFrame.Bottom - 1);
-
-                //压入返回值到主调栈帧的栈顶
-                globalStack.PushN(results, 0, resultNum);
-            }
-            else
-            {
-                SetTop(newFrame.Bottom - 1);
-            }
+           
         }
 
     }

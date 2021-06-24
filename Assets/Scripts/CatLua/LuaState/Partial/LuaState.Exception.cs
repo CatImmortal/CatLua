@@ -25,8 +25,6 @@ namespace CatLua
                 //不断弹出栈帧 直到到了初始的调用栈帧
                 while (curFrame != frame)
                 {
-                    CloseUpvalue(curFrame.Bottom);
-                    SetTop(curFrame.Bottom - 1);
                     PopFuncCallFrame();
                 }
 
