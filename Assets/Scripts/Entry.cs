@@ -5,22 +5,24 @@ using CatLua;
 using System;
 using UnityEngine.Profiling;
 using System.Threading.Tasks;
-
+using System.IO;
 public class Entry : MonoBehaviour
 {
     public TextAsset main;
     private LuaState ls;
-
     // Start is called before the first frame update
     void Start()
     {
         Application.targetFrameRate = 30;
 
-        LuaState ls = new LuaState(100);
-        CSFuncs.Init(ls);
-        ls.LoadChunk(main.bytes, main.name, "b");
-        ls.CallFunc(0, 0);
+        //LuaState ls = new LuaState(100);
+        //CSFuncs.Init(ls);
+        //ls.LoadChunk(main.bytes, main.name, "b");
+        //ls.CallFunc(0, 0);
 
+        string source = File.ReadAllText(Application.dataPath + "/Scripts/LuaScripts/" + main.name + ".lua");
+
+        TestLexer(source,"main");
     }
 
     private Chunk TestUndump()
@@ -173,5 +175,20 @@ public class Entry : MonoBehaviour
         //        break;
         //    }
         //}
+    }
+
+    private void TestLexer(string chunk,string chunkName)
+    {
+        Lexer lexer = new Lexer(chunk, chunkName);
+        while (true)
+        {
+            lexer.GetNextToken(out int line, out string token, out TokenType type);
+            //Debug.Log($"line:{line},type:{type},token:{token}");
+            Debug.Log(token);
+            if (type == TokenType.Eof)
+            {
+                return;
+            }
+        }
     }
 }
