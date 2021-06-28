@@ -62,13 +62,17 @@ namespace CatLua
         /// <summary>
         /// 匹配十进制整数或浮点数的正则表达式
         /// </summary>
-        private Regex NumberRegex = new Regex(@"^-?\d+$|^(-?\d+)(\.\d+)?", RegexOptions.Compiled);
+        private Regex numberRegex = new Regex(@"^-?\d+$|^(-?\d+)(\.\d+)?", RegexOptions.Compiled);
 
         /// <summary>
         /// 匹配标识符和关键字的正则表达式
         /// </summary>
-        private Regex IdentifierRegex = new Regex(@"^[_\d\w]+", RegexOptions.Compiled);
+        private Regex identifierRegex = new Regex(@"^[_\d\w]+", RegexOptions.Compiled);
 
+        /// <summary>
+        /// 匹配短字符串的正则表达式（不支持转义字符
+        /// </summary>
+        private Regex shortStrRegex = new Regex("^\"[\\s\\S]*\"");
 
         private string nextToken;
         private TokenType nextTokenType;
@@ -561,11 +565,18 @@ namespace CatLua
         /// <summary>
         /// 扫描短字符串
         /// </summary>
-        /// <returns></returns>
         private string ScanShortString()
         {
-            //todo
-            return string.Empty;
+            string matchResult = shortStrRegex.Match(chunk.Substring(curIndex-1)).Value;
+            if (string.IsNullOrEmpty(matchResult))
+            {
+                Error("提取短字符串失败");
+            }
+
+            Next(matchResult.Length - 1);
+            string result = matchResult.Substring(1, matchResult.Length - 2);
+
+            return result;
         }
 
         /// <summary>
@@ -573,7 +584,7 @@ namespace CatLua
         /// </summary>
         private string ScanNumber()
         {
-            return Scan(NumberRegex);
+            return Scan(numberRegex);
         }
 
         /// <summary>
@@ -581,7 +592,7 @@ namespace CatLua
         /// </summary>
         private string ScanIdentifier()
         {
-            return Scan(IdentifierRegex);
+            return Scan(identifierRegex);
         }
 
         /// <summary>
