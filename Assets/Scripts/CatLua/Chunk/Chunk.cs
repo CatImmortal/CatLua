@@ -20,7 +20,7 @@ namespace CatLua
         public byte UpvaluesSize;
 
         /// <summary>
-        /// 主函数的函数原型
+        /// 主函数
         /// </summary>
         public FuncPrototype MainFunc;
 
