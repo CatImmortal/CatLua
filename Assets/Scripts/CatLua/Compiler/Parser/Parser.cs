@@ -21,8 +21,6 @@ namespace CatLua
             return block;
         }
 
-     
-
         /// <summary>
         /// 是否为Return或Block结束
         /// </summary>
