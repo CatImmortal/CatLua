@@ -8,7 +8,12 @@ namespace CatLua
     /// </summary>
     public class ParensExp : BaseExp
     {
-        public BaseExp exp;
+        public BaseExp Exp;
+
+        public ParensExp(int line, BaseExp exp) : base(line)
+        {
+            Exp = exp;
+        }
     }
 
 }

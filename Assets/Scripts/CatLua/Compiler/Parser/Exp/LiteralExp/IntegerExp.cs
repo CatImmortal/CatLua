@@ -8,7 +8,7 @@ namespace CatLua
     /// </summary>
     public class IntegerExp : BaseExp
     {
-        public IntegerExp(int line, int lastLine, long val) : base(line, lastLine)
+        public IntegerExp(int line ,long val) : base(line)
         {
             Val = val;
         }

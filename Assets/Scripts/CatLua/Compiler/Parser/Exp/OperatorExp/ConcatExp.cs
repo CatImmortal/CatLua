@@ -8,7 +8,14 @@ namespace CatLua
     /// </summary>
     public class ConcatExp : BaseExp
     {
+        public ConcatExp(int line, BaseExp[] exps) : base(line)
+        {
+            Exps = exps;
+        }
+
         public BaseExp[] Exps;
+
+       
     }
 
 }

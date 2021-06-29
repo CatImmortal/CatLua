@@ -8,7 +8,14 @@ namespace CatLua
     /// </summary>
     public class StringExp : BaseExp
     {
+        public StringExp(int line, string str) : base(line)
+        {
+            Str = str;
+        }
+
         public string Str;
+
+       
     }
 
 }

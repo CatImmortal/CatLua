@@ -8,7 +8,14 @@ namespace CatLua
     /// </summary>
     public class FloatExp : BaseExp
     {
+        public FloatExp(int line, double val) : base(line)
+        {
+            Val = val;
+        }
+
         public double Val;
+
+
     }
 
 }

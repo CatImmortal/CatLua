@@ -8,7 +8,9 @@ namespace CatLua
     /// </summary>
     public class NilExp : BaseExp
     {
-        
+        public NilExp(int line) : base(line)
+        {
+        }
     }
 
 }

@@ -8,8 +8,16 @@ namespace CatLua
     /// </summary>
     public class LocalFuncDefStat : BaseStat
     {
+        public LocalFuncDefStat(string name, BaseExp funcDefExp)
+        {
+            Name = name;
+            FuncDefExp = funcDefExp;
+        }
+
         public string Name;
         public BaseExp FuncDefExp;
+
+
     }
 
 }

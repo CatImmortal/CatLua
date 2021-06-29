@@ -8,7 +8,9 @@ namespace CatLua
     /// </summary>
     public class FalseExp : BaseExp
     {
-
+        public FalseExp(int line) : base(line)
+        {
+        }
     }
 
 }

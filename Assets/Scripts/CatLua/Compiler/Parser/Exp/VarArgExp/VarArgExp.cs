@@ -8,7 +8,9 @@ namespace CatLua
     /// </summary>
     public class VarargExp : BaseExp
     {
-
+        public VarargExp(int line) : base(line)
+        {
+        }
     }
 
 }

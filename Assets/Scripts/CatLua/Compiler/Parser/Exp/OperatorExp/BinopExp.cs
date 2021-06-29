@@ -11,6 +11,14 @@ namespace CatLua
         public int Op;
         public BaseExp Exp1;
         public BaseExp Exp2;
+
+        public BinopExp(int line, int op, BaseExp exp1, BaseExp exp2) : base(line)
+        {
+            Op = op;
+            Exp1 = exp1;
+            Exp2 = exp2;
+        }
+
     }
 
 }

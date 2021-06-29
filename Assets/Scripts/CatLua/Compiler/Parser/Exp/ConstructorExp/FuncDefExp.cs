@@ -8,9 +8,22 @@ namespace CatLua
     /// </summary>
     public class FuncDefExp : BaseExp
     {
+        public FuncDefExp(int line, int lastLine, string[] paramList, bool isVararg, Block block) : base(line)
+        {
+            LastLine = lastLine;
+            ParamList = paramList;
+            IsVararg = isVararg;
+            Block = block;
+        }
+
+        public int LastLine;
         public string[] ParamList;
         public bool IsVararg;
         public Block Block;
+
+
+
+
     }
 
 }

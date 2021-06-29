@@ -8,8 +8,17 @@ namespace CatLua
     /// </summary>
     public class TableConstructorExp : BaseExp
     {
+        public TableConstructorExp(int line, int lastLine, BaseExp[] keyExps, BaseExp[] valueExps) : base(line)
+        {
+            LastLine = lastLine;
+            KeyExps = keyExps;
+            ValueExps = valueExps;
+        }
+
+        public int LastLine;
         public BaseExp[] KeyExps;
         public BaseExp[] ValueExps;
+
     }
 
 }

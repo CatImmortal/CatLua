@@ -8,7 +8,16 @@ namespace CatLua
     /// </summary>
     public class FuncCallStat : BaseStat
     {
+        public FuncCallStat(FuncCallExp exp)
+        {
+            PrefixExp = exp.PrefixExp;
+            NameExp = exp.NameExp;
+            Args = exp.Args;
+        }
 
+        public BaseExp PrefixExp;
+        public StringExp NameExp;
+        public BaseExp[] Args;
     }
 
 }
