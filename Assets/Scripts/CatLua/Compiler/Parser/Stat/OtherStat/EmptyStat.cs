@@ -4,13 +4,11 @@ using System.Collections.Generic;
 namespace CatLua
 {
     /// <summary>
-    /// repeat语句
+    /// 空语句
     /// </summary>
-    public class RepeatStat
+    public class EmptyStat : BaseStat
     {
-        public BaseExp Exp;
-        public Block Block;
-        
+
     }
 
 }

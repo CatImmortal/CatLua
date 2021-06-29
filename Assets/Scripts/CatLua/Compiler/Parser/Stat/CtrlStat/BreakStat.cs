@@ -4,12 +4,11 @@ using System.Collections.Generic;
 namespace CatLua
 {
     /// <summary>
-    /// while语句
+    /// Break语句
     /// </summary>
-    public class WhileStat
+    public class BreakStat : BaseStat
     {
-        public Block Block;
-        public BaseExp Exp;
+        public int Line;
     }
-
 }
+

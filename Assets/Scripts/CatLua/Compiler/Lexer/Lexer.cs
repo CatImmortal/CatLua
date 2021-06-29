@@ -45,6 +45,21 @@ namespace CatLua
         };
 
         /// <summary>
+        /// 匹配十进制整数或浮点数的正则表达式
+        /// </summary>
+        private static Regex numberRegex = new Regex(@"^-?\d+$|^(-?\d+)(\.\d+)?", RegexOptions.Compiled);
+
+        /// <summary>
+        /// 匹配标识符和关键字的正则表达式
+        /// </summary>
+        private static Regex identifierRegex = new Regex(@"^[_\d\w]+", RegexOptions.Compiled);
+
+        /// <summary>
+        /// 匹配短字符串的正则表达式（不支持转义字符
+        /// </summary>
+        private static Regex shortStrRegex = new Regex("^\"[\\s\\S]*\"");
+
+        /// <summary>
         /// 源代码
         /// </summary>
         private string chunk;
@@ -59,20 +74,7 @@ namespace CatLua
         /// </summary>
         private int curIndex;
 
-        /// <summary>
-        /// 匹配十进制整数或浮点数的正则表达式
-        /// </summary>
-        private Regex numberRegex = new Regex(@"^-?\d+$|^(-?\d+)(\.\d+)?", RegexOptions.Compiled);
 
-        /// <summary>
-        /// 匹配标识符和关键字的正则表达式
-        /// </summary>
-        private Regex identifierRegex = new Regex(@"^[_\d\w]+", RegexOptions.Compiled);
-
-        /// <summary>
-        /// 匹配短字符串的正则表达式（不支持转义字符
-        /// </summary>
-        private Regex shortStrRegex = new Regex("^\"[\\s\\S]*\"");
 
         private string nextToken;
         private TokenType nextTokenType;
@@ -87,7 +89,7 @@ namespace CatLua
             private set;
         }
 
-        private void Error(string err)
+        public void Error(string err)
         {
             err = $"{chunkName}:{Line}: {err}";
             throw new System.Exception(err);
@@ -95,9 +97,9 @@ namespace CatLua
 
 
         /// <summary>
-        /// 获取下一个token的类型
+        /// 查看下一个token的类型
         /// </summary>
-        private TokenType LookAHead()
+        public TokenType LookNextTokenType()
         {
             if (nextTokenLine > 0)
             {
@@ -125,7 +127,7 @@ namespace CatLua
         /// <summary>
         /// 提取下一个标识符
         /// </summary>
-        private void GetNextIdentifier(out int line,out string token)
+        public void GetNextIdentifier(out int line,out string token)
         {
             GetNextTokenOfType(TokenType.Identifier, out line, out token);
         }
@@ -134,7 +136,7 @@ namespace CatLua
         /// <summary>
         /// 获取指定类型的下一个token
         /// </summary>
-        private void GetNextTokenOfType(TokenType type,out int line,out string token)
+        public void GetNextTokenOfType(TokenType type,out int line,out string token)
         {
             GetNextToken(out  line, out token, out TokenType typeResult);
             if (type != typeResult)

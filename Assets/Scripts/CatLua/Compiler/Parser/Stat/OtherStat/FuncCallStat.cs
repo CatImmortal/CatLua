@@ -4,11 +4,11 @@ using System.Collections.Generic;
 namespace CatLua
 {
     /// <summary>
-    /// Break语句
+    /// 函数调用语句
     /// </summary>
-    public class BreakStat
+    public class FuncCallStat : BaseStat
     {
-        public int Line;
-    }
-}
 
+    }
+
+}

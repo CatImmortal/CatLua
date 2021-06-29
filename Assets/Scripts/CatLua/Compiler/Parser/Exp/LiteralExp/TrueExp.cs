@@ -8,7 +8,9 @@ namespace CatLua
     /// </summary>
     public class TrueExp : BaseExp
     {
-
+        public TrueExp(int line, int lastLine) : base(line, lastLine)
+        {
+        }
     }
 
 }

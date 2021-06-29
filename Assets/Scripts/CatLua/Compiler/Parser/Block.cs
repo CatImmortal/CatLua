@@ -9,6 +9,8 @@ namespace CatLua
     public class Block
     {
         public int LastLine;
+        public BaseStat[] Stats;
+        public BaseExp[] ReturnExps;
     }
 }
 

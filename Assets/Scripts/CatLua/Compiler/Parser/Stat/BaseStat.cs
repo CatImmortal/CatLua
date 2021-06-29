@@ -1,14 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 
+
 namespace CatLua
 {
     /// <summary>
-    /// do语句
+    /// 语句基类
     /// </summary>
-    public class DoStat
+    public abstract class BaseStat
     {
-       public Block block;
+
     }
 
 }
