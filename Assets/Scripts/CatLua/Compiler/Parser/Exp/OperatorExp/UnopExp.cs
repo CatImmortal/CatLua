@@ -8,14 +8,16 @@ namespace CatLua
     /// </summary>
     public class UnopExp : BaseExp
     {
-        public UnopExp(int line, int op, BaseExp exp) : base(line)
+        public TokenType Op;
+        public BaseExp Exp;
+
+        public UnopExp(int line, TokenType op, BaseExp exp) : base(line)
         {
             Op = op;
             Exp = exp;
         }
 
-        public int Op;
-        public BaseExp Exp;
+
 
 
     }

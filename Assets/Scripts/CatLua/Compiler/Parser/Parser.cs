@@ -6,12 +6,20 @@ namespace CatLua
     /// <summary>
     /// 语法解析器（递归下降解析）
     /// </summary>
-    public partial class Parser
+    public static partial class Parser
     {
+        public static Block Parse(string chunk,string chunkName)
+        {
+            Lexer lexer = new Lexer(chunk,chunkName);
+            Block block = ParseBlock(lexer);
+            lexer.GetNextTokenOfType(TokenType.Eof, out _, out _);
+            return block;
+        }
+
         /// <summary>
         /// 解析Block
         /// </summary>
-        public Block ParseBlock(Lexer lexer)
+        private static Block ParseBlock(Lexer lexer)
         {
             Block block = new Block();
             block.LastLine = lexer.Line;
@@ -24,7 +32,7 @@ namespace CatLua
         /// <summary>
         /// 是否为Return或Block结束
         /// </summary>
-        private bool IsReturnOrBlockEnd(TokenType type)
+        private static bool IsReturnOrBlockEnd(TokenType type)
         {
             switch (type)
             {
@@ -42,32 +50,12 @@ namespace CatLua
         }
 
 
-        /// <summary>
-        /// 解析逗号分隔的变量名列表
-        /// </summary>
-        private string[] ParseNameList(Lexer lexer,string name0)
-        {
-            List<string> nameList = new List<string>();
-            nameList.Add(name0);
-
-            while (lexer.LookNextTokenType() == TokenType.SepComma)
-            {
-                //跳过逗号
-                lexer.GetNextToken(out _, out _, out _);
-
-                //提取标识符
-                lexer.GetNextIdentifier(out _, out string name);
-
-                nameList.Add(name);
-            }
-
-            return nameList.ToArray();
-        }
 
 
 
+   
 
-       
+
     }
 
 }

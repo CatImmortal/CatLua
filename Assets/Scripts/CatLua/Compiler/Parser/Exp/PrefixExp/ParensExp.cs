@@ -10,7 +10,7 @@ namespace CatLua
     {
         public BaseExp Exp;
 
-        public ParensExp(int line, BaseExp exp) : base(line)
+        public ParensExp( BaseExp exp) : base(-1)
         {
             Exp = exp;
         }

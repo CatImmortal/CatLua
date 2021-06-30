@@ -8,11 +8,11 @@ namespace CatLua
     /// </summary>
     public class BinopExp : BaseExp
     {
-        public int Op;
+        public TokenType Op;
         public BaseExp Exp1;
         public BaseExp Exp2;
 
-        public BinopExp(int line, int op, BaseExp exp1, BaseExp exp2) : base(line)
+        public BinopExp(int line, TokenType op, BaseExp exp1, BaseExp exp2) : base(line)
         {
             Op = op;
             Exp1 = exp1;
