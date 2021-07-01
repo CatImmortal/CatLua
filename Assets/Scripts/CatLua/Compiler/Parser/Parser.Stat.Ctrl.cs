@@ -1,4 +1,6 @@
-﻿namespace CatLua
+﻿using System.Collections.Generic;
+
+namespace CatLua
 {
     public partial class Parser
     {
@@ -197,7 +199,7 @@
         private static ForInStat ParseForInStat(Lexer lexer, string name0)
         {
             //解析in前面的变量列表
-            string[] names = ParseNameList(lexer, name0);
+            string[] nameList = ParseNameList(lexer, name0);
 
             //跳过in
             lexer.GetNextTokenOfType(TokenType.KwIn, out _, out _);
@@ -214,7 +216,7 @@
             //跳过end
             lexer.GetNextTokenOfType(TokenType.KwEnd, out _, out _);
 
-            return new ForInStat(lineOfDo, names, exps, block);
+            return new ForInStat(lineOfDo, nameList, exps, block);
         }
     }
 

@@ -39,13 +39,15 @@ namespace CatLua
             paramList = null;
           
 
-            //右括号和...直接返回了
+            //左括号后接的是 右括号或...
+            //直接返回了
             switch (lexer.LookNextTokenType())
             {
                 case TokenType.SepRparen:
                     return false;
 
                 case TokenType.Vararg:
+                    //跳过...
                     lexer.GetNextToken(out _, out _, out _);
                     return true;
             }
@@ -65,7 +67,7 @@ namespace CatLua
 
                 if (lexer.LookNextTokenType() == TokenType.Identifier)
                 {
-                    //变量名
+                    //解析变量名
                     lexer.GetNextIdentifier(out _, out name);
                     list.Add(name);
                 }
@@ -74,6 +76,8 @@ namespace CatLua
                     //跳过vararg
                     lexer.GetNextTokenOfType(TokenType.Vararg, out _, out _);
                     isVararg = true;
+
+                    //vararg只能放在参数末尾 所以break了
                     break;
                 }
             }
@@ -114,16 +118,15 @@ namespace CatLua
 
             if (lexer.LookNextTokenType() != TokenType.SepRcurly)
             {
-                //没遇到 }
-
-                //解析key value
+                //{ 后接的不是 }
+                //继续解析key value
                 ParseKeyValue(lexer, out BaseExp key, out BaseExp value);
                 keyList.Add(key);
                 valueList.Add(value);
 
                 while (IsKeyValueSep(lexer.LookNextTokenType()))
                 {
-                    //处理分隔符后面的key value
+                    //处理分隔符以及后面的key value
 
                     //跳过分隔符
                     lexer.GetNextToken(out _, out _, out _);

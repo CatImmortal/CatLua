@@ -185,7 +185,7 @@ namespace CatLua
         }
 
         /// <summary>
-        /// 解析表达式0 (nil false true numeral LiteralString ... functiondef prefixexp tableconstructor)
+        /// 解析表达式0 (nil false true numeral LiteralString vararg functiondef tableconstructor prefixexp)
         /// </summary>
         private static BaseExp ParseExp0(Lexer lexer)
         {
@@ -229,7 +229,7 @@ namespace CatLua
 
 
         /// <summary>
-        /// 解析逗号分隔的var表达式列表
+        /// 解析逗号分隔的var列表 var包括名字表达式和表访问表达式(都是前缀表达式)
         /// </summary>
         private static BaseExp[] ParseVarList(Lexer lexer, BaseExp var0)
         {
@@ -252,7 +252,7 @@ namespace CatLua
         }
 
         /// <summary>
-        /// 检查exp是否为var表达式
+        /// 检查exp是否为var(名字表达式或表访问表达式)
         /// </summary>
         private static BaseExp CheckVar(Lexer lexer, BaseExp exp)
         {

@@ -34,7 +34,9 @@
         /// </summary>
         private static BaseStat ParseAssignOrFuncCallStat(Lexer lexer)
         {
-            //解析前缀表达式
+            //赋值语句和函数调用语句都以前缀表达式开始
+
+            //先解析前缀表达式
             BaseExp prefixExp = ParsePrefixExp(lexer);
 
             if (prefixExp is FuncCallExp exp)

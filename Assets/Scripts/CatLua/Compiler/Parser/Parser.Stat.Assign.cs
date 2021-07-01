@@ -10,7 +10,7 @@ namespace CatLua
         /// </summary>
         private static AssignStat ParseAssignStat(Lexer lexer, BaseExp var0)
         {
-            //解析赋值号左侧的var表达式列表
+            //解析赋值号左侧的var列表
             BaseExp[] varList = ParseVarList(lexer, var0);
 
             //跳过赋值符号
