@@ -60,6 +60,7 @@
                         keyExp = new StringExp(line, name);
 
                         //记录访问表达式是表访问表达式的语法糖
+                        //a.name = a["name"]
                         exp = new TableAccessExp(line, exp, keyExp);
 
                         break;
@@ -79,7 +80,7 @@
 
                 }
 
-                return exp;
+
             }
         }
 
