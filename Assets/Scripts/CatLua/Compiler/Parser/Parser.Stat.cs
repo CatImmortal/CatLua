@@ -16,7 +16,7 @@ namespace CatLua
             {
                 //下一个token 不是 return或block结束 就解析一条语句
                 BaseStat stat = ParseStat(lexer);
-
+                UnityEngine.Debug.Log("Parse结束，语句类型为" + stat.GetType());
                 if (!(stat is EmptyStat))
                 {
                     //不是空语句 放入列表

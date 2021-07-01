@@ -6,6 +6,7 @@ using System;
 using UnityEngine.Profiling;
 using System.Threading.Tasks;
 using System.IO;
+
 public class Entry : MonoBehaviour
 {
     public TextAsset main;
@@ -22,7 +23,7 @@ public class Entry : MonoBehaviour
 
         string source = File.ReadAllText(Application.dataPath + "/Scripts/LuaScripts/" + main.name + ".lua");
 
-        TestLexer(source,"main");
+        TestParser(source,"main");
     }
 
     private Chunk TestUndump()
@@ -190,5 +191,11 @@ public class Entry : MonoBehaviour
                 return;
             }
         }
+    }
+
+    private void TestParser(string chunk, string chunkName)
+    {
+        Block block =  Parser.Parse(chunk, chunkName);
+        Debug.Log("语法解析结束");
     }
 }

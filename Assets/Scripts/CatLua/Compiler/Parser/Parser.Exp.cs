@@ -22,10 +22,10 @@ namespace CatLua
             switch (lexer.LookNextTokenType())
             {
                 case TokenType.Eof:
-                case TokenType.KwEnd:
-                case TokenType.KwElse:
-                case TokenType.KwElseif:
-                case TokenType.KwUntil:
+                //case TokenType.KwEnd:
+                //case TokenType.KwElse:
+                //case TokenType.KwElseif:
+                //case TokenType.KwUntil:
                     //block结束了 返回空数组
                     return new BaseExp[0];
 
@@ -40,7 +40,7 @@ namespace CatLua
 
                     if (lexer.LookNextTokenType() == TokenType.SepSemi)
                     {
-                        //跳过分号
+                        //解析完所有表达式后 有分号要跳过分号
                         lexer.GetNextToken(out _, out _, out _);
                     }
 
@@ -55,13 +55,17 @@ namespace CatLua
         {
             List<BaseExp> exps = new List<BaseExp>();
 
+            //解析表达式
+            BaseExp exp = ParseExp(lexer);
+            exps.Add(exp);
+
             while (lexer.LookNextTokenType() == TokenType.SepComma)
             {
                 //跳过逗号
                 lexer.GetNextToken(out _, out _, out _);
 
                 //解析表达式
-                BaseExp exp = ParseExp(lexer);
+                exp = ParseExp(lexer);
                 exps.Add(exp);
             }
 
@@ -76,113 +80,7 @@ namespace CatLua
             return ParseExp12(lexer);
         }
 
-        /// <summary>
-        /// 解析表达式12 (or)
-        /// </summary>
-        private static BaseExp ParseExp12(Lexer lexer)
-        {
-            //解析左侧表达式
-            BaseExp leftExp = ParseExp11(lexer);
-
-            while (lexer.LookNextTokenType() == TokenType.OpOr)
-            {
-                lexer.GetNextToken(out int line, out _, out TokenType type);
-
-                //解析右侧表达式
-                BaseExp rightExp = ParseExp11(lexer);
-
-                //将左侧表达式和右侧表达式 合为一个新的左侧表达式 实现运算符的左结合性
-                //如： a or b or c = (a or b) or c
-                leftExp = new BinopExp(line, type, leftExp, rightExp);
-            }
-
-            return leftExp;
-        }
-
-        /// <summary>
-        /// 解析表达式11 (and)
-        /// </summary>
-        private static BaseExp ParseExp11(Lexer lexer)
-        {
-
-        }
-
-        /// <summary>
-        /// 解析表达式5 (..)
-        /// </summary>
-        private static BaseExp ParseExp5(Lexer lexer)
-        {
-            BaseExp exp = ParseExp4(lexer);
-            if (lexer.LookNextTokenType() != TokenType.OpConcat)
-            {
-                return exp;
-            }
-
-            int line = 0;
-            List<BaseExp> exps = new List<BaseExp>();
-            exps.Add(exp);
-
-            while (lexer.LookNextTokenType() == TokenType.OpConcat)
-            {
-                //生成多叉树
-                lexer.GetNextToken(out line, out _, out _);
-                exp = ParseExp4(lexer);
-                exps.Add(exp);
-            }
-
-            return new ConcatExp(line, exps.ToArray());
-        }
-
-        /// <summary>
-        /// 解析表达式4 ( + - * / // %)
-        /// </summary>
-        private static BaseExp ParseExp4(Lexer lexer)
-        {
-
-        }
-
-        /// <summary>
-        /// 解析表达式2 (not # - ~)
-        /// </summary>
-        private static BaseExp ParseExp2(Lexer lexer)
-        {
-            switch (lexer.LookNextTokenType())
-            {
-                case TokenType.OpNot:
-                case TokenType.OpLen:
-                case TokenType.OpUnm:
-                case TokenType.OpBNot:
-                    lexer.GetNextToken(out int line, out _, out TokenType type);
-                    //递归调用 实现一元运算符的右结合性
-                    BaseExp rightExp = ParseExp2(lexer);
-                    return new UnopExp(line, type, rightExp);
-                    
-
-            }
-
-            return ParseExp1(lexer);
-        }
-
-        /// <summary>
-        /// 解析表达式1 (^)
-        /// </summary>
-        private static BaseExp ParseExp1(Lexer lexer)
-        {
-            //解析左侧表达式
-            BaseExp leftExp = ParseExp(lexer);
-
-            if (lexer.LookNextTokenType() == TokenType.OpPow)
-            {
-                lexer.GetNextToken(out int line, out _, out TokenType type);
-
-                //解析右侧表达式 递归调用 实现乘方的右结合性
-                BaseExp rightExp = ParseExp1(lexer);
-
-                leftExp = new BinopExp(line, type, leftExp, rightExp);
-            }
-
-            return leftExp;
-        }
+       
 
         /// <summary>
         /// 解析表达式0 (nil false true numeral LiteralString vararg functiondef tableconstructor prefixexp)

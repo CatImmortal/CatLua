@@ -57,7 +57,7 @@ namespace CatLua
         /// <summary>
         /// 匹配短字符串的正则表达式（不支持转义字符
         /// </summary>
-        private static Regex shortStrRegex = new Regex("^\"[\\s\\S]*\"");
+        private static Regex shortStrRegex = new Regex("^\"[^\"]*\"", RegexOptions.Compiled);
 
         /// <summary>
         /// 源代码
@@ -141,7 +141,7 @@ namespace CatLua
             GetNextToken(out  line, out token, out TokenType typeResult);
             if (type != typeResult)
             {
-                Error("NextTokenOfType调用失败，类型不正确：" + token);
+                Error($"NextTokenOfType调用失败，{token}不是{type}类型的");
             }
 
         }
@@ -612,7 +612,10 @@ namespace CatLua
             return matchResult;
         }
 
-
+        public override string ToString()
+        {
+            return chunk.Substring(curIndex);
+        }
     }
 }
 

@@ -8,6 +8,9 @@ namespace CatLua
     /// </summary>
     public static partial class Parser
     {
+        /// <summary>
+        /// 解析chunk
+        /// </summary>
         public static Block Parse(string chunk,string chunkName)
         {
             Lexer lexer = new Lexer(chunk,chunkName);

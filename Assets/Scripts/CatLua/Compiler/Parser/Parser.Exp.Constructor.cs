@@ -5,7 +5,7 @@ namespace CatLua
     public partial class Parser
     {
         /// <summary>
-        /// 解析函数定义表达式
+        /// 解析函数定义表达式（包括参数列表）
         /// </summary>
         private static FuncDefExp ParseFuncDefExp(Lexer lexer)
         {

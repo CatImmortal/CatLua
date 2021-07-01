@@ -74,7 +74,7 @@ namespace CatLua
             BaseExp[] expList = null;
             if (lexer.LookNextTokenType() == TokenType.OpAsssign)
             {
-                //有赋值符号
+                //有赋值符号 
 
                 //跳过赋值符号
                 lexer.GetNextToken(out _, out _, out _);
@@ -122,6 +122,7 @@ namespace CatLua
             lexer.GetNextIdentifier(out int line, out string name);
             exp = new NameExp(line, name);
 
+            //循环检测点号的记录访问表达式 a.b.c...
             while (lexer.LookNextTokenType() == TokenType.SepDot)
             {
                 //跳过点号
@@ -135,6 +136,7 @@ namespace CatLua
                 exp = new TableAccessExp(line, exp, key);
             }
 
+            //检测是否有冒号调用
             if (lexer.LookNextTokenType() == TokenType.SepColon)
             {
                 //跳过冒号

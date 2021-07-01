@@ -33,7 +33,7 @@
                 switch (lexer.LookNextTokenType())
                 {
                     case TokenType.SepLbrack:
-
+                        //a[exp]
                         //解析表访问表达式
 
                         //跳过 [
@@ -49,7 +49,7 @@
                         break;
 
                     case TokenType.SepDot:
-
+                        //a.name
                         //解析记录访问表达式
 
                         //跳过 .
@@ -65,10 +65,10 @@
                         break;
 
                     //以下4种都是函数调用表达式
-                    case TokenType.SepColon:    //:  用冒号调用函数的情况
-                    case TokenType.SepLparen:   //(  用括号把参数括起来的情况
-                    case TokenType.SepLcurly:   //{  不用括号 直接用表构造器作为参数的情况
-                    case TokenType.String:  //string  不用括号 直接用字符串字面量作为参数的情况
+                    case TokenType.SepColon:    //:  用冒号调用函数的情况 t:f()
+                    case TokenType.SepLparen:   //(  用括号把参数括起来的情况 f(x,y,z)
+                    case TokenType.SepLcurly:   //{  不用括号 直接用表构造器作为参数的情况 f {1,2,3}
+                    case TokenType.String:  //string  不用括号 直接用字符串字面量作为参数的情况 f "sss"
                         
                         //解析为函数调用表达式
                         exp = ParseFuncCallExp(lexer, exp);
