@@ -77,53 +77,12 @@ namespace CatLua
         /// </summary>
         private static BaseExp ParseExp(Lexer lexer)
         {
-            return ParseExp12(lexer);
+            return ParseExpByPriority(lexer, 12);
         }
 
        
 
-        /// <summary>
-        /// 解析表达式0 (nil false true numeral LiteralString vararg functiondef tableconstructor prefixexp)
-        /// </summary>
-        private static BaseExp ParseExp0(Lexer lexer)
-        {
-            switch (lexer.LookNextTokenType())
-            {
-                case TokenType.KwNil:
-                    lexer.GetNextToken(out int line, out _, out _);
-                    return new NilExp(line);
 
-                case TokenType.KwFalse:
-                    lexer.GetNextToken(out line, out _, out _);
-                    return new FalseExp(line);
-
-                case TokenType.KwTrue:
-                    lexer.GetNextToken(out line, out _, out _);
-                    return new TrueExp(line);
-
-                case TokenType.Number:
-                    return ParseNumberExp(lexer);
-
-                case TokenType.String:
-                    lexer.GetNextToken(out line, out string token, out _);
-                    return new StringExp(line, token);
-
-                case TokenType.Vararg:
-                    lexer.GetNextToken(out line, out _, out _);
-                    return new VarargExp(line);
-
-                case TokenType.KwFunction:
-                    lexer.GetNextToken(out _, out _, out _);
-                    return ParseFuncDefExp(lexer);
-
-                case TokenType.SepLcurly:
-                    return ParseTableConstructorExp(lexer);
-
-                default:
-                    return ParsePrefixExp(lexer);
-
-            }
-        }
 
 
         /// <summary>
