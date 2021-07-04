@@ -100,7 +100,7 @@ namespace CatLua
                 
                 if (info.Instack == 1)
                 {
-                    //upvalue是外层函数的局部变量
+                    //upvalue是外1层函数的局部变量
 
                     //尝试从openUpvlaues里获取
                     if (!openUpvalues.TryGetValue(globalStackIndex,out Upvalue upvalue))

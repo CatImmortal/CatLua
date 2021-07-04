@@ -18,7 +18,7 @@ namespace CatLua
         }
 
         /// <summary>
-        /// 前一个局部变量
+        /// 前一个同名局部变量
         /// </summary>
         public GenLocalVarInfo Prev;
 
