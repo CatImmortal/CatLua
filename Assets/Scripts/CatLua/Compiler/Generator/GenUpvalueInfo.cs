@@ -22,7 +22,7 @@ namespace CatLua
         public int LocalVarSlot;
 
         /// <summary>
-        /// upvalue要捕获的局部变量已经被直接外围函数捕获时，此字段表示该upvalue在在直接外围函数upvalue表的索引
+        /// upvalue要捕获的局部变量已经被直接外围函数捕获时，此字段表示该upvalue在直接外围函数upvalue表的索引
         /// </summary>
         public int UpvalueIndex;
 

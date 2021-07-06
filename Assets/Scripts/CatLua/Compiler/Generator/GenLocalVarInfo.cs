@@ -22,6 +22,9 @@ namespace CatLua
         /// </summary>
         public GenLocalVarInfo Prev;
 
+        /// <summary>
+        /// 绑定的变量名
+        /// </summary>
         public string Name;
 
         /// <summary>

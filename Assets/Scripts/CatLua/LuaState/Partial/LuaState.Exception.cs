@@ -25,7 +25,7 @@ namespace CatLua
                 //不断弹出栈帧 直到到了初始的调用栈帧
                 while (curFrame != frame)
                 {
-                    PopFuncCallFrame();
+                    PopFuncCallFrameAndSetTop();
                 }
 
                 //将异常信息作为pcall的返回值压入调用栈帧的栈顶

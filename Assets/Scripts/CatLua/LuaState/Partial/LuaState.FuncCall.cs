@@ -56,7 +56,7 @@ namespace CatLua
         /// <summary>
         /// 压入函数调用栈帧，并修改栈顶
         /// </summary>
-        public void PushFuncCallFrame(FuncCallFrame frame)
+        public void PushFuncCallFrameAndSetTop(FuncCallFrame frame)
         {
             frame.Prev = curFrame;
             curFrame = frame;
@@ -68,7 +68,7 @@ namespace CatLua
         /// <summary>
         /// 弹出函数调用栈帧，并闭合upvalue以及恢复栈顶
         /// </summary>
-        public void PopFuncCallFrame()
+        public void PopFuncCallFrameAndSetTop()
         {
             //闭合被调栈帧上的局部变量所构造的Upvalue
             CloseUpvalue(CurFrameBottom);
@@ -182,9 +182,9 @@ namespace CatLua
                 LuaDataUnion mtData = mt["__call"];
                 if (mt != null && mtData.Type == LuaDataType.Function)
                 {
-                    //以被调用的data为第一个参数，后续跟其他参数
+                    //调用__call元方法 以被调用的data为第一个参数，后续跟其他参数
 
-                    //插入到原本要调用的函数和参数前面 后续会调用这个__call关联的函数
+                    //将__call插入到原本要调用的函数和参数前面 后续会调用与这个__call关联的函数
                     Push(mtData);
                     PopAndInsert(-(argsNum + 2));  
 
@@ -201,7 +201,6 @@ namespace CatLua
 
             if (data.Closure.CSFunc == null)
             {
-
                 //调用Lua函数
                 Closure c = data.Closure;
                 Debug.Log(string.Format("<color=#66ccff>调用Lua函数，函数和参数压入栈顶</color>：{0}<{1}-{2}>,{3}:", c.Proto.Source, c.Proto.LineDefined, c.Proto.LastLineDefined,this));
@@ -234,7 +233,7 @@ namespace CatLua
             int paramsNum = c.Proto.NumParams;
             bool isVarArg = c.Proto.IsVararg != 0;
 
-            //为要调用的函数创建栈帧
+            //为被调函数创建栈帧
 
             //设置被调栈帧的栈底 需要保证在之前的栈帧之上 不会和之前的栈帧数据重叠
             //如果之前的栈帧里保存的数据没超过预留寄存器数量，就设为curFrame.ReserveRegisterMaxIndex + 1，否则设为Top + 1
@@ -242,20 +241,20 @@ namespace CatLua
 
             FuncCallFrame newFrame = new FuncCallFrame(c,bottom);
 
-            //压入被调栈帧
-            PushFuncCallFrame(newFrame);
+            //压入被调栈帧 并修改栈顶
+            PushFuncCallFrameAndSetTop(newFrame);
 
             //将固定参数压入被调栈帧
             globalStack.PushN(FuncAndParams, 1, paramsNum);
 
-            //再次修改栈顶 指向最后一个寄存器
-            //这样后续push任意新值不会占用到栈帧自己预留的寄存器位置
+            //再次修改栈顶 指向最后一个预留寄存器
+            //这样后续push任意新值都不会占用到栈帧自己预留的寄存器位置
             SetTop(newFrame.ReserveRegisterMaxIndex);
 
             if (argsNum > paramsNum && isVarArg)
             {
                 //实际参数多于固定参数 并且这个函数有变长参数
-                //就把多出来的参数放入变长参数里处理
+                //就把多出来的参数收集到变长参数里处理
                 LuaDataUnion[] varArgs = new LuaDataUnion[argsNum - paramsNum];
                 Array.Copy(FuncAndParams, paramsNum + 1, varArgs, 0, varArgs.Length);
                 newFrame.VarArgs = varArgs;
@@ -290,8 +289,8 @@ namespace CatLua
         {
             if (resultNum == 0)
             {
-                //没返回值 直接弹出被调栈帧
-                PopFuncCallFrame();
+                //没返回值 直接弹出被调栈帧 并闭合upvalue以及恢复栈顶
+                PopFuncCallFrameAndSetTop();
                 return;
             }
 
@@ -299,8 +298,8 @@ namespace CatLua
             //取出所有返回值
             LuaDataUnion[] results = globalStack.PopN(CallFrameReturnResultNum);
 
-            //弹出被调栈帧
-            PopFuncCallFrame();
+            //弹出被调栈帧 并闭合upvalue以及恢复栈顶
+            PopFuncCallFrameAndSetTop();
 
             //压入resultNum个返回值到主调栈帧上，不足的部分用nil补
             //resultNum为-1时就全部压入
@@ -320,8 +319,8 @@ namespace CatLua
             int bottom = Math.Max(curFrame.ReserveRegisterMaxIndex + 1, Top + 1);
             FuncCallFrame newFrame = new FuncCallFrame(c,bottom);
 
-            //压入被调栈帧
-            PushFuncCallFrame(newFrame);
+            //压入被调栈帧 并修改栈顶
+            PushFuncCallFrameAndSetTop(newFrame);
 
             //压入固定参数
             globalStack.PushN(FuncAndParams, 1, argsNum);
@@ -333,7 +332,7 @@ namespace CatLua
             if (resultNum == 0)
             {
                 //没返回值 直接弹出被调栈帧
-                PopFuncCallFrame();
+                PopFuncCallFrameAndSetTop();
                 return;
             }
 
@@ -341,7 +340,7 @@ namespace CatLua
             LuaDataUnion[] results = globalStack.PopN(r);
 
             //弹出被调栈帧
-            PopFuncCallFrame();
+            PopFuncCallFrameAndSetTop();
 
             //压入返回值到主调栈帧的栈顶
             globalStack.PushN(results, 0, resultNum);

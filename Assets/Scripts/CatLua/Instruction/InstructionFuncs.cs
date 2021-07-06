@@ -96,7 +96,7 @@ namespace CatLua
             {
                 //处理upvalue
                 a += vm.CurFrameBottom - 1;  //这里传的栈索引从1开始 需要再-1
-                vm.CloseUpvalue(a);
+                vm.CloseUpvalue(a);  //闭合开放中的upvalue
             }
         }
 

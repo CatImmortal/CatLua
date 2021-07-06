@@ -57,7 +57,7 @@ namespace CatLua
         }
 
         /// <summary>
-        /// 本栈帧的栈底索引
+        /// 栈帧的栈底索引
         /// </summary>
         public int Bottom
         {
