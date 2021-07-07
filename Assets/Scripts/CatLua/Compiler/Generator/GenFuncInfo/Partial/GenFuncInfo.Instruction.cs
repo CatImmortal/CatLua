@@ -91,6 +91,14 @@ namespace CatLua
 
             return minSlot + 1;  //需要额外+1 这样如果没有在栈中的upvalue 就返回0
         }
+
+        /// <summary>
+        /// 生成Return指令
+        /// </summary>
+        public void EmitReturn(int a , int b)
+        {
+
+        }
     }
 
 }
