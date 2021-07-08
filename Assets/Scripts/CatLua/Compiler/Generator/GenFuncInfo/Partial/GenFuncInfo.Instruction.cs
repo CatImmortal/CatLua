@@ -62,7 +62,7 @@ namespace CatLua
         /// <summary>
         /// 将pc位置的指令的sBx操作数设置为指定的sBx(跳转指令用)
         /// </summary>
-        public void FixSbx(int sBx, int pc)
+        public void FixSbx(int pc , int sBx)
         {
             uint i = Instructions[pc];
             i = i << 18 >> 18; //清空左边18位sBx操作数
@@ -77,25 +77,84 @@ namespace CatLua
         {
 
 
-            int minSlot = -1;
+            //int minSlot = -1;
 
-            foreach (KeyValuePair<string, GenUpvalueInfo> item in UpvalueDict)
+            //foreach (KeyValuePair<string, GenUpvalueInfo> item in UpvalueDict)
+            //{
+            //    if (item.Value.LocalVarSlot >= 0)
+            //    {
+            //        //找出还在栈上的upvalue中 寄存器索引最小的那个值
+            //        minSlot = Math.Min(minSlot, item.Value.LocalVarSlot);
+            //    }
+
+            //}
+
+            //return minSlot + 1;  //需要额外+1 这样如果没有在栈中的upvalue 就返回0
+
+            //是否有被upvalue捕获的局部变量
+            bool hasCaptureLocalVars = false;
+
+            //生效中的局部变量里 绑定到的寄存器索引最小值
+            int minSlotOfLocalVars = MaxRegs;
+
+            //遍历当前生效的局部变量
+            foreach (KeyValuePair<string, GenLocalVarInfo> item in activeLocalVarDict)
             {
-                if (item.Value.LocalVarSlot >= 0)
+                if (item.Value.ScopeLv == ScopeLv)
                 {
-                    //找出还在栈上的upvalue中 寄存器索引最小的那个值
-                    minSlot = Math.Min(minSlot, item.Value.LocalVarSlot);
-                }
+                    //当前作用域
+                    GenLocalVarInfo v = item.Value;
+                    
+                    //同名 且在当前作用域的局部变量
+                    while (v != null && v.ScopeLv == ScopeLv)
+                    {
 
+                        if (v.Captured)
+                        {
+                            //被Upvalue捕获过
+                            hasCaptureLocalVars = true;
+                        }
+
+                        if (v.Slot < minSlotOfLocalVars && v.Name[0] != '(')
+                        {
+                            minSlotOfLocalVars = v.Slot;
+                        }
+
+                        v = v.Prev;
+                    }
+                }
             }
 
-            return minSlot + 1;  //需要额外+1 这样如果没有在栈中的upvalue 就返回0
+            if (hasCaptureLocalVars)
+            {
+                return minSlotOfLocalVars + 1;
+            }
+            else
+            {
+                return 0;
+            }
         }
 
         /// <summary>
         /// 生成Return指令
         /// </summary>
         public void EmitReturn(int a , int b)
+        {
+
+        }
+
+        /// <summary>
+        /// 生成jmp指令
+        /// </summary>
+        public int EmitJmp(int a ,int b)
+        {
+
+        }
+
+        /// <summary>
+        /// 生成test指令
+        /// </summary>
+        public int EmitTest(int reg,int a)
         {
 
         }

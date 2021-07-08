@@ -104,7 +104,7 @@ namespace CatLua
         {
             //对函数调用表达式求值 但不需要任何返回值
             int reg = fi.AllocReg();
-
+            CompileFuncCallExp(fi, stat, reg, 0);
         }
 
         /// <summary>
@@ -112,7 +112,11 @@ namespace CatLua
         /// </summary>
         public static void CompileBreakStat(GenFuncInfo fi, BreakStat stat)
         {
+            //生成参数都为0的jump指令
+            int pc = fi.EmitJmp(0, 0);
 
+            //添加到Break表中 等块结束时修复
+            fi.AddBreakJump(pc);
         }
 
 
@@ -121,7 +125,13 @@ namespace CatLua
         /// </summary>
         public static void CompileDoStat(GenFuncInfo fi, DoStat stat)
         {
+            fi.EnterScope(false);
 
+            CompileBlock(fi, stat.block);
+
+            fi.CloseOpenUpvalue();
+
+            fi.ExitScope();
         }
 
 
@@ -130,7 +140,26 @@ namespace CatLua
         /// </summary>
         public static void CompileRepeatStat(GenFuncInfo fi, RepeatStat stat)
         {
+            fi.EnterScope(true);
 
+            //记录当前pc
+            int startPC = fi.PC;
+
+            //处理块
+            CompileBlock(fi, stat.Block);
+
+            //分配一个变量 对表达式求值
+            int r = fi.AllocReg();
+            CompileExp(fi, stat.Exp, r, 1);
+            fi.FreeReg();
+
+            //生成test和jmp指令 
+            fi.EmitTest(r, 0); //r处的值不为false 就跳过接下来回到循环体开始处的jmp指令 结束循环
+            fi.EmitJmp(0, startPC - fi.PC - 1);  //跳回最开始
+
+            fi.CloseOpenUpvalue();
+
+            fi.ExitScope();
         }
 
 
@@ -139,7 +168,29 @@ namespace CatLua
         /// </summary>
         public static void CompileWhileStat(GenFuncInfo fi, WhileStat stat)
         {
+            //记录当前pc
+            int startPC = fi.PC;
 
+            //分配一个变量 对表达式求值
+            int r = fi.AllocReg();
+            CompileExp(fi, stat.Exp, r, 1);
+            fi.FreeReg();
+
+            //生成test和jmp指令 
+            fi.EmitTest(r, 0);  //r处的值不为false 就跳过接下来结束循环的jmp指令 循环运行block
+            int jmpToEndPC = fi.EmitJmp(0, 0); //结束循环 此时块还没结束 跳转偏移量暂时设为0
+
+            //对块进行处理
+            fi.EnterScope(true);
+
+            CompileBlock(fi, stat.Block);
+            fi.CloseOpenUpvalue();
+            fi.EmitJmp(0, startPC - fi.PC - 1);  //跳回最开始
+
+            fi.ExitScope();
+
+            //修复结束循环的jmp指令的偏移量
+            fi.FixSbx(jmpToEndPC, fi.PC - jmpToEndPC);
         }
 
 
@@ -148,7 +199,38 @@ namespace CatLua
         /// </summary>
         public static void CompileIfStat(GenFuncInfo fi, IfStat stat)
         {
+            int[] jmpToEndPCs = new int[stat.Exps.Length];
 
+            //跳到下一个if表达式的PC
+            int jmpToNextExpPC = -1;
+
+            for (int i = 0; i < stat.Exps.Length; i++)
+            {
+                BaseExp exp = stat.Exps[i];
+
+                //修复跳转到下一个elseif的jmp指令的偏移量
+                if (jmpToNextExpPC >= 0)
+                {
+                    fi.FixSbx(jmpToNextExpPC, fi.PC - jmpToNextExpPC);
+                }
+
+                //分配一个变量 对表达式求值
+                int r = fi.AllocReg();
+                CompileExp(fi, exp, r, 1);
+                fi.FreeReg();
+
+                //生成test和jmp指令 
+                fi.EmitTest(r, 0); //r处的值不为false 就跳过接下来 跳转到下一个elseif 的jmp指令 直接进入block
+                jmpToNextExpPC = fi.EmitJmp(0, 0);  //跳转到下一个elseif 此时还不知道具体pc 跳转偏移量暂时设为0
+
+                //处理块
+                fi.EnterScope(true);
+
+                CompileBlock(fi, stat.Blocks[i]);
+                fi.CloseOpenUpvalue();
+
+                fi.ExitScope();
+            }
         }
 
 
@@ -193,6 +275,7 @@ namespace CatLua
         /// </summary>
         public static void CompileLocalFuncDefStat(GenFuncInfo fi, LocalFuncDefStat stat)
         {
+            //1个局部变量+1个函数定义表达式
             int reg = fi.AddLocalVar(stat.Name);
             CompileFuncDefExp(fi, stat.FuncDefExp, reg);
         }
@@ -272,7 +355,7 @@ namespace CatLua
         /// <summary>
         /// 编译函数调用表达式
         /// </summary>
-        public static void CompileFuncCallStat(GenFuncInfo fi, BaseExp exp, int reg,int x)
+        public static void CompileFuncCallExp(GenFuncInfo fi, FuncCallStat stat, int reg,int x)
         {
 
         }

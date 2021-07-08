@@ -41,7 +41,7 @@ namespace CatLua
         {
             ScopeLv++;
 
-            //检查新作用域里是否可被break打断
+            //检查新作用域是否为可被break打断的循环块
             if (breakable)
             {
                 //循环块
@@ -61,8 +61,8 @@ namespace CatLua
         {
             ScopeLv--;
 
-
-            List<int> pendingBreakJumps = Breaks[Breaks.Count - 1];
+            //取出此作用域的所有break对应的jmp指令索引
+            List<int> pendingBreakJumps = Breaks[Breaks.Count - 1]; 
             Breaks.RemoveAt(Breaks.Count - 1);
 
             //根据upvalue获取参数a
@@ -70,7 +70,7 @@ namespace CatLua
 
             for (int i = 0; i < pendingBreakJumps.Count; i++)
             {
-                //当前作用域已生成的最后一条指令索引PC 和 之前记录的break指令索引pc 的差值，就是正确的sBx参数
+                //当前作用域已生成的最后一条指令索引PC 和 当前记录的break指令索引pc 的差值，就是正确的sBx参数（即要跳过多少条指令才能到达末尾）
                 //在执行jmp指令的时候会使得PC+=sBx，继而从break指令跳转到当前作用域的最后一条指令
                 int pc = pendingBreakJumps[i];
                 int sBx = PC - pc;

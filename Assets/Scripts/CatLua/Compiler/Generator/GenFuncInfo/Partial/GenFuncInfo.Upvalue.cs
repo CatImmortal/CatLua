@@ -49,6 +49,19 @@ namespace CatLua
             //绑定失败
             return -1;
         }
+   
+        /// <summary>
+        /// 闭合处于开放状态的upvalue
+        /// </summary>
+        public void CloseOpenUpvalue()
+        {
+            int a = GetJmpArgA();
+            if (a > 0)
+            {
+                //栈上有upvalue 用jump指令的a参数来处理upvalue的关闭
+                EmitJmp(a, 0);
+            }
+        }
     }
 
 }
