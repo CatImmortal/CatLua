@@ -302,7 +302,7 @@ namespace CatLua
         }
 
         /// <summary>
-        /// 将a位置的值(index)减去a+2的值(step)，初始化index,然后让PC增加sbx，指向循环体
+        /// 将a位置的值(index)减去a+2的值(step)，初始化index,然后让PC增加sbx，指向循环检测部分
         /// </summary>
         private static void ForPrep(Instructoin i, LuaState vm)
         {
@@ -333,6 +333,11 @@ namespace CatLua
         /// </summary>
         private static void ForLoop(Instructoin i, LuaState vm)
         {
+            //a+3 i
+            //a+2 step
+            //a+1 limit
+            //a index
+
             i.GetAsBx(out int a, out int sbx);
             a += vm.CurFrameBottom;
 
@@ -654,7 +659,7 @@ namespace CatLua
         }
 
         /// <summary>
-        /// 检查a + 1处的值是否为nil，如果不是就将a + 1的值复制到a，然后将PC增加sbx，指向下一次循环
+        /// 检查a + 1处的值是否为nil，如果不是就将a + 1的值复制到a，然后将PC增加sbx，指向循环体
         /// </summary>
         private static void TForLoop(Instructoin i, LuaState vm)
         {

@@ -61,7 +61,9 @@ namespace CatLua
         {
             ScopeLv--;
 
-            //取出此作用域的所有break对应的jmp指令索引
+            //block结束时 修复此block中的break指令
+
+            //取出此block的所有break对应的jmp指令索引
             List<int> pendingBreakJumps = Breaks[Breaks.Count - 1]; 
             Breaks.RemoveAt(Breaks.Count - 1);
 

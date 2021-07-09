@@ -60,7 +60,7 @@ namespace CatLua
         }
 
         /// <summary>
-        /// 将pc位置的指令的sBx操作数设置为指定的sBx(跳转指令用)
+        /// 将pc位置的指令的sBx操作数设置为指定的sBx(跳转用)
         /// </summary>
         public void FixSbx(int pc , int sBx)
         {
@@ -115,7 +115,7 @@ namespace CatLua
                             hasCaptureLocalVars = true;
                         }
 
-                        if (v.Slot < minSlotOfLocalVars && v.Name[0] != '(')
+                        if (v.Slot < minSlotOfLocalVars && v.Name[0] != '(')  //(开头的局部变量 是编译器生成的 不考虑在内
                         {
                             minSlotOfLocalVars = v.Slot;
                         }
@@ -135,26 +135,68 @@ namespace CatLua
             }
         }
 
-        /// <summary>
-        /// 生成Return指令
-        /// </summary>
+
         public void EmitReturn(int a , int b)
         {
 
         }
 
-        /// <summary>
-        /// 生成jmp指令
-        /// </summary>
         public int EmitJmp(int a ,int b)
         {
 
         }
 
-        /// <summary>
-        /// 生成test指令
-        /// </summary>
+
         public int EmitTest(int reg,int a)
+        {
+
+        }
+
+
+        public int EmitForPrep(int a,int sbx)
+        {
+
+        }
+
+
+        public int EmitForLoop(int a, int sbx)
+        {
+
+        }
+
+        public int EmitTForCall(int a,int c)
+        {
+
+        }
+
+        public int EmitTForLoop(int a, int sbx)
+        {
+
+        }
+
+        public int EmitLoadNil(int a,int b)
+        {
+
+        }
+
+     
+
+        public int EmitMove(int a, int b)
+        {
+
+        }
+
+        public int EmitSetUpValue(int a, int b)
+        {
+
+        }
+
+        public int EmitSetTabUp(int a, int b, int c)
+        {
+
+        }
+
+        public int EmitSetTable(int a, int b, int c)
         {
 
         }
