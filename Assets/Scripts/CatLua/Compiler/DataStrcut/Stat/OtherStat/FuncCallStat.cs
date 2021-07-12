@@ -10,11 +10,12 @@ namespace CatLua
     {
         public FuncCallStat(FuncCallExp exp)
         {
+            Exp = exp;
             PrefixExp = exp.PrefixExp;
             NameExp = exp.NameExp;
             Args = exp.Args;
         }
-
+        public FuncCallExp Exp;
         public BaseExp PrefixExp;
         public StringExp NameExp;
         public BaseExp[] Args;

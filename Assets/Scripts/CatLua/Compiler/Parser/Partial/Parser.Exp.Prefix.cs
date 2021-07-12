@@ -55,7 +55,7 @@
                         //跳过 .
                         lexer.GetNextToken(out _, out _, out _);
 
-                        //解析点后面的key
+                        //解析点后面的key为string key
                         lexer.GetNextIdentifier(out int line, out string name);
                         keyExp = new StringExp(line, name);
 

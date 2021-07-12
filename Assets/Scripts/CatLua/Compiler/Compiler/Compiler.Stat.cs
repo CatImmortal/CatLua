@@ -1,30 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System;
 
 namespace CatLua
 {
-    public static class Compiler
+    public static partial class Compiler
     {
-        /// <summary>
-        /// 编译Block
-        /// </summary>
-        public static void CompileBlock(GenFuncInfo fi,Block node)
-        {
-            for (int i = 0; i < node.Stats.Length; i++)
-            {
-                //编译语句
-            }
-
-            if (node.ReturnExps != null)
-            {
-                //编译返回值表达式
-            }
-        }
-
         /// <summary>
         /// 编译语句
         /// </summary>
-        public static void CompileStat(GenFuncInfo fi , BaseStat stat)
+        public static void CompileStat(GenFuncInfo fi, BaseStat stat)
         {
             //根据语句类型调用不同的编译方法
 
@@ -94,17 +79,17 @@ namespace CatLua
                 return;
             }
 
-            throw new System.Exception("不支持编译的语句：" + stat.GetType());
+            throw new Exception("不支持编译的语句：" + stat.GetType());
         }
 
         /// <summary>
         /// 编译函数调用语句
         /// </summary>
-        public static void CompileFuncCallStat(GenFuncInfo fi,FuncCallStat stat)
+        public static void CompileFuncCallStat(GenFuncInfo fi, FuncCallStat stat)
         {
             //对函数调用表达式求值 但不需要任何返回值
             int reg = fi.AllocReg();
-            CompileFuncCallExp(fi, stat, reg, 0);
+            CompileFuncCallExp(fi, stat.Exp, reg, 0);
         }
 
         /// <summary>
@@ -263,7 +248,7 @@ namespace CatLua
 
             //声明3个特殊的局部变量 分别存 索引，限制和步长
             LocalVarDeclStat lvds = new LocalVarDeclStat(0, new string[] { "(for index)", "(for limit)", "(for step)" }, new BaseExp[] { stat.InitExp, stat.LimitExp, stat.StepExp });
-            CompileLocalVarDeclStat(fi,lvds);
+            CompileLocalVarDeclStat(fi, lvds);
 
             //声明跟在for后的局部变量 
             fi.AddLocalVar(stat.VarName);
@@ -271,16 +256,16 @@ namespace CatLua
             //生成forprep指令
             int a = fi.UsedRegs - 4;
 
-            int ForPrepPC = fi.EmitForPrep(a, 0); //跳转到循环条件检测 sbx待修复
+            int ForPrepPC = fi.EmitForPrep(a, 0); //初始化循环index值 然后跳到循环条件检测ForLoop
 
-            CompileBlock(fi,stat.Block);
+            CompileBlock(fi, stat.Block);
             fi.CloseOpenUpvalue();
 
-            int ForLoopPC = fi.EmitForLoop(a, 0); //跳转到循环体 sbx待修复
+            int ForLoopPC = fi.EmitForLoop(a, 0); //循环条件检测 通过后会跳回循环体
 
-            //修复sbx  todo:
+            //修复sbx
             fi.FixSbx(ForPrepPC, ForLoopPC - ForPrepPC - 1);
-            fi.FixSbx(ForLoopPC, ForPrepPC - ForLoopPC);  //sbx是个负数
+            fi.FixSbx(ForLoopPC, ForPrepPC - ForLoopPC);
 
             fi.ExitScope();
         }
@@ -294,7 +279,7 @@ namespace CatLua
             fi.EnterScope(true);
 
             //声明3个特殊的局部变量 分别存 自定义迭代器函数 要遍历的表 key变量
-            LocalVarDeclStat lvds = new LocalVarDeclStat(0, new string[] { "(for generator)", "(for state)", "(for control)" }, new BaseExp[] { stat.InitExp, stat.LimitExp, stat.StepExp });
+            LocalVarDeclStat lvds = new LocalVarDeclStat(0, new string[] { "(for generator)", "(for state)", "(for control)" }, stat.ExpList);
             CompileLocalVarDeclStat(fi, lvds);
 
             //声明跟在for后的局部变量 
@@ -303,7 +288,7 @@ namespace CatLua
                 fi.AddLocalVar(stat.NameList[i]);
             }
 
-            int jmpToTForCallPC = fi.EmitJmp(0, 0);  //跳转到TFormCall处 开始循环检测
+            int jmpToTForCallPC = fi.EmitJmp(0, 0);  //用来跳转到TFormCall处的jmp指令 
 
             //编译循环体
             CompileBlock(fi, stat.Block);
@@ -314,9 +299,9 @@ namespace CatLua
             //迭代器函数的寄存器索引
             int GeneratorReg = fi.SlotOfLocalVar("(for generator)");
 
-            fi.EmitTForCall(GeneratorReg, stat.NameList.Length);
+            fi.EmitTForCall(GeneratorReg, stat.NameList.Length);  //调用迭代器函数
 
-            fi.EmitTForLoop(GeneratorReg + 2, jmpToTForCallPC - fi.PC - 1);  //跳回循环体 继续循环
+            fi.EmitTForLoop(GeneratorReg + 2, jmpToTForCallPC - fi.PC - 1);  //检查迭代器函数返回结果 不为nil就跳回循环体 继续循环
 
             fi.ExitScope();
         }
@@ -336,14 +321,14 @@ namespace CatLua
             int[] kRegs = new int[varsNum];
             int[] vRegs = new int[varsNum];
 
-            //处理=号左侧的索引表达式，分配临时变量，对table和key求值
+            //处理=号左侧的变量
             for (int i = 0; i < varsNum; i++)
             {
                 BaseExp varExp = stat.VarList[i];
 
                 if (varExp is TableAccessExp taExp)
                 {
-                    //var表达式是表访问表达式
+                    //为表访问表达式的var分配寄存器
 
                     //编译前缀表达式
                     tRegs[i] = fi.AllocReg();
@@ -354,13 +339,14 @@ namespace CatLua
                     CompileExp(fi, taExp.KeyExp, kRegs[i], 1);
                 }
             }
-
-            //统一对=号右侧的表达式 计算寄存器索引
             for (int i = 0; i < varsNum; i++)
             {
+                //为非表访问表达式的var分配寄存器
                 vRegs[i] = fi.UsedRegs + i;
             }
 
+
+            //处理=号右侧的表达式 和局部变量声明语句类似 需要考虑多重赋值
             if (expsNum >= varsNum)
             {
                 //var 不比 表达式 多
@@ -384,7 +370,9 @@ namespace CatLua
             else
             {
                 //var 比 表达式 多
+
                 bool multRet = false;
+
                 for (int i = 0; i < expsNum; i++)
                 {
                     BaseExp exp = stat.ExpList[i];
@@ -414,6 +402,7 @@ namespace CatLua
                 }
             }
 
+            //处理赋值的3种情况：局部变量 upvalue 全局变量
             for (int i = 0; i < varsNum; i++)
             {
                 BaseExp exp = stat.VarList[i];
@@ -440,7 +429,7 @@ namespace CatLua
                         {
                             //var是个全局变量
                             a = fi.IndexOfUpvalue("_ENV");
-                            b = fi.IndexOfConstant(new LuaConstantUnion(LuaConstantType.ShorStr,str: nExp.Name));
+                            b = fi.IndexOfConstant(new LuaConstantUnion(LuaConstantType.ShorStr, str: nExp.Name));
                             fi.EmitSetTabUp(a, b, vRegs[i]);
 
                         }
@@ -451,12 +440,14 @@ namespace CatLua
                 }
                 else
                 {
+                    //var表达式 是个表构造器
                     fi.EmitSetTable(tRegs[i], kRegs[i], vRegs[i]);
                 }
             }
+
+            //释放临时变量
+            fi.UsedRegs = oldUsedRegs;
         }
-
-
 
 
         /// <summary>
@@ -465,6 +456,8 @@ namespace CatLua
         public static void CompileLocalVarDeclStat(GenFuncInfo fi, LocalVarDeclStat stat)
         {
             int oldUsedRegs = fi.UsedRegs;
+
+            //处理=号右侧的表达式
             if (stat.NameList.Length == stat.ExpList.Length)
             {
                 //=号左侧的变量和右侧的表达式数量一样多
@@ -534,7 +527,7 @@ namespace CatLua
             //释放临时变量
             fi.UsedRegs = oldUsedRegs;
 
-            //声明局部变量
+            //处理=号左侧的局部变量
             for (int i = 0; i < stat.NameList.Length; i++)
             {
                 fi.AddLocalVar(stat.NameList[i]);
@@ -550,90 +543,8 @@ namespace CatLua
         {
             //1个局部变量+1个函数定义表达式
             int reg = fi.AddLocalVar(stat.Name);
-            CompileFuncDefExp(fi, stat.FuncDefExp, reg);
+            CompileFuncDefExp(fi, (FuncDefExp)stat.FuncDefExp, reg);
         }
-
-        /// <summary>
-        /// 编译返回值表达式
-        /// </summary>
-        public static void CompileReturnExp(GenFuncInfo fi, BaseExp[] exps)
-        {
-            if (exps.Length == 0)
-            {
-                //没返回值
-                fi.EmitReturn(0, 0);
-                return;
-            }
-
-            //最后一个表达式是否是vararg或者函数调用
-            bool multReturn = IsVarargOrFuncCall(exps[exps.Length - 1]);
-
-            //循环编译所有表达式
-            for (int i = 0; i < exps.Length; i++)
-            {
-                BaseExp exp = exps[i];
-
-                int reg = fi.AllocReg();
-                if (i == exps.Length - 1 && multReturn)
-                {
-                    CompileExp(fi, exp, reg, -1);
-                }
-                else
-                {
-                    CompileExp(fi, exp, reg, 1);
-                }
-            }
-
-            fi.FreeRegs(exps.Length);
-
-            //返回值的寄存器索引起点
-            int a = fi.UsedRegs;
-
-            //根据是否有变长返回值 决定b参数
-            if (multReturn)
-            {
-                
-                fi.EmitReturn(a, -1);
-            }
-            else
-            {
-                fi.EmitReturn(a, exps.Length);
-            }
-        }
-
-        /// <summary>
-        /// 表达式是否为vararg或函数调用
-        /// </summary>
-        public static bool IsVarargOrFuncCall(BaseExp exp)
-        {
-            return exp is VarargExp || exp is FuncCallExp;
-        }
-
-        /// <summary>
-        /// 编译表达式
-        /// </summary>
-        public static void CompileExp(GenFuncInfo fi,BaseExp exp,int reg,int x)
-        {
-            //todo
-        }
-
-        /// <summary>
-        /// 编译函数定义表达式
-        /// </summary>
-        public static void CompileFuncDefExp(GenFuncInfo fi, BaseExp exp, int reg)
-        {
-
-        }
-
-        /// <summary>
-        /// 编译函数调用表达式
-        /// </summary>
-        public static void CompileFuncCallExp(GenFuncInfo fi, FuncCallStat stat, int reg,int x)
-        {
-
-        }
-
-
     }
 }
 

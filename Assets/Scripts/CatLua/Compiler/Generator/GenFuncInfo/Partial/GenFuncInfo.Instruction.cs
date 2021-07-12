@@ -115,7 +115,7 @@ namespace CatLua
                             hasCaptureLocalVars = true;
                         }
 
-                        if (v.Slot < minSlotOfLocalVars && v.Name[0] != '(')  //(开头的局部变量 是编译器生成的 不考虑在内
+                        if (v.Slot < minSlotOfLocalVars && v.Name[0] != '(')  // ( 开头的局部变量 是编译器生成的 不考虑在内
                         {
                             minSlotOfLocalVars = v.Slot;
                         }
@@ -131,57 +131,65 @@ namespace CatLua
             }
             else
             {
+                //没有需要关闭的upvalue
                 return 0;
             }
         }
 
-
-        public void EmitReturn(int a , int b)
-        {
-
-        }
-
-        public int EmitJmp(int a ,int b)
-        {
-
-        }
-
-
-        public int EmitTest(int reg,int a)
-        {
-
-        }
-
-
-        public int EmitForPrep(int a,int sbx)
-        {
-
-        }
-
-
-        public int EmitForLoop(int a, int sbx)
-        {
-
-        }
-
-        public int EmitTForCall(int a,int c)
-        {
-
-        }
-
-        public int EmitTForLoop(int a, int sbx)
-        {
-
-        }
-
-        public int EmitLoadNil(int a,int b)
-        {
-
-        }
-
-     
-
         public int EmitMove(int a, int b)
+        {
+
+        }
+
+        public int EmitLoadK(int a,long val)
+        {
+
+        }
+
+        public int EmitLoadK(int a, double val)
+        {
+
+        }
+
+        public int EmitLoadK(int a, string val)
+        {
+
+        }
+
+
+        public int EmitLoadKX(int a, int ax)
+        {
+
+        }
+
+        public int EmitLoadBool(int a,int b,int c)
+        {
+
+        }
+
+        public int EmitLoadNil(int a, int b)
+        {
+
+        }
+
+        public int EmitGetUpvalue(int a,int b)
+        {
+
+        }
+
+        public int EmitGetTabUp(int a, int b, int c)
+        {
+
+        }
+
+        public int EmitGetTable()
+        {
+
+        }
+
+
+
+        public int EmitSetTabUp(int a, int b, int c)
         {
 
         }
@@ -191,15 +199,126 @@ namespace CatLua
 
         }
 
-        public int EmitSetTabUp(int a, int b, int c)
-        {
-
-        }
-
         public int EmitSetTable(int a, int b, int c)
         {
 
         }
+
+
+
+        public int EmitNewTable()
+        {
+
+        }
+
+        public int EmitSelf()
+        {
+
+        }
+
+        public int EmitConcat()
+        {
+
+        }
+
+
+        public int EmitJmp(int a, int b)
+        {
+
+        }
+
+        public int EmitTest(int a,int c)
+        {
+
+        }
+
+        public int EmitTestSet()
+        {
+
+        }
+
+        public int EmitCall()
+        {
+
+        }
+
+        public int EmitTailCall()
+        {
+
+        }
+
+
+        public void EmitReturn(int a, int b)
+        {
+
+        }
+
+        public int EmitForLoop(int a, int sbx)
+        {
+
+        }
+
+        public int EmitForPrep(int a, int sbx)
+        {
+
+        }
+
+
+        public int EmitTForCall(int a, int c)
+        {
+
+        }
+
+        public int EmitTForLoop(int a, int sbx)
+        {
+
+        }
+
+        public int EmitSetList()
+        {
+
+        }
+
+        public int EmitClosure(int a,int bx)
+        {
+
+        }
+
+        public int EmitVararg(int a, int b)
+        {
+
+        }
+
+
+       
+
+
+
+
+
+      
+
+
+    
+
+      
+
+
+     
+
+
+     
+     
+
+     
+
+      
+
+    
+
+     
+
+
     }
 
 }
