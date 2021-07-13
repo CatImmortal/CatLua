@@ -77,7 +77,7 @@ namespace CatLua
                 int pc = pendingBreakJumps[i];
                 int sBx = PC - pc;
 
-                //修复break的jmp指令的sBx参数
+                //修复break的jmp指令的sBx参数和a参数
                 int instruction = (sBx + Constants.MaxArgSbx) << 14 | a << 6 | (int)OpCodeType.Jmp;
                 Instructions[pc] = (uint)instruction;
 

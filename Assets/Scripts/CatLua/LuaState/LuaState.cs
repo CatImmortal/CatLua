@@ -21,6 +21,8 @@ namespace CatLua
             registry[Constants.GlobalEnvKey] = Factory.NewTable(new LuaTable());
 
             openUpvalues = new Dictionary<int, Upvalue>();
+
+            CSFuncs.Init(this);
         }
 
         /// <summary>
@@ -42,6 +44,26 @@ namespace CatLua
         /// 开放状态的upvalue
         /// </summary>
         private Dictionary<int, Upvalue> openUpvalues;
+
+        /// <summary>
+        /// 加载一段字节码chunk，将主函数原型实例化为闭包，压入栈顶
+        /// mode表示加载模式，"b"=加载二进制chunk，"t"=加载文本chunk，"pt"=两者都可
+        /// </summary>
+        public int LoadChunk(byte[] bytes, string chunkName, string mode)
+        {
+            Chunk chunk = Chunk.Undump(bytes);
+            Closure c = new Closure(chunk.MainFunc);
+            Push(c);
+
+            if (c.Proto.UpvalueInfos.Length > 0)
+            {
+                //设置_G到入口函数的upvalue中
+                LuaDataUnion g = registry[Constants.GlobalEnvKey];
+                c.Upvalues[0] = new Upvalue(g);
+            }
+
+            return 0;
+        }
 
         public override string ToString()
         {

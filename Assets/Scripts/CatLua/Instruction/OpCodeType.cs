@@ -45,7 +45,7 @@ namespace CatLua
 
         Unm,
 
-        Bnot,
+        BNot,
         Not,
 
         Len,

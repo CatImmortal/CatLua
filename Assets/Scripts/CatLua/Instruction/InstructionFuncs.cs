@@ -263,7 +263,7 @@ namespace CatLua
         }
 
         /// <summary>
-        /// 将b中的bool值和c作比较，如果一样就将b的值复制到a中，否则跳过下一条指令
+        /// 将b中的bool值和c作比较，如果一样就将b的值复制到a中，不一样跳过下一条指令(下一条一般是jmp指令，主要用于实现短路运算)
         /// </summary>
         private static void TestSet(Instructoin i, LuaState vm)
         {
@@ -558,7 +558,7 @@ namespace CatLua
         }
 
         /// <summary>
-        /// 将b位置的table和table的函数(函数key来自c位置的函数名)复制到a + 1和a里
+        /// 将b位置的table和函数table[c]复制到a + 1和a里
         /// </summary>
         private static void Self(Instructoin i, LuaState vm)
         {
@@ -568,8 +568,8 @@ namespace CatLua
 
             vm.Copy(b, a + 1);
 
-            vm.PushConstOrData(c);  //push table function key
-            vm.PushTableValue(b);  //push function(table[key])
+            vm.PushConstOrData(c); 
+            vm.PushTableValue(b);  
             vm.PopAndCopy(a);
         }
 

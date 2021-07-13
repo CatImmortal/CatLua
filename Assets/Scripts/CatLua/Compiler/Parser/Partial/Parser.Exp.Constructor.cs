@@ -178,15 +178,17 @@ namespace CatLua
                 return;
             }
 
-            //key = value的形式
+           
 
             BaseExp exp = ParseExp(lexer);
 
-            key = null;
+            key = null; //只有value的形式 {1,2,3,4}这样 key会返回为null
             value = exp;
 
             if (exp is NameExp nameExp)
             {
+                //key = value的形式
+
                 if (lexer.LookNextTokenType() == TokenType.OpAsssign)
                 {
                     //跳过=
@@ -200,6 +202,9 @@ namespace CatLua
                     value = ParseExp(lexer);
                 }
             }
+
+
+            
         }
 
         /// <summary>

@@ -130,7 +130,7 @@ namespace CatLua
                     constant = new LuaConstantUnion(LuaConstantType.Number, number: ReadLuaNumber());
                     break;
                 case Constants.TagShortStr:
-                    constant = new LuaConstantUnion(LuaConstantType.ShorStr, str: ReadString());
+                    constant = new LuaConstantUnion(LuaConstantType.ShortStr, str: ReadString());
                     break;
                 case Constants.TagLongStr:
                     constant = new LuaConstantUnion(LuaConstantType.LongStr, str: ReadString());

@@ -44,7 +44,7 @@ namespace CatLua
                 case LuaConstantType.Number:
                     Push(constant.Number);
                     break;
-                case LuaConstantType.ShorStr:
+                case LuaConstantType.ShortStr:
                 case LuaConstantType.LongStr:
                     Push(constant.Str);
                     break;

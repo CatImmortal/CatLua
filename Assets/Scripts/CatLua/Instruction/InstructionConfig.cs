@@ -87,7 +87,7 @@ namespace CatLua
             new InstructionConfig(0,0,OpArgType.K,OpArgType.K,OpMode.IABC,OpCodeType.ShL,InstructionFuncs.ShLFunc),
             new InstructionConfig(0,1,OpArgType.K,OpArgType.K,OpMode.IABC,OpCodeType.ShR,InstructionFuncs.ShRFunc),
             new InstructionConfig(0,1,OpArgType.R,OpArgType.N,OpMode.IABC,OpCodeType.Unm,InstructionFuncs.UnmFunc),
-            new InstructionConfig(0,1,OpArgType.R,OpArgType.N,OpMode.IABC,OpCodeType.Bnot,InstructionFuncs.BNotFunc),
+            new InstructionConfig(0,1,OpArgType.R,OpArgType.N,OpMode.IABC,OpCodeType.BNot,InstructionFuncs.BNotFunc),
             new InstructionConfig(0,1,OpArgType.R,OpArgType.N,OpMode.IABC,OpCodeType.Not,InstructionFuncs.NotFunc),
             new InstructionConfig(0,1,OpArgType.R,OpArgType.N,OpMode.IABC,OpCodeType.Len,InstructionFuncs.LenFunc),
             new InstructionConfig(0,1,OpArgType.R,OpArgType.R,OpMode.IABC,OpCodeType.Concat,InstructionFuncs.ConcatFunc),

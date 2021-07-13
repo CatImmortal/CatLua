@@ -13,7 +13,7 @@ namespace CatLua
         Boolean,
         Integer,
         Number,
-        ShorStr,
+        ShortStr,
         LongStr,
     }
 

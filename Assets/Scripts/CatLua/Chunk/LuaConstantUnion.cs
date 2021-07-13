@@ -25,7 +25,7 @@ namespace CatLua
                 case LuaConstantType.Number:
                     Number = number;
                     break;
-                case LuaConstantType.ShorStr:
+                case LuaConstantType.ShortStr:
                 case LuaConstantType.LongStr:
                     Str = str;
                     break;
@@ -58,7 +58,7 @@ namespace CatLua
                 case LuaConstantType.Number:
                     s = Number.ToString();
                     break;
-                case LuaConstantType.ShorStr:
+                case LuaConstantType.ShortStr:
                 case LuaConstantType.LongStr:
                     s = Str;
                     break;

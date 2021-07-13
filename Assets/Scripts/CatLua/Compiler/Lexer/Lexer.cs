@@ -141,7 +141,7 @@ namespace CatLua
             GetNextToken(out  line, out token, out TokenType typeResult);
             if (type != typeResult)
             {
-                Error($"NextTokenOfType调用失败，{token}不是{type}类型的");
+                Error($"NextTokenOfType调用失败，需求{type}但提取到的是{token}");
             }
 
         }

@@ -139,7 +139,7 @@ namespace CatLua
             fi.FreeReg();
 
             //生成test和jmp指令 
-            fi.EmitTest(r, 0); //r处的值不为false 就跳过接下来回到循环体开始处的jmp指令 结束循环
+            fi.EmitTest(r, 0); //r处的值为true 就跳过接下来回到循环体开始处的jmp指令 结束循环
             fi.EmitJmp(0, startPC - fi.PC - 1);  //跳回最开始
 
             fi.CloseOpenUpvalue();
@@ -162,7 +162,7 @@ namespace CatLua
             fi.FreeReg();
 
             //生成test和jmp指令 
-            fi.EmitTest(r, 0);  //r处的值不为false 就跳过接下来结束循环的jmp指令 循环运行block
+            fi.EmitTest(r, 0);  //r处的值为true 就跳过接下来结束循环的jmp指令 循环运行block
             int jmpToEndPC = fi.EmitJmp(0, 0); //结束循环 此时块还没结束 跳转偏移量暂时设为0
 
             //对块进行处理
@@ -206,7 +206,7 @@ namespace CatLua
                 fi.FreeReg();
 
                 //生成test和jmp指令 
-                fi.EmitTest(r, 0); //r处的值不为false 就跳过接下来 跳转到下一个elseif 的jmp指令 直接进入block执行
+                fi.EmitTest(r, 0); //r处的值为true 就跳过接下来 跳转到下一个elseif 的jmp指令 直接进入block执行
                 jmpToNextExpPC = fi.EmitJmp(0, 0);  //跳转到下一个elseif 此时还不知道具体pc 跳转偏移量暂时设为0
 
                 //处理块
@@ -427,9 +427,9 @@ namespace CatLua
                         }
                         else
                         {
-                            //var是个全局变量
+                            //var是个全局变量 从Env表获取
                             a = fi.IndexOfUpvalue("_ENV");
-                            b = fi.IndexOfConstant(new LuaConstantUnion(LuaConstantType.ShorStr, str: nExp.Name));
+                            b = fi.IndexOfConstant(new LuaConstantUnion(LuaConstantType.ShortStr, str: nExp.Name));
                             fi.EmitSetTabUp(a, b, vRegs[i]);
 
                         }
