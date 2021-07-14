@@ -22,7 +22,8 @@ namespace CatLua
         {
             //将整个block视为一个函数体 以此创建函数信息
             FuncDefExp fdExp = new FuncDefExp(0, 0, null, true, block);
-            GenFuncInfo fi = new GenFuncInfo(null, fdExp);
+
+            GenFuncInfo fi = new GenFuncInfo(null, null);
 
             //将ENV作为局部变量放入
             fi.AddLocalVar("_ENV");
