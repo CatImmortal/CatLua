@@ -6,10 +6,6 @@ namespace CatLua
 {
     public partial class GenFuncInfo
     {
-        /// <summary>
-        /// 指令
-        /// </summary>
-        public List<uint> Instructions = new List<uint>();
 
         private static Dictionary<TokenType, OpCodeType> ArithAndBitwiseBinops = new Dictionary<TokenType, OpCodeType>()
         {
@@ -29,6 +25,12 @@ namespace CatLua
         };
 
         /// <summary>
+        /// 指令
+        /// </summary>
+        public List<uint> Instructions = new List<uint>();
+
+
+        /// <summary>
         /// 已经生成的最后一条指令的索引
         /// </summary>
         public int PC
@@ -42,7 +44,7 @@ namespace CatLua
         /// <summary>
         /// 生成ABC模式的编码指令
         /// </summary>
-        public void EmitABC(OpCodeType opcode, int a, int b, int c)
+        private void EmitABC(OpCodeType opcode, int a, int b, int c)
         {
             int i = b << 23 | c << 14 | a << 6 | (int)opcode;
             Instructions.Add((uint)i);
@@ -51,7 +53,7 @@ namespace CatLua
         /// <summary>
         /// 生成ABx模式的编码指令
         /// </summary>
-        public void EmitABx(OpCodeType opcode, int a, int bx)
+        private void EmitABx(OpCodeType opcode, int a, int bx)
         {
             int i = bx << 14 | a << 6 | (int)opcode;
             Instructions.Add((uint)i);
@@ -60,7 +62,7 @@ namespace CatLua
         /// <summary>
         /// 生成AsBx模式的编码指令
         /// </summary>
-        public void EmitAsBx(OpCodeType opcode, int a, int sbx)
+        private void EmitAsBx(OpCodeType opcode, int a, int sbx)
         {
             int i = (sbx + Constants.MaxArgSbx) << 14 | a << 6 | (int)opcode;
             Instructions.Add((uint)i);
@@ -69,7 +71,7 @@ namespace CatLua
         /// <summary>
         /// 生成Ax模式的编码指令
         /// </summary>
-        public void EmitAx(OpCodeType opcode, int ax)
+        private void EmitAx(OpCodeType opcode, int ax)
         {
             int i = ax << 6 | (int)opcode;
             Instructions.Add((uint)i);
@@ -89,7 +91,7 @@ namespace CatLua
         /// <summary>
         /// 根据upvalue获取jmp指令的参数a
         /// </summary>
-        public int GetJmpArgA()
+        private int GetJmpArgA()
         {
 
             //是否有被upvalue捕获的局部变量
@@ -98,13 +100,14 @@ namespace CatLua
             //生效中的局部变量里 绑定到的寄存器索引最小值
             int minSlotOfLocalVars = MaxRegs;
 
-            //遍历当前生效的局部变量 检查是否有被upvalue捕获过的 同时获取局部变量中的寄存器索引最小值
+            //遍历当前生效的局部变量 检查是否有被子函数的upvalue表捕获过的
             foreach (KeyValuePair<string, GenLocalVarInfo> item in activeLocalVarDict)
             {
                 if (item.Value.ScopeLv == ScopeLv)
                 {
                     GenLocalVarInfo v = item.Value;
 
+                    //处理多个同名局部变量的情况
                     while (v != null && v.ScopeLv == ScopeLv)
                     {
 
@@ -134,84 +137,88 @@ namespace CatLua
             }
         }
 
-        public int EmitMove(int a, int b)
+        public void EmitMove(int a, int b)
+        {
+            EmitABC(OpCodeType.Move, a, b, 0);
+        }
+
+        public void EmitLoadK(int a,long val)
+        {
+            int bx = ConstantDict[new LuaConstantUnion(LuaConstantType.Integer, integer: val)];
+            EmitABx(OpCodeType.LoadK,a, bx);
+        }
+
+        public void EmitLoadK(int a, double val)
+        {
+
+            int bx = ConstantDict[new LuaConstantUnion(LuaConstantType.Number,number:val)];
+            EmitABx(OpCodeType.LoadK, a, bx);
+        }
+
+        public void EmitLoadK(int a, string val)
+        {
+            int bx = ConstantDict[new LuaConstantUnion(LuaConstantType.ShortStr, str:val)];
+            EmitABx(OpCodeType.LoadK, a, bx);
+        }
+
+
+        public void EmitLoadKX(int a, int ax)
         {
 
         }
 
-        public int EmitLoadK(int a,long val)
+        public void EmitLoadBool(int a,int b,int c)
         {
-
+            EmitABC(OpCodeType.LoadBool, a, b, c);
         }
 
-        public int EmitLoadK(int a, double val)
+        public void EmitLoadNil(int a, int b)
         {
-
+            EmitABC(OpCodeType.LoadNil, a, b, 0);
         }
 
-        public int EmitLoadK(int a, string val)
+        public void EmitGetUpvalue(int a,int b)
         {
-
+            EmitABC(OpCodeType.GetUpValue, a, b, 0);
         }
 
-
-        public int EmitLoadKX(int a, int ax)
+        public void EmitGetTabUp(int a, int b, int c)
         {
-
+            EmitABC(OpCodeType.GetTabup, a, b, c);
         }
 
-        public int EmitLoadBool(int a,int b,int c)
+        public void EmitGetTable(int a, int b, int c)
         {
-
-        }
-
-        public int EmitLoadNil(int a, int b)
-        {
-
-        }
-
-        public int EmitGetUpvalue(int a,int b)
-        {
-
-        }
-
-        public int EmitGetTabUp(int a, int b, int c)
-        {
-
-        }
-
-        public int EmitGetTable(int a, int b, int c)
-        {
-
+            EmitABC(OpCodeType.GetTable, a, b, c);
         }
 
 
 
-        public int EmitSetTabUp(int a, int b, int c)
+        public void EmitSetTabUp(int a, int b, int c)
         {
-
+            EmitABC(OpCodeType.SetTabup, a, b, c);
         }
 
-        public int EmitSetUpValue(int a, int b)
+        public void EmitSetUpValue(int a, int b)
         {
-
+            EmitABC(OpCodeType.SetUpvalue, a, b, 0);
         }
 
-        public int EmitSetTable(int a, int b, int c)
+        public void EmitSetTable(int a, int b, int c)
         {
-
+            EmitABC(OpCodeType.SetTabup, a, b, c);
         }
 
 
 
-        public int EmitNewTable(int a, int b, int c)
+        public void EmitNewTable(int a, int b, int c)
         {
             EmitABC(OpCodeType.NewTable, a, LMath.Int2Fb(b), LMath.Int2Fb(c));
         }
 
-        public int EmitSelf(int a, int b, int c)
+        public void EmitSelf(int a, int b, int c)
         {
-
+            EmitABC(OpCodeType.Self, a, b, c);
         }
 
         public void EmitConcat(int a,int b ,int c)
@@ -222,25 +229,26 @@ namespace CatLua
 
         public int EmitJmp(int a, int b)
         {
-
+            EmitABC(OpCodeType.Jmp, a, b,0);
+            return PC;
         }
 
-        public int EmitTest(int a,int c)
+        public void EmitTest(int a,int c)
         {
-
+            EmitABC(OpCodeType.Test, a, 0, c);
         }
 
-        public int EmitTestSet(int a, int b,int c)
+        public void EmitTestSet(int a, int b,int c)
         {
-
+            EmitABC(OpCodeType.TestSet, a, b, c);
         }
 
-        public int EmitCall(int a, int b, int c)
+        public void EmitCall(int a, int b, int c)
         {
-
+            EmitABC(OpCodeType.Call, a, b, c);
         }
 
-        public int EmitTailCall()
+        public void EmitTailCall()
         {
 
         }
@@ -248,43 +256,45 @@ namespace CatLua
 
         public void EmitReturn(int a, int b)
         {
-
+            EmitABC(OpCodeType.Return, a, b, 0);
         }
 
         public int EmitForLoop(int a, int sbx)
         {
-
+            EmitAsBx(OpCodeType.ForLoop, a, sbx);
+            return PC;
         }
 
         public int EmitForPrep(int a, int sbx)
         {
-
+            EmitAsBx(OpCodeType.ForPrep, a, sbx);
+            return PC;
         }
 
 
-        public int EmitTForCall(int a, int c)
+        public void EmitTForCall(int a, int c)
         {
-
+            EmitABC(OpCodeType.TForCall, a, 0, c);
         }
 
-        public int EmitTForLoop(int a, int sbx)
+        public void EmitTForLoop(int a, int sbx)
         {
-
+            EmitAsBx(OpCodeType.TForloop, a, sbx);
         }
 
-        public int EmitSetList(int a, int b , int c)
+        public void EmitSetList(int a, int b , int c)
         {
-
+            EmitABC(OpCodeType.SetList, a, b, c);
         }
 
-        public int EmitClosure(int a,int bx)
+        public void EmitClosure(int a,int bx)
         {
-
+            EmitABx(OpCodeType.Closure, a, bx);
         }
 
-        public int EmitVararg(int a, int b)
+        public void EmitVararg(int a, int b)
         {
-
+            EmitABC(OpCodeType.Vararg, a, b, 0);
         }
 
         /// <summary>
@@ -328,7 +338,7 @@ namespace CatLua
                 {
                     //将 b c位置的值进行比较 
                     //如果不是a 就跳过下一条jmp指令 将结果设为false
-                    //如果是a 就通过jmp 将结果设为true  
+                    //如果是a 就通过jmp将结果设为true  
 
                     case TokenType.OpEq:
                         EmitABC(OpCodeType.Eq, 1, b, c);

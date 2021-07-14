@@ -9,7 +9,7 @@ namespace CatLua
         /// <summary>
         /// 编译返回值表达式
         /// </summary>
-        public static void CompileReturnExp(GenFuncInfo fi, BaseExp[] exps)
+        private static void CompileReturnExp(GenFuncInfo fi, BaseExp[] exps)
         {
             if (exps.Length == 0)
             {
@@ -57,7 +57,7 @@ namespace CatLua
         /// <summary>
         /// 表达式是否为vararg或函数调用
         /// </summary>
-        public static bool IsVarargOrFuncCall(BaseExp exp)
+        private static bool IsVarargOrFuncCall(BaseExp exp)
         {
             return exp is VarargExp || exp is FuncCallExp;
         }
@@ -65,7 +65,7 @@ namespace CatLua
         /// <summary>
         /// 编译表达式 
         /// </summary>
-        public static void CompileExp(GenFuncInfo fi, BaseExp exp, int reg, int num)
+        private static void CompileExp(GenFuncInfo fi, BaseExp exp, int reg, int num)
         {
             if (exp is NilExp)
             {
@@ -172,7 +172,7 @@ namespace CatLua
         /// <summary>
         /// 编译Vararg表达式
         /// </summary>
-        public static void CompileVarargExp(GenFuncInfo fi, VarargExp exp, int reg, int num)
+        private static void CompileVarargExp(GenFuncInfo fi, VarargExp exp, int reg, int num)
         {
             if (!fi.IsVararg)
             {
@@ -185,7 +185,7 @@ namespace CatLua
         /// <summary>
         /// 编译函数定义表达式
         /// </summary>
-        public static void CompileFuncDefExp(GenFuncInfo fi, FuncDefExp exp, int reg)
+        private static void CompileFuncDefExp(GenFuncInfo fi, FuncDefExp exp, int reg)
         {
             GenFuncInfo child = new GenFuncInfo(fi, exp);
             fi.Children.Add(child);
@@ -211,7 +211,7 @@ namespace CatLua
         /// <summary>
         /// 编译表构造表达式
         /// </summary>
-        public static void CompileTableConstructorExp(GenFuncInfo fi, TableConstructorExp exp, int reg)
+        private static void CompileTableConstructorExp(GenFuncInfo fi, TableConstructorExp exp, int reg)
         {
             //计算数组部分的长度
             int arrLength = 0;
@@ -300,7 +300,7 @@ namespace CatLua
         /// <summary>
         /// 编译一元运算表达式
         /// </summary>
-        public static void CompileUnopExp(GenFuncInfo fi, UnopExp exp, int reg)
+        private static void CompileUnopExp(GenFuncInfo fi, UnopExp exp, int reg)
         {
             int b = fi.AllocReg();
             CompileExp(fi, exp.Exp, b, 1);
@@ -310,7 +310,7 @@ namespace CatLua
         /// <summary>
         /// 编译二元运算表达式
         /// </summary>
-        public static void CompileBinopExp(GenFuncInfo fi, BinopExp exp, int reg)
+        private static void CompileBinopExp(GenFuncInfo fi, BinopExp exp, int reg)
         {
             switch (exp.Op)
             {
@@ -368,7 +368,7 @@ namespace CatLua
         /// <summary>
         /// 编译ConCat表达式
         /// </summary>
-        public static void CompileConcatExp(GenFuncInfo fi, ConcatExp exp, int reg)
+        private static void CompileConcatExp(GenFuncInfo fi, ConcatExp exp, int reg)
         {
             for (int i = 0; i < exp.Exps.Length; i++)
             {
@@ -385,7 +385,7 @@ namespace CatLua
         /// <summary>
         /// 编译名字表达式
         /// </summary>
-        public static void CompileNameExp(GenFuncInfo fi, NameExp exp, int reg)
+        private static void CompileNameExp(GenFuncInfo fi, NameExp exp, int reg)
         {
             //可能是局部变量 upvalue 全局变量
 
@@ -405,9 +405,14 @@ namespace CatLua
                 else
                 {
                     //全局变量
-                    //转换为对_Env表的表访问表达式
-                    TableAccessExp taExp = new TableAccessExp(exp.Line, new NameExp(0, "_ENV"), new StringExp(exp.Line, exp.Name));
-                    CompileTableAccessExp(fi, taExp, reg);
+
+                    ////转换为对Upvalues里的_ENV表的表访问表达式
+                    //TableAccessExp taExp = new TableAccessExp(exp.Line, new NameExp(0, "_ENV"), new StringExp(exp.Line, exp.Name));
+                    //CompileTableAccessExp(fi, taExp, reg);
+
+                    int b = fi.IndexOfUpvalue("_ENV");
+                    int c = fi.IndexOfConstant(new LuaConstantUnion(LuaConstantType.ShortStr, str: exp.Name));
+                    fi.EmitGetTabUp(reg,b,c);
                 }
             }
         }
@@ -416,7 +421,7 @@ namespace CatLua
         /// <summary>
         /// 编译表访问表达式
         /// </summary>
-        public static void CompileTableAccessExp(GenFuncInfo fi, TableAccessExp exp, int reg)
+        private static void CompileTableAccessExp(GenFuncInfo fi, TableAccessExp exp, int reg)
         {
             //分别对table和key的表达式求值
             int b = fi.AllocReg();
@@ -432,7 +437,7 @@ namespace CatLua
         /// <summary>
         /// 编译函数调用表达式
         /// </summary>
-        public static void CompileFuncCallExp(GenFuncInfo fi, FuncCallExp exp, int reg, int num)
+        private static void CompileFuncCallExp(GenFuncInfo fi, FuncCallExp exp, int reg, int num)
         {
             //参数数量
             int argsNum = exp.Args.Length;

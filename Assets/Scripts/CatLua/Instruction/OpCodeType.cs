@@ -68,7 +68,7 @@ namespace CatLua
         TForCall,
         TForloop,
 
-        Setlist,
+        SetList,
 
         Closure,
 

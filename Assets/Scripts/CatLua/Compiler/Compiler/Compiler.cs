@@ -6,11 +6,21 @@ namespace CatLua
     public static partial class Compiler
     {
         /// <summary>
+        /// 将Lua源代码编译为函数原型
+        /// </summary>
+        public static FuncPrototype Compile(string sourceCode,string chunkName)
+        {
+            Block ast = Parser.Parse(sourceCode, chunkName);
+            FuncPrototype proto = GenProto(ast);
+            return proto;
+        }
+
+        /// <summary>
         /// 通过Block生成FuncProto
         /// </summary>
-        public static FuncPrototype GenProto(Block block)
+        private static FuncPrototype GenProto(Block block)
         {
-            //将整个block视为一个函数体
+            //将整个block视为一个函数体 以此创建函数信息
             FuncDefExp fdExp = new FuncDefExp(0, 0, null, true, block);
             GenFuncInfo fi = new GenFuncInfo(null, fdExp);
 
@@ -28,7 +38,7 @@ namespace CatLua
         /// <summary>
         /// 函数信息转换为函数原型
         /// </summary>
-        public static FuncPrototype ToProto(GenFuncInfo fi)
+        private static FuncPrototype ToProto(GenFuncInfo fi)
         {
             FuncPrototype proto = new FuncPrototype();
             proto.NumParams = (byte)fi.NumParams;
@@ -49,7 +59,7 @@ namespace CatLua
             return proto;
         }
 
-        public static LuaConstantUnion[] GetConstants(GenFuncInfo fi)
+        private static LuaConstantUnion[] GetConstants(GenFuncInfo fi)
         {
             LuaConstantUnion[] constants = new LuaConstantUnion[fi.ConstantDict.Count];
             foreach (KeyValuePair<LuaConstantUnion, int> item in fi.ConstantDict)
@@ -60,7 +70,7 @@ namespace CatLua
         }
 
 
-        public static FuncPrototype[] ToProtos(GenFuncInfo[] fis)
+        private static FuncPrototype[] ToProtos(GenFuncInfo[] fis)
         {
             FuncPrototype[] protos = new FuncPrototype[fis.Length];
             for (int i = 0; i < fis.Length; i++)
@@ -70,7 +80,7 @@ namespace CatLua
             return protos;
         }
 
-        public static UpvalueInfo[] GetUpvalueInfos(GenFuncInfo fi)
+        private static UpvalueInfo[] GetUpvalueInfos(GenFuncInfo fi)
         {
             UpvalueInfo[] upvalueInfos = new UpvalueInfo[fi.UpvalueDict.Count];
             foreach (KeyValuePair<string, GenUpvalueInfo> item in fi.UpvalueDict)
@@ -78,7 +88,7 @@ namespace CatLua
                 UpvalueInfo upvalue = new UpvalueInfo();
                 if (item.Value.LocalVarSlot >= 0)
                 {
-                    //instack
+                    //in stack
                     upvalue.Index = (byte)item.Value.LocalVarSlot;
                     upvalue.Instack = 1;
                     upvalueInfos[item.Value.Index] = upvalue;
@@ -98,7 +108,7 @@ namespace CatLua
         /// <summary>
         /// 编译Block
         /// </summary>
-        public static void CompileBlock(GenFuncInfo fi, Block block)
+        private static void CompileBlock(GenFuncInfo fi, Block block)
         {
             for (int i = 0; i < block.Stats.Length; i++)
             {

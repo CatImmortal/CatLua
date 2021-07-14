@@ -15,6 +15,7 @@ namespace CatLua
         /// </summary>
         public int IndexOfUpvalue(string name)
         {
+            //name已经和upvalue绑定了 直接返回
             if (UpvalueDict.TryGetValue(name, out GenUpvalueInfo upvalue))
             {
                 return upvalue.Index;

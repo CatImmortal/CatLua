@@ -46,13 +46,31 @@ namespace CatLua
         private Dictionary<int, Upvalue> openUpvalues;
 
         /// <summary>
-        /// 加载一段字节码chunk，将主函数原型实例化为闭包，压入栈顶
-        /// mode表示加载模式，"b"=加载二进制chunk，"t"=加载文本chunk，"pt"=两者都可
+        /// 加载Lua源码
         /// </summary>
-        public int LoadChunk(byte[] bytes, string chunkName, string mode)
+        public int LoadSourceCode(string SourceCode,string chunkName)
+        {
+            FuncPrototype mainFunc = Compiler.Compile(SourceCode, chunkName);
+            LoadMainFunc(mainFunc);
+            return 0;
+        }
+
+        /// <summary>
+        /// 加载Lua字节码
+        /// </summary>
+        public int LoadChunk(byte[] bytes, string chunkName)
         {
             Chunk chunk = Chunk.Undump(bytes);
-            Closure c = new Closure(chunk.MainFunc);
+            LoadMainFunc(chunk.MainFunc);
+            return 0;
+        }
+
+        /// <summary>
+        /// 加载主函数原型,将其实例化为闭包，压入栈顶
+        /// </summary>
+        private void LoadMainFunc(FuncPrototype mainFunc)
+        {
+            Closure c = new Closure(mainFunc);
             Push(c);
 
             if (c.Proto.UpvalueInfos.Length > 0)
@@ -62,7 +80,6 @@ namespace CatLua
                 c.Upvalues[0] = new Upvalue(g);
             }
 
-            return 0;
         }
 
         public override string ToString()

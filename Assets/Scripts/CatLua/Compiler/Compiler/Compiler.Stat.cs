@@ -9,7 +9,7 @@ namespace CatLua
         /// <summary>
         /// 编译语句
         /// </summary>
-        public static void CompileStat(GenFuncInfo fi, BaseStat stat)
+        private static void CompileStat(GenFuncInfo fi, BaseStat stat)
         {
             //根据语句类型调用不同的编译方法
 
@@ -85,7 +85,7 @@ namespace CatLua
         /// <summary>
         /// 编译函数调用语句
         /// </summary>
-        public static void CompileFuncCallStat(GenFuncInfo fi, FuncCallStat stat)
+        private static void CompileFuncCallStat(GenFuncInfo fi, FuncCallStat stat)
         {
             //对函数调用表达式求值 但不需要任何返回值
             int reg = fi.AllocReg();
@@ -95,7 +95,7 @@ namespace CatLua
         /// <summary>
         /// 编译Break语句
         /// </summary>
-        public static void CompileBreakStat(GenFuncInfo fi, BreakStat stat)
+        private static void CompileBreakStat(GenFuncInfo fi, BreakStat stat)
         {
             //生成参数都为0的jump指令
             int pc = fi.EmitJmp(0, 0);
@@ -108,7 +108,7 @@ namespace CatLua
         /// <summary>
         /// 编译Do语句
         /// </summary>
-        public static void CompileDoStat(GenFuncInfo fi, DoStat stat)
+        private static void CompileDoStat(GenFuncInfo fi, DoStat stat)
         {
             fi.EnterScope(false);
 
@@ -123,7 +123,7 @@ namespace CatLua
         /// <summary>
         /// 编译Repeat语句
         /// </summary>
-        public static void CompileRepeatStat(GenFuncInfo fi, RepeatStat stat)
+        private static void CompileRepeatStat(GenFuncInfo fi, RepeatStat stat)
         {
             fi.EnterScope(true);
 
@@ -151,7 +151,7 @@ namespace CatLua
         /// <summary>
         /// 编译While语句
         /// </summary>
-        public static void CompileWhileStat(GenFuncInfo fi, WhileStat stat)
+        private static void CompileWhileStat(GenFuncInfo fi, WhileStat stat)
         {
             //记录当前pc
             int startPC = fi.PC;
@@ -182,7 +182,7 @@ namespace CatLua
         /// <summary>
         /// 编译If语句
         /// </summary>
-        public static void CompileIfStat(GenFuncInfo fi, IfStat stat)
+        private static void CompileIfStat(GenFuncInfo fi, IfStat stat)
         {
             int[] jmpToEndPCs = new int[stat.Exps.Length];
 
@@ -242,7 +242,7 @@ namespace CatLua
         /// <summary>
         /// 编译ForNum语句
         /// </summary>
-        public static void CompileForNumStat(GenFuncInfo fi, ForNumStat stat)
+        private static void CompileForNumStat(GenFuncInfo fi, ForNumStat stat)
         {
             fi.EnterScope(true);
 
@@ -274,7 +274,7 @@ namespace CatLua
         /// <summary>
         /// 编译ForIn语句
         /// </summary>
-        public static void CompileForInStat(GenFuncInfo fi, ForInStat stat)
+        private static void CompileForInStat(GenFuncInfo fi, ForInStat stat)
         {
             fi.EnterScope(true);
 
@@ -310,7 +310,7 @@ namespace CatLua
         /// <summary>
         /// 编译赋值语句
         /// </summary>
-        public static void CompileAssignStat(GenFuncInfo fi, AssignStat stat)
+        private static void CompileAssignStat(GenFuncInfo fi, AssignStat stat)
         {
             int expsNum = stat.ExpList.Length;
             int varsNum = stat.VarList.Length;
@@ -453,7 +453,7 @@ namespace CatLua
         /// <summary>
         /// 编译局部变量声明语句
         /// </summary>
-        public static void CompileLocalVarDeclStat(GenFuncInfo fi, LocalVarDeclStat stat)
+        private static void CompileLocalVarDeclStat(GenFuncInfo fi, LocalVarDeclStat stat)
         {
             int oldUsedRegs = fi.UsedRegs;
 
@@ -539,7 +539,7 @@ namespace CatLua
         /// <summary>
         /// 编译局部函数定义语句
         /// </summary>
-        public static void CompileLocalFuncDefStat(GenFuncInfo fi, LocalFuncDefStat stat)
+        private static void CompileLocalFuncDefStat(GenFuncInfo fi, LocalFuncDefStat stat)
         {
             //1个局部变量+1个函数定义表达式
             int reg = fi.AddLocalVar(stat.Name);

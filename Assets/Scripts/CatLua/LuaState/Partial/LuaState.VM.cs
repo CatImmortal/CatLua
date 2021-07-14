@@ -100,7 +100,7 @@ namespace CatLua
                 
                 if (info.Instack == 1)
                 {
-                    //upvalue是外1层函数的局部变量
+                    //upvalue是直接外围函数的局部变量
 
                     //尝试从openUpvlaues里获取
                     if (!openUpvalues.TryGetValue(globalStackIndex,out Upvalue upvalue))
@@ -113,8 +113,8 @@ namespace CatLua
                 }
                 else
                 {
-                    //upvalue是更外层函数的局部变量 已被主函数捕获过了 直接从主函数的upvalue表里获取
-                    //因为主函数的upvalue表不是全局的 所以不用+CurFrameBottom
+                    //upvalue是间接外围函数的局部变量 已被直接外围函数捕获过了 直接从直接外围函数的upvalue表里获取
+                    //因为直接外围函数的upvalue表不是全局的 所以不用+CurFrameBottom
                     c.Upvalues[i] = curFrame.Closure.Upvalues[info.Index];
                 }
             }

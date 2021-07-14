@@ -104,7 +104,7 @@ namespace CatLua
             new InstructionConfig(0,1,OpArgType.R,OpArgType.N,OpMode.IAsBx,OpCodeType.ForPrep,InstructionFuncs.ForPrepFunc),
             new InstructionConfig(0,0,OpArgType.N,OpArgType.U,OpMode.IABC,OpCodeType.TForCall,InstructionFuncs.TForCallFunc),
             new InstructionConfig(0,1,OpArgType.R,OpArgType.N,OpMode.IAsBx,OpCodeType.TForloop,InstructionFuncs.TForLoopFunc),
-            new InstructionConfig(0,0,OpArgType.U,OpArgType.U,OpMode.IABC,OpCodeType.Setlist,InstructionFuncs.SetListFunc),
+            new InstructionConfig(0,0,OpArgType.U,OpArgType.U,OpMode.IABC,OpCodeType.SetList,InstructionFuncs.SetListFunc),
             new InstructionConfig(0,1,OpArgType.U,OpArgType.N,OpMode.IABx,OpCodeType.Closure,InstructionFuncs.ClosureFunc),
             new InstructionConfig(0,1,OpArgType.U,OpArgType.N,OpMode.IABC,OpCodeType.Vararg,InstructionFuncs.VarArgFunc),
             new InstructionConfig(0,0,OpArgType.U,OpArgType.U,OpMode.IAx,OpCodeType.ExtraArg),
