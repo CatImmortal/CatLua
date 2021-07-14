@@ -13,14 +13,8 @@ namespace CatLua
         {
             globalStack = new LuaStack(size);
 
-            curFrame = new FuncCallFrame();
-
-            registry = new LuaTable();
-
             //将全局环境表_G放入注册表
             registry[Constants.GlobalEnvKey] = Factory.NewTable(new LuaTable());
-
-            openUpvalues = new Dictionary<int, Upvalue>();
 
             CSFuncs.Init(this);
         }
@@ -30,20 +24,12 @@ namespace CatLua
         /// </summary>
         private LuaStack globalStack;
 
-        /// <summary>
-        /// 当前函数调用栈帧
-        /// </summary>
-        private FuncCallFrame curFrame;
 
         /// <summary>
         /// 全局Lua注册表
         /// </summary>
-        private LuaTable registry;
+        private LuaTable registry = new LuaTable();
 
-        /// <summary>
-        /// 开放状态的upvalue
-        /// </summary>
-        private Dictionary<int, Upvalue> openUpvalues;
 
         /// <summary>
         /// 加载Lua源码

@@ -157,7 +157,7 @@ namespace CatLua
             //data不是table 或者 data.table[key] == nil
             //尝试调用__newindex元方法
 
-            //raw调用 或者 没有关联的__newindex元方法
+            //raw调用 或者 没有关联的__newindex元方法 直接赋值了
             if (raw || !HasMetaMethod(data, "__newindex"))
             {
                 data.Table[key] = value;

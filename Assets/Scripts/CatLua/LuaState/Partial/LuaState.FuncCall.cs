@@ -7,6 +7,17 @@ namespace CatLua
     public partial class LuaState
     {
         /// <summary>
+        /// 当前函数调用栈帧
+        /// </summary>
+        private FuncCallFrame curFrame = new FuncCallFrame();
+
+
+        /// <summary>
+        /// 开放状态的upvalue
+        /// </summary>
+        private Dictionary<int, Upvalue> openUpvalues = new Dictionary<int, Upvalue>();
+
+        /// <summary>
         /// 当前被调栈帧的函数，实际返回的返回值数量
         /// </summary>
         public int CallFrameReturnResultNum;

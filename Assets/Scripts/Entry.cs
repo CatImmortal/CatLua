@@ -16,14 +16,14 @@ public class Entry : MonoBehaviour
     {
         Application.targetFrameRate = 30;
 
-        //LuaState ls = new LuaState(100);
-        //CSFuncs.Init(ls);
-        //ls.LoadChunk(main.bytes, main.name, "b");
-        //ls.CallFunc(0, 0);
+        LuaState ls = new LuaState(100);
+        CSFuncs.Init(ls);
+        ls.LoadChunk(main.bytes, main.name);
+        ls.CallFunc(0, 0);
 
-        string source = File.ReadAllText(Application.dataPath + "/Scripts/LuaScripts/" + main.name + ".lua");
+        //string source = File.ReadAllText(Application.dataPath + "/Scripts/LuaScripts/" + main.name + ".lua");
 
-        TestParser(source,"main");
+        //TestParser(source,"main");
     }
 
     private Chunk TestUndump()

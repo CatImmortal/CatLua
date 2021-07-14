@@ -35,7 +35,7 @@ namespace CatLua
 
             LuaDataUnion data = registry[Constants.GlobalEnvKey];
             data.Table[dataKey] = value;
-            registry[Constants.GlobalEnvKey] = data;
+            //registry[Constants.GlobalEnvKey] = data;
         }
 
         /// <summary>
