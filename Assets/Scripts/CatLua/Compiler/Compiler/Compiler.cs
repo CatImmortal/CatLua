@@ -20,7 +20,7 @@ namespace CatLua
         /// </summary>
         private static FuncPrototype GenProto(Block block)
         {
-            //将整个block视为一个函数体 以此创建函数信息
+            //将整个block视为一个函数体
             FuncDefExp fdExp = new FuncDefExp(0, 0, null, true, block);
 
             GenFuncInfo fi = new GenFuncInfo(null, null);
