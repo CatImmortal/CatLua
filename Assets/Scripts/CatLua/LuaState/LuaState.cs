@@ -13,10 +13,11 @@ namespace CatLua
         {
             globalStack = new LuaStack(size);
 
-            //将全局环境表_G放入注册表
+            //将全局环境表放入注册表
             registry[Constants.GlobalEnvKey] = Factory.NewTable(new LuaTable());
 
-            CSFuncs.Init(this);
+            //开启所有标准库
+            OpenStdLibs();
         }
 
         /// <summary>
@@ -61,7 +62,7 @@ namespace CatLua
 
             if (c.Proto.UpvalueInfos.Length > 0)
             {
-                //设置_G到入口函数的upvalue中
+                //设置全局环境表到入口函数的upvalue中
                 LuaDataUnion g = registry[Constants.GlobalEnvKey];
                 c.Upvalues[0] = new Upvalue(g);
             }

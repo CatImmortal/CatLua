@@ -7,7 +7,7 @@ namespace CatLua
     public partial class LuaState
     {
         /// <summary>
-        /// 将_G压入栈顶
+        /// 将全局环境表压入栈顶
         /// </summary>
         public void PushGlobalEnv()
         {
@@ -16,7 +16,7 @@ namespace CatLua
         }
 
         /// <summary>
-        /// 将_G[key]压入栈顶
+        /// 将全局环境表[key]压入栈顶
         /// </summary>
         public LuaDataType PushGlobalValue(string key)
         {
@@ -25,7 +25,7 @@ namespace CatLua
         }
 
         /// <summary>
-        /// 从栈顶弹出value，_G[key] = value
+        /// 从栈顶弹出value，全局环境表[key] = value
         /// </summary>
         public void SetGlobalValue(string key)
         {
@@ -35,11 +35,10 @@ namespace CatLua
 
             LuaDataUnion data = registry[Constants.GlobalEnvKey];
             data.Table[dataKey] = value;
-            //registry[Constants.GlobalEnvKey] = data;
         }
 
         /// <summary>
-        /// 注册C#函数到_G
+        /// 注册C#函数到全局环境表
         /// </summary>
         public void RegisteCSFunc(string key, Func<LuaState, int, int> csFunc)
         {

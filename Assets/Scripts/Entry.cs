@@ -17,7 +17,7 @@ public class Entry : MonoBehaviour
         Application.targetFrameRate = 30;
 
         LuaState ls = new LuaState(100);
-        CSFuncs.Init(ls);
+        
         ls.LoadChunk(main.bytes, main.name);
         ls.CallFunc(0, 0);
 

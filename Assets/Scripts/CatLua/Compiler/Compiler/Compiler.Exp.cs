@@ -456,7 +456,7 @@ namespace CatLua
             }
 
 
-
+            //编译参数
             for (int i = 0; i < argsNum; i++)
             {
                 BaseExp argExp = exp.Args[i];
@@ -490,7 +490,8 @@ namespace CatLua
                 argsNum = -1;
             }
 
-            //argsNum和num应该还需要+1
+            //编译调用指令
+            //todo:argsNum和num应该还需要+1
             fi.EmitCall(reg, argsNum, num);
         }
     }

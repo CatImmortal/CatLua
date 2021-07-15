@@ -37,7 +37,10 @@ namespace CatLua
         public const int SetListDefaultBatch = 50;
 
         //全局环境在注册表table里的key
-        public const long GlobalEnvKey = 2;
+        public const long GlobalEnvKey = 1;
+
+        public const string LuaLoadedTable = "_LOADED";
+        public const string LuaPreloadTable = "_PRELOAD";
     }
 }
 

@@ -81,7 +81,7 @@ namespace CatLua
         }
 
         /// <summary>
-        /// 尝试调用有最多2个参数和1个返回值的元方法
+        /// 尝试调用有1到2个参数和1个返回值的元方法
         /// </summary>
         public bool TryCallMetaMethod(LuaDataUnion a, LuaDataUnion b,string metaMethodName,out LuaDataUnion result)
         {

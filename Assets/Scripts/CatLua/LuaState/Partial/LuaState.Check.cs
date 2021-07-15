@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace CatLua
@@ -35,6 +36,19 @@ namespace CatLua
             double d;
             bool result = TryGetNumber(index, out d);
             return result;
+        }
+
+        /// <summary>
+        /// 检查index位置值的是否为number，若为number就返回该number值
+        /// </summary>
+        public double CheckNumber(int index)
+        {
+            bool b = TryGetNumber(index, out double d);
+            if (!b)
+            {
+                throw new Exception("参数类型不正确，需求Number");
+            }
+            return d;
         }
     }
 }

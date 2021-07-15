@@ -9,16 +9,18 @@ namespace CatLua
         private Dictionary<string, Func<LuaState, int, int>> stdLibs = new Dictionary<string, Func<LuaState, int, int>>()
         {
             { "_G",BasicLib.OpenBaseLib},
+            { "math",MathLib.OpenMathLib},
+            { "package",PackageLib.OpenPackageLib},
         };
 
         /// <summary>
         /// 开启所有标准库
         /// </summary>
-        public void OpenLibs()
+        public void OpenStdLibs()
         {
             foreach (KeyValuePair<string, Func<LuaState, int, int>> item in stdLibs)
             {
-                RequireF(item.Key, item.Value, true);
+                RequireF(item.Key, item.Value,true);
             }
         }
 
@@ -28,6 +30,7 @@ namespace CatLua
         public void RequireF(string modName, Func<LuaState, int, int> csFunc,bool isGlobal)
         {
             LuaTable globalTable = registry[Constants.GlobalEnvKey].Table;
+
             if (globalTable["_LOADED"].Type == LuaDataType.Nil)
             {
                 globalTable["_LOADED"] = Factory.NewTable(new LuaTable());
@@ -35,26 +38,24 @@ namespace CatLua
 
             LuaTable loaded = globalTable["_LOADED"].Table;
 
+
+            //检查是否加载过
             if (loaded[modName].Type == LuaDataType.Nil)
             {
                 //包未加载
 
                 //调用加载函数
                 PushCSFunc(csFunc);
-                Push(modName);
-                CallFunc(1, 1);
+                CallFunc(0, 1);
 
-                //_LOADED[modName] = module
                 loaded[modName] = Pop();
 
             }
 
             if (isGlobal)
             {
-                //_G[modName] = module
                 globalTable[modName] = loaded[modName];
             }
-
         }
 
         /// <summary>
@@ -78,6 +79,40 @@ namespace CatLua
             SetTableValue(index, fName);
             return false;
         }
+
+        /// <summary>
+        /// 将csfuncs都放入栈顶的table里
+        /// </summary>
+        public void SetCSFuncs(Dictionary<string, Func<LuaState, int, int>> csFuncs, int upvalueNum = 0)
+        {
+            LuaDataUnion[] upvalues = PopN(upvalueNum);
+
+            foreach (KeyValuePair<string, Func<LuaState, int, int>> item in csFuncs)
+            {
+                for (int i = 0; i < upvalues.Length; i++)
+                {
+                    Push(upvalues[i]);
+                }
+                PushCSFunc(item.Value,upvalueNum);
+                SetTableValue(-1, item.Key);
+            }
+        }
+
+        /// <summary>
+        /// 用csFuncs里的函数创建一个table，并压入栈顶
+        /// </summary>
+        public void NewLib(Dictionary<string, Func<LuaState, int, int>> csFuncs)
+        {
+            LuaTable t = new LuaTable();
+            foreach (KeyValuePair<string, Func<LuaState, int, int>> item in csFuncs)
+            {
+                t[item.Key] = Factory.NewFunc(new Closure(item.Value));
+            }
+
+            Push(t);
+        }
+
+      
     }
 }
 

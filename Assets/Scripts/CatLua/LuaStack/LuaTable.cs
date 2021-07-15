@@ -183,34 +183,34 @@ namespace CatLua
             }
         }
 
-        public override string ToString()
-        {
-            string s = string.Empty;
+        //public override string ToString()
+        //{
+        //    string s = string.Empty;
 
-            s += "table:{";
+        //    s += "table:{";
 
-            if (arr != null)
-            {
-                for (int i = 0; i < arr.Count; i++)
-                {
-                    s += $"{i + 1} = {arr[i]},";
-                }
-            }
+        //    if (arr != null)
+        //    {
+        //        for (int i = 0; i < arr.Count; i++)
+        //        {
+        //            s += $"{i + 1} = {arr[i]},";
+        //        }
+        //    }
 
 
-            if (dict != null)
-            {
-                foreach (KeyValuePair<LuaDataUnion, LuaDataUnion> item in dict)
-                {
-                    s += $"{item.Key} = {item.Value},";
-                }
-            }
+        //    if (dict != null)
+        //    {
+        //        foreach (KeyValuePair<LuaDataUnion, LuaDataUnion> item in dict)
+        //        {
+        //            s += $"{item.Key} = {item.Value},";
+        //        }
+        //    }
             
 
-            s += "}";
+        //    s += "}";
 
-            return s;
-        }
+        //    return s;
+        //}
 
         /// <summary>
         /// 尝试将lua值转换为数组部分的整数索引

@@ -172,17 +172,21 @@ namespace CatLua
             {
                 //不是函数 尝试调用__call元方法
                 LuaTable mt = GetMetaTable(data);
-                LuaDataUnion mtData = mt["__call"];
-                if (mt != null && mtData.Type == LuaDataType.Function)
+                
+                if (mt != null)
                 {
-                    //调用__call元方法 以被调用的data为第一个参数，后续跟其他参数
+                    LuaDataUnion mtData = mt["__call"];
+                    if (mtData.Type == LuaDataType.Function)
+                    {
+                        //调用__call元方法 以被调用的data为第一个参数，后续跟其他参数
 
-                    //将__call插入到原本要调用的函数和参数前面 后续会调用与这个__call关联的函数
-                    Push(mtData);
-                    PopAndInsert(-(argsNum + 2));  
+                        //将__call插入到原本要调用的函数和参数前面 后续会调用与这个__call关联的函数
+                        Push(mtData);
+                        PopAndInsert(-(argsNum + 2));
 
-                    argsNum++;
-                    data = mtData;  //这里将原本要调用的换成__call
+                        argsNum++;
+                        data = mtData;  //这里将原本要调用的换成__call
+                    }
                 }
                 else
                 {
