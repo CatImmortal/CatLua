@@ -440,7 +440,7 @@ namespace CatLua
                 }
                 else
                 {
-                    //var表达式 是个表构造器
+                    //var表达式 是个表访问
                     fi.EmitSetTable(tRegs[i], kRegs[i], vRegs[i]);
                 }
             }
