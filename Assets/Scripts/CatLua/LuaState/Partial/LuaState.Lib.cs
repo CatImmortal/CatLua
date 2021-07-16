@@ -20,14 +20,14 @@ namespace CatLua
         {
             foreach (KeyValuePair<string, Func<LuaState, int, int>> item in stdLibs)
             {
-                RequireF(item.Key, item.Value,true);
+                OpenStdLib(item.Key, item.Value);
             }
         }
 
         /// <summary>
         /// 开启单个标准库
         /// </summary>
-        public void RequireF(string modName, Func<LuaState, int, int> csFunc,bool isGlobal)
+        public void OpenStdLib(string modName, Func<LuaState, int, int> csFunc)
         {
             LuaTable globalTable = registry[Constants.GlobalEnvKey].Table;
 
@@ -48,14 +48,12 @@ namespace CatLua
                 PushCSFunc(csFunc);
                 CallFunc(0, 1);
 
+                //分别放入loaded表和全局环境表里
                 loaded[modName] = Pop();
-
-            }
-
-            if (isGlobal)
-            {
                 globalTable[modName] = loaded[modName];
             }
+
+            
         }
 
         /// <summary>
