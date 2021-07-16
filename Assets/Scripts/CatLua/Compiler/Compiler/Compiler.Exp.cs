@@ -69,7 +69,8 @@ namespace CatLua
         {
             if (exp is NilExp)
             {
-                fi.EmitLoadNil(reg, num);
+                int b = reg + num - 1;
+                fi.EmitLoadNil(reg, b);
                 return;
             }
 
@@ -289,7 +290,7 @@ namespace CatLua
                     int valueReg = fi.AllocReg();
                     CompileExp(fi, valueExp, valueReg, 1);
 
-                    fi.AllocRegs(2);
+                    fi.FreeRegs(2);
 
                     fi.EmitSetTable(reg, keyReg, valueReg);
                 }
@@ -338,7 +339,7 @@ namespace CatLua
                     }
 
                     
-                    int JmpPC = fi.EmitJmp(0, 0);  //跳过对第二个操作数的计算
+                    int JmpPC = fi.EmitJmp(-1, 0);  //跳过对第二个操作数的计算
 
                     //编译第二个操作数的表达式
                     b = fi.AllocReg();
@@ -437,7 +438,7 @@ namespace CatLua
         /// <summary>
         /// 编译函数调用表达式
         /// </summary>
-        private static void CompileFuncCallExp(GenFuncInfo fi, FuncCallExp exp, int reg, int num)
+        private static void CompileFuncCallExp(GenFuncInfo fi, FuncCallExp exp, int reg, int resultNum)
         {
             //参数数量
             int argsNum = exp.Args.Length;
@@ -491,8 +492,7 @@ namespace CatLua
             }
 
             //编译调用指令
-            //todo:argsNum和num应该还需要+1
-            fi.EmitCall(reg, argsNum, num);
+            fi.EmitCall(reg, argsNum, resultNum);
         }
     }
 }

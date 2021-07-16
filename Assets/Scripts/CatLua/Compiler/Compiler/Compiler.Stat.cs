@@ -98,7 +98,7 @@ namespace CatLua
         private static void CompileBreakStat(GenFuncInfo fi, BreakStat stat)
         {
             //生成参数都为0的jump指令
-            int pc = fi.EmitJmp(0, 0);
+            int pc = fi.EmitJmp(-1, 0);
 
             //添加到Break表中 等block结束时修复
             fi.AddBreakJump(pc);
@@ -140,7 +140,7 @@ namespace CatLua
 
             //生成test和jmp指令 
             fi.EmitTest(r, 0); //r处的值为true 就跳过接下来回到循环体开始处的jmp指令 结束循环
-            fi.EmitJmp(0, startPC - fi.PC - 1);  //跳回最开始
+            fi.EmitJmp(-1, startPC - fi.PC - 1);  //跳回最开始
 
             fi.CloseOpenUpvalue();
 
@@ -163,14 +163,14 @@ namespace CatLua
 
             //生成test和jmp指令 
             fi.EmitTest(r, 0);  //r处的值为true 就跳过接下来结束循环的jmp指令 循环运行block
-            int jmpToEndPC = fi.EmitJmp(0, 0); //结束循环 此时块还没结束 跳转偏移量暂时设为0
+            int jmpToEndPC = fi.EmitJmp(-1, 0); //结束循环 此时块还没结束 跳转偏移量暂时设为0
 
             //对块进行处理
             fi.EnterScope(true);
 
             CompileBlock(fi, stat.Block);
             fi.CloseOpenUpvalue();
-            fi.EmitJmp(0, startPC - fi.PC - 1);  //跳回最开始
+            fi.EmitJmp(-1, startPC - fi.PC - 1);  //跳回最开始
 
             fi.ExitScope();
 
@@ -207,7 +207,7 @@ namespace CatLua
 
                 //生成test和jmp指令 
                 fi.EmitTest(r, 0); //r处的值为true 就跳过接下来 跳转到下一个elseif 的jmp指令 直接进入block执行
-                jmpToNextExpPC = fi.EmitJmp(0, 0);  //跳转到下一个elseif 此时还不知道具体pc 跳转偏移量暂时设为0
+                jmpToNextExpPC = fi.EmitJmp(-1, 0);  //跳转到下一个elseif 此时还不知道具体pc 跳转偏移量暂时设为0
 
                 //处理块
                 fi.EnterScope(true);
@@ -220,7 +220,7 @@ namespace CatLua
                 //为每个if的block的生成 跳转到结束位置的jmp指令
                 if (i < stat.Exps.Length - 1)
                 {
-                    jmpToEndPCs[i] = fi.EmitJmp(0, 0);
+                    jmpToEndPCs[i] = fi.EmitJmp(-1, 0);
                 }
                 else
                 {
@@ -288,7 +288,7 @@ namespace CatLua
                 fi.AddLocalVar(stat.NameList[i]);
             }
 
-            int jmpToTForCallPC = fi.EmitJmp(0, 0);  //用来跳转到TFormCall处的jmp指令 
+            int jmpToTForCallPC = fi.EmitJmp(-1, 0);  //用来跳转到TFormCall处的jmp指令 
 
             //编译循环体
             CompileBlock(fi, stat.Block);
@@ -359,7 +359,7 @@ namespace CatLua
                     if (i >= varsNum && i == expsNum - 1 && IsVarargOrFuncCall(exp))
                     {
                         //最后一个表达式 是vararg或函数调用
-                        CompileExp(fi, exp, a, 0);
+                        CompileExp(fi, exp, a, -1);
                     }
                     else
                     {
@@ -397,8 +397,9 @@ namespace CatLua
                 {
                     //没有变长返回值表达式 用nil填充不足的
                     int num = varsNum - expsNum;
-                    int a = fi.AllocRegs(num);
-                    fi.EmitLoadNil(a, num);
+                    int b = fi.AllocRegs(num);
+                    int a = b - num + 1;
+                    fi.EmitLoadNil(a, b);
                 }
             }
 
@@ -479,7 +480,7 @@ namespace CatLua
                     //检查最后一个表达式 是否为 vararg或函数调用表达式
                     if (i == stat.ExpList.Length - 1 && IsVarargOrFuncCall(exp))
                     {
-                        CompileExp(fi, exp, a, 0);
+                        CompileExp(fi, exp, a, -1);
                     }
                     else
                     {
@@ -519,8 +520,9 @@ namespace CatLua
                 {
                     //没有变长返回值表达式 用nil填充不足的
                     int num = stat.NameList.Length - stat.ExpList.Length;
-                    int a = fi.AllocRegs(num);
-                    fi.EmitLoadNil(a, num);
+                    int b = fi.AllocRegs(num);
+                    int a = b - num + 1;
+                    fi.EmitLoadNil(a, b);
                 }
             }
 

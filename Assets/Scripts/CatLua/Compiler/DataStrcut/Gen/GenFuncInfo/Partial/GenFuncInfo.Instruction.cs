@@ -129,11 +129,11 @@ namespace CatLua
             if (hasCaptureLocalVars)
             {
                 //需要闭合upvalue
-                return minSlotOfLocalVars + 1;
+                return minSlotOfLocalVars;
             }
             else
             {
-                return 0;
+                return -1;
             }
         }
 
@@ -229,6 +229,7 @@ namespace CatLua
 
         public int EmitJmp(int a, int b)
         {
+            a++; //a可能是-1 需要再+1
             EmitABC(OpCodeType.Jmp, a, b,0);
             return PC;
         }
@@ -245,6 +246,8 @@ namespace CatLua
 
         public void EmitCall(int a, int b, int c)
         {
+            b++;
+            c++;
             EmitABC(OpCodeType.Call, a, b, c);
         }
 
@@ -256,6 +259,7 @@ namespace CatLua
 
         public void EmitReturn(int a, int b)
         {
+            b--;
             EmitABC(OpCodeType.Return, a, b, 0);
         }
 
@@ -294,6 +298,7 @@ namespace CatLua
 
         public void EmitVararg(int a, int b)
         {
+            b--;
             EmitABC(OpCodeType.Vararg, a, b, 0);
         }
 
@@ -364,7 +369,7 @@ namespace CatLua
                 //EmitLoadBool(a, 1, 1);
                 //EmitLoadBool(a, 0, 0);
 
-                EmitJmp(0, 1);  //跳过下一条指令 执行第二条LoadBool
+                EmitJmp(-1, 1);  //跳过下一条指令 执行第二条LoadBool
                 EmitLoadBool(a, 0, 1);  //将a位置的值设置为false 并跳过下一条LoadBool
                 EmitLoadBool(a, 1, 0);  //将a位置的值设置为true
             }
