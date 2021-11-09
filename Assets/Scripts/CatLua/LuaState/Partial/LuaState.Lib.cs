@@ -10,7 +10,7 @@ namespace CatLua
         {
             { "_G",BasicLib.OpenBaseLib},
             { "math",MathLib.OpenMathLib},
-            { "package",PackageLib.OpenPackageLib},
+            //{ "package",PackageLib.OpenPackageLib},
         };
 
         /// <summary>
@@ -92,7 +92,7 @@ namespace CatLua
                     Push(upvalues[i]);
                 }
                 PushCSFunc(item.Value,upvalueNum);
-                SetTableValue(-1, item.Key);
+                SetTableValue(0, item.Key);
             }
         }
 
